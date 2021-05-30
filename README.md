@@ -225,6 +225,5 @@ pystarport serve --config ibc.yaml
 # setup ibc channel
 hermes -c data/relayer.toml create channel ibc-0 ibc-1 --port-a transfer --port-b transfer
 # start relayer process
-supervisorctl -c data/tasks.ini relayer-demo
+supervisorctl -c data/tasks.ini start relayer-demo
 ```
-
