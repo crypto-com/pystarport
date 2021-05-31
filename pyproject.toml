@@ -6,8 +6,8 @@ authors = ["huangyi <huang@crypto.com>"]
 license = "Apache"
 keywords = ["CRO", "blockchain", "crypto.com", "cosmos"]
 readme = "README.md"
-homepage = "https://github.com/crypto-org-chain/pystarport"
-repository = "https://github.com/crypto-org-chain/pystarport"
+homepage = "https://github.com/crypto-com/pystarport"
+repository = "https://github.com/crypto-com/pystarport"
 include = [
     "LICENSE",
 ]
