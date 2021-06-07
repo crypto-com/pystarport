@@ -1,0 +1,23 @@
+name: upload
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install dependencies
+        run: python3 -m pip install --user --upgrade setuptools wheel
+      - name: build
+        run: python3 setup.py sdist bdist_wheel
+      - name: release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
