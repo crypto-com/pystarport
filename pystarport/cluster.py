@@ -684,7 +684,8 @@ def init_devnet(
         if use_ledger:
             acct = cli.create_account_ledger(account["name"])
         else:
-            acct = cli.create_account(account["name"])
+            mnemonic = account.get("mnemonic")
+            acct = cli.create_account(account["name"], mnemonic=mnemonic)
         vesting = account.get("vesting")
         if not vesting:
             cli.add_genesis_account(acct["address"], account["coins"])
