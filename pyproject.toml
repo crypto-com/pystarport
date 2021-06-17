@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pystarport"
-version = "0.2.0"
+version = "0.2.1"
 description = "Spawn local devnets for cosmos-sdk chains"
 authors = ["huangyi <huang@crypto.com>"]
 license = "Apache"
@@ -8,9 +8,7 @@ keywords = ["CRO", "blockchain", "crypto.com", "cosmos"]
 readme = "README.md"
 homepage = "https://github.com/crypto-com/pystarport"
 repository = "https://github.com/crypto-com/pystarport"
-include = [
-    "LICENSE",
-]
+include = ["LICENSE"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
