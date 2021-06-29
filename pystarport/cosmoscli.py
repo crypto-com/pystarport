@@ -579,13 +579,17 @@ class CosmosCLI:
         """MsgCreateValidator
         create the node with create_node before call this"""
         pubkey = (
-            self.raw(
-                "tendermint",
-                "show-validator",
-                home=self.data_dir,
+            "'"
+            + (
+                self.raw(
+                    "tendermint",
+                    "show-validator",
+                    home=self.data_dir,
+                )
+                .strip()
+                .decode()
             )
-            .strip()
-            .decode()
+            + "'"
         )
         return json.loads(
             self.raw(
