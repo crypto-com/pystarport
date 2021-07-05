@@ -1052,6 +1052,7 @@ def edit_app_cfg(path, base_port, app_config):
             "snapshot-interval": 5,
             "snapshot-keep-recent": 10,
         },
+        "minimum-gas-prices": "0basecro",
     }
     doc = tomlkit.parse(open(path).read())
     doc["grpc-web"] = {}
