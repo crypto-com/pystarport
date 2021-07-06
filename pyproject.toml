@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pystarport"
-version = "0.2.1"
+version = "0.2.2"
 description = "Spawn local devnets for cosmos-sdk chains"
 authors = ["huangyi <huang@crypto.com>"]
 license = "Apache"
