@@ -844,7 +844,15 @@ def init_devnet(
 
     # write supervisord config file
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
-        write_ini(fp, supervisord_ini(cmd, config["validators"], config["chain_id"]))
+        write_ini(
+            fp,
+            supervisord_ini(
+                cmd,
+                config["validators"],
+                config["chain_id"],
+                config.get("start-flags", ""),
+            ),
+        )
 
     if gen_compose_file:
         yaml.dump(
@@ -951,12 +959,12 @@ def find_account(data_dir, chain_id, name):
     return next(acct for acct in accounts if acct["name"] == name)
 
 
-def supervisord_ini(cmd, validators, chain_id):
+def supervisord_ini(cmd, validators, chain_id, start_flags=""):
     ini = {}
     for i, node in enumerate(validators):
         ini[f"program:{chain_id}-node{i}"] = dict(
             COMMON_PROG_OPTIONS,
-            command=f"{cmd} start --home %(here)s/node{i}",
+            command=f"{cmd} start --home %(here)s/node{i} {start_flags}",
             stdout_logfile=f"%(here)s/node{i}.log",
         )
     return ini
