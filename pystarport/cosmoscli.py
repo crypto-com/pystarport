@@ -371,22 +371,40 @@ class CosmosCLI:
             )
         )
 
-    def delegate_amount(self, to_addr, amount, from_addr):
-        return json.loads(
-            self.raw(
-                "tx",
-                "staking",
-                "delegate",
-                to_addr,
-                amount,
-                "-y",
-                home=self.data_dir,
-                from_=from_addr,
-                keyring_backend="test",
-                chain_id=self.chain_id,
-                node=self.node_rpc,
+    def delegate_amount(self, to_addr, amount, from_addr, gas_price=None):
+        if gas_price == None:
+            return json.loads(
+                self.raw(
+                    "tx",
+                    "staking",
+                    "delegate",
+                    to_addr,
+                    amount,
+                    "-y",
+                    home=self.data_dir,
+                    from_=from_addr,
+                    keyring_backend="test",
+                    chain_id=self.chain_id,
+                    node=self.node_rpc,
+                )
             )
-        )
+        else:
+            return json.loads(
+                self.raw(
+                    "tx",
+                    "staking",
+                    "delegate",
+                    to_addr,
+                    amount,
+                    "-y",
+                    home=self.data_dir,
+                    from_=from_addr,
+                    keyring_backend="test",
+                    chain_id=self.chain_id,
+                    node=self.node_rpc,
+                    gas_prices=gas_price,
+                )
+            )
 
     # to_addr: croclcl1...  , from_addr: cro1...
     def unbond_amount(self, to_addr, amount, from_addr):
