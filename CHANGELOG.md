@@ -1,7 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- [13](https://github.com/crypto-com/pystarport/issues/13) Support configure start command flags
 
 *Jul 6, 2021*
+
 ## v0.2.2
 
 - [12] (https://github.com/crypto-com/pystarport/issues/12) Add back mnemonics
@@ -22,5 +26,4 @@
 ## v0.2.0
 
 - Support `app-config` to patch `app.toml` for each validator
-
 
