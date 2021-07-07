@@ -407,8 +407,8 @@ class ClusterCLI:
     def get_delegated_amount(self, which_addr, i=0):
         return self.cosmos_cli(i).get_delegated_amount(which_addr)
 
-    def delegate_amount(self, to_addr, amount, from_addr, i=0):
-        return self.cosmos_cli(i).delegate_amount(to_addr, amount, from_addr)
+    def delegate_amount(self, to_addr, amount, from_addr, i=0, gas_price=None):
+        return self.cosmos_cli(i).delegate_amount(to_addr, amount, from_addr, gas_price)
 
     # to_addr: croclcl1...  , from_addr: cro1...
     def unbond_amount(self, to_addr, amount, from_addr, i=0):
