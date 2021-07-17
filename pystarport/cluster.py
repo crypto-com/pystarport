@@ -247,6 +247,7 @@ class ClusterCLI:
             home / "config/config.toml",
             base_port,
             node0["p2p"]["persistent_peers"],
+            {},
             custom_edit=custom_edit_tm,
         )
         edit_app_cfg(home / "config/app.toml", base_port, {})
@@ -835,7 +836,7 @@ def init_devnet(
         ]
     )
     for i, val in enumerate(config["validators"]):
-        edit_tm_cfg(data_dir / f"node{i}/config/config.toml", val["base_port"], peers)
+        edit_tm_cfg(data_dir / f"node{i}/config/config.toml", val["base_port"], peers, val.get("config", {}))
         edit_app_cfg(
             data_dir / f"node{i}/config/app.toml",
             val["base_port"],
@@ -1019,7 +1020,7 @@ def docker_compose_yml(cmd, validators, data_dir, image):
     }
 
 
-def edit_tm_cfg(path, base_port, peers, *, custom_edit=None):
+def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
     doc = tomlkit.parse(open(path).read())
     # tendermint is start in process, not needed
     # doc['proxy_app'] = 'tcp://127.0.0.1:%d' % abci_port(base_port)
@@ -1032,6 +1033,7 @@ def edit_tm_cfg(path, base_port, peers, *, custom_edit=None):
     doc["p2p"]["allow_duplicate_ip"] = True
     doc["consensus"]["timeout_commit"] = "1s"
     doc["rpc"]["timeout_broadcast_tx_commit"] = "30s"
+    patch_toml_doc(doc, config)
     if custom_edit is not None:
         custom_edit(doc)
     open(path, "w").write(tomlkit.dumps(doc))
