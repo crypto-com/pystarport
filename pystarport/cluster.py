@@ -140,7 +140,7 @@ class ClusterCLI:
             ]
         )
 
-    def stop_relayer(self, path):
+    def stop_relayer(self):
         subprocess.run(
             [
                 sys.executable,
@@ -148,11 +148,11 @@ class ClusterCLI:
                 "-c",
                 self.data_root / SUPERVISOR_CONFIG_FILE,
                 "stop",
-                "program:relayer-{}".format(path),
+                "program:relayer-demo",
             ]
         )
 
-    def restart_relayer(self, path):
+    def restart_relayer(self):
         subprocess.run(
             [
                 sys.executable,
@@ -160,7 +160,7 @@ class ClusterCLI:
                 "-c",
                 self.data_root / SUPERVISOR_CONFIG_FILE,
                 "restart",
-                "program:relayer-{}".format(path),
+                "program:relayer-demo",
             ]
         )
 
@@ -836,7 +836,12 @@ def init_devnet(
         ]
     )
     for i, val in enumerate(config["validators"]):
-        edit_tm_cfg(data_dir / f"node{i}/config/config.toml", val["base_port"], peers, val.get("config", {}))
+        edit_tm_cfg(
+            data_dir / f"node{i}/config/config.toml",
+            val["base_port"],
+            peers,
+            val.get("config", {}),
+        )
         edit_app_cfg(
             data_dir / f"node{i}/config/app.toml",
             val["base_port"],
@@ -875,9 +880,8 @@ def relayer_chain_config(data_dir, chain):
         "rpc_timeout": "10s",
         "account_prefix": chain.get("account-prefix", "cro"),
         "store_prefix": "ibc",
-        "gas": 300000,
-        "fee_denom": "basecro",
-        "fee_amount": 0,
+        "max_gas": 300000,
+        "gas_price": {"price": 0, "denom": "basecro"},
         "trusting_period": "336h",
     }
 
@@ -887,8 +891,8 @@ def init_cluster(
 ):
     config = yaml.safe_load(open(config_path))
 
-    # override relayer config in config.yaml
-    rly_section = config.pop("relayer", {})
+    # TODO: override relayer config in config.yaml
+    config.pop("relayer", {})
     for chain_id, cfg in config.items():
         cfg["path"] = str(config_path)
         cfg["chain_id"] = chain_id
@@ -899,11 +903,10 @@ def init_cluster(
         init_devnet(
             data_dir / chain["chain_id"], chain, base_port, image, cmd, gen_compose_file
         )
-    paths = rly_section.get("paths", {})
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
         write_ini(
             fp,
-            supervisord_ini_group(config.keys(), paths),
+            supervisord_ini_group(config.keys()),
         )
     if len(chains) > 1:
         relayer_config = data_dir / "relayer.toml"
@@ -912,24 +915,11 @@ def init_cluster(
             tomlkit.dumps(
                 {
                     "global": {
-                        "strategy": "naive",
+                        "strategy": "all",
                         "log_level": "info",
                     },
                     "chains": [
                         relayer_chain_config(data_dir, chain) for chain in chains
-                    ],
-                    "connections": [
-                        {
-                            "a_chain": path["src"]["chain-id"],
-                            "b_chain": path["dst"]["chain-id"],
-                            "paths": [
-                                {
-                                    "a_port": path["src"]["port-id"],
-                                    "b_port": path["dst"]["port-id"],
-                                }
-                            ],
-                        }
-                        for path in paths.values()
                     ],
                 }
             )
@@ -948,8 +938,8 @@ def init_cluster(
                     chain["chain_id"],
                     "--mnemonic",
                     mnemonic,
-                    "--coin-type",
-                    str(chain.get("coin-type", 394)),
+                    "--hd-path",
+                    "m/44'/" + str(chain.get("coin-type", 394)) + "'/0'/0/0",
                 ],
                 check=True,
             )
@@ -971,7 +961,7 @@ def supervisord_ini(cmd, validators, chain_id, start_flags=""):
     return ini
 
 
-def supervisord_ini_group(chain_ids, paths):
+def supervisord_ini_group(chain_ids):
     cfg = {
         "include": {
             "files": " ".join(
@@ -991,18 +981,12 @@ def supervisord_ini_group(chain_ids, paths):
         "unix_http_server": {"file": "%(here)s/supervisor.sock"},
         "supervisorctl": {"serverurl": "unix://%(here)s/supervisor.sock"},
     }
-    for path, path_cfg in paths.items():
-        src = path_cfg["src"]["chain-id"]
-        dst = path_cfg["dst"]["chain-id"]
-        cfg[f"program:relayer-{path}"] = dict(
-            COMMON_PROG_OPTIONS,
-            command=(
-                f"hermes -c %(here)s/relayer.toml start {src} {dst} "
-                "-p transfer -c channel-0"
-            ),
-            stdout_logfile=f"%(here)s/relayer-{path}.log",
-            autostart="false",
-        )
+    cfg[f"program:relayer-demo"] = dict(
+        COMMON_PROG_OPTIONS,
+        command=(f"hermes -c %(here)s/relayer.toml start"),
+        stdout_logfile=f"%(here)s/relayer-demo.log",
+        autostart="false",
+    )
     return cfg
 
 
