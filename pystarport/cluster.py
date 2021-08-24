@@ -687,6 +687,12 @@ def init_devnet(
     def create_account(cli, account, use_ledger=False):
         if use_ledger:
             acct = cli.create_account_ledger(account["name"])
+        elif account.get("address"):
+            # if address field exists, will use account with that address directly
+            acct = {
+                "name": account.get("name"),
+                "address": account.get("address")
+            }
         else:
             mnemonic = account.get("mnemonic")
             acct = cli.create_account(account["name"], mnemonic=mnemonic)
