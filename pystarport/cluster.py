@@ -690,7 +690,7 @@ def init_devnet(
         elif account.get("address"):
             # if address field exists, will use account with that address directly
             acct = {
-                "name": account["name"],
+                "name": account.get("name"),
                 "address": account.get("address")
             }
         else:
