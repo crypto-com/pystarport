@@ -845,7 +845,7 @@ def init_devnet(
         edit_app_cfg(
             data_dir / f"node{i}/config/app.toml",
             val["base_port"],
-            val.get("app-config", {}),
+            jsonmerge.merge(config.get("app-config", {}), val.get("app-config", {})),
         )
 
     # write supervisord config file
@@ -1049,11 +1049,29 @@ def edit_app_cfg(path, base_port, app_config):
         },
         "minimum-gas-prices": "0basecro",
     }
+
+    app_config = format_value(
+        app_config,
+        {
+            "EVMRPC_PORT": ports.evmrpc_port(base_port),
+            "EVMRPC_PORT_WS": ports.evmrpc_ws_port(base_port),
+        },
+    )
+
     doc = tomlkit.parse(open(path).read())
     doc["grpc-web"] = {}
     doc["grpc-web"]["address"] = "0.0.0.0:%d" % ports.grpc_web_port(base_port)
     patch_toml_doc(doc, jsonmerge.merge(default_patch, app_config))
     open(path, "w").write(tomlkit.dumps(doc))
+
+
+def format_value(v, ctx):
+    if isinstance(v, str):
+        return v.format(**ctx)
+    elif isinstance(v, dict):
+        return {k: format_value(vv, ctx) for k, vv in v.items()}
+    else:
+        return v
 
 
 if __name__ == "__main__":
