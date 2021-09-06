@@ -696,6 +696,8 @@ def init_devnet(
         else:
             mnemonic = account.get("mnemonic")
             acct = cli.create_account(account["name"], mnemonic=mnemonic)
+            if mnemonic:
+                acct["mnemonic"] = mnemonic
         vesting = account.get("vesting")
         if not vesting:
             cli.add_genesis_account(acct["address"], account["coins"])
@@ -796,6 +798,8 @@ def init_devnet(
     for i, node in enumerate(config["validators"]):
         mnemonic = node.get("mnemonic")
         account = cli.create_account("validator", i, mnemonic=mnemonic)
+        if mnemonic:
+            account["mnemonic"] = mnemonic
         accounts.append(account)
         if "coins" in node:
             cli.add_genesis_account(account["address"], node["coins"], i)
