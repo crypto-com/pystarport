@@ -877,11 +877,14 @@ def init_devnet(
         )
 
 
-def relayer_chain_config(data_dir, chain):
+def relayer_chain_config(data_dir, chain, relayer_chains_config):
     cfg = json.load((data_dir / chain["chain_id"] / "config.json").open())
     rpc_port = ports.rpc_port(cfg["validators"][0]["base_port"])
     grpc_port = ports.grpc_port(cfg["validators"][0]["base_port"])
-    return {
+
+    chain_config = next((i for i in relayer_chains_config if i["id"] == chain["chain_id"]), {})
+
+    return jsonmerge.merge({
         "key_name": "relayer",
         "id": chain["chain_id"],
         "rpc_addr": f"http://localhost:{rpc_port}",
@@ -893,7 +896,7 @@ def relayer_chain_config(data_dir, chain):
         "max_gas": 300000,
         "gas_price": {"price": 0, "denom": "basecro"},
         "trusting_period": "336h",
-    }
+    },chain_config)
 
 
 def init_cluster(
@@ -901,8 +904,7 @@ def init_cluster(
 ):
     config = yaml.safe_load(open(config_path))
 
-    # TODO: override relayer config in config.yaml
-    config.pop("relayer", {})
+    relayer_config = config.pop("relayer", {})
     for chain_id, cfg in config.items():
         cfg["path"] = str(config_path)
         cfg["chain_id"] = chain_id
@@ -919,19 +921,23 @@ def init_cluster(
             supervisord_ini_group(config.keys()),
         )
     if len(chains) > 1:
-        relayer_config = data_dir / "relayer.toml"
+        relayer_chains_config = relayer_config.pop("chains", {})
+        relayer_config_file = data_dir / "relayer.toml"
         # write relayer config
-        relayer_config.write_text(
+        relayer_config_file.write_text(
             tomlkit.dumps(
-                {
-                    "global": {
-                        "strategy": "all",
-                        "log_level": "info",
+                jsonmerge.merge(
+                    {
+                        "global": {
+                            "strategy": "all",
+                            "log_level": "info",
+                        },
+                        "chains": [
+                            relayer_chain_config(data_dir, chain, relayer_chains_config) for chain in chains
+                        ],
                     },
-                    "chains": [
-                        relayer_chain_config(data_dir, chain) for chain in chains
-                    ],
-                }
+                    relayer_config
+                )
             )
         )
 
@@ -942,7 +948,7 @@ def init_cluster(
                 [
                     "hermes",
                     "-c",
-                    relayer_config,
+                    relayer_config_file,
                     "keys",
                     "restore",
                     chain["chain_id"],
