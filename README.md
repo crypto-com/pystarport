@@ -197,24 +197,16 @@ ibc-1:
         params:
           receive_enabled: true
           send_enabled: true
-relayer:
+relayer: # refer here (https://hermes.informal.systems/config.html) for more configs
   global:
-    timeout: 10s
-    light-cache-size: 20
-  paths:
-    demo:
-      src:
-        chain-id: ibc-0
-        port-id: transfer
-        order: unordered
-        version: ics20-1
-      dst:
-        chain-id: ibc-1
-        port-id: transfer
-        order: unordered
-        version: ics20-1
-      strategy:
-        type: naive
+    strategy: 'packets'
+    log_level: 'info'
+  chains:
+    - id: "ibc-0" # id is needed to match chain id
+      trusting_period: "20s"
+    - id: "ibc-1" # id is needed to match chain id
+      trusting_period: "20s"
+
 ```
 
 With following commands to setup ibc, you are ready to play with ibc functionalities:
