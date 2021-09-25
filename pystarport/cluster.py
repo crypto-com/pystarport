@@ -707,10 +707,12 @@ def init_devnet(
                 seconds=durations.Duration(vesting).to_seconds()
             )
             vend = int(end_time.timestamp())
+            # allow vest only some of coins allocated, where account["coins"] must larger than account["vesting_coins"] if any vesting_coins specified in config.yaml.
+            vesting_amount = account.get("vesting_coins", account["coins"])
             cli.add_genesis_account(
                 acct["address"],
                 account["coins"],
-                vesting_amount=account["coins"],
+                vesting_amount=vesting_amount,
                 vesting_end_time=vend,
             )
         return acct
