@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- [29](https://github.com/crypto-com/pystarport/pull/29) Allow vesting portion of the allocated fund in account
 - [28](https://github.com/crypto-com/pystarport/pull/28) Support overwrite default relayer config with configs used to setup chains
 - [13](https://github.com/crypto-com/pystarport/issues/13) Support configure start command flags
 - [19](https://github.com/crypto-com/pystarport/issues/19) Support `config` to patch `config.toml` for each validator
