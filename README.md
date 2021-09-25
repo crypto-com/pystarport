@@ -21,6 +21,7 @@ chainmaind:
       coins: 200cro
     - name: reserve
       coins: 200cro
+      vesting_coins: 100cro # if not provided, the all of coins will be vested
       vesting: "1d"
     - name: launch
       coins: 100cro
