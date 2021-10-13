@@ -86,7 +86,7 @@ class ClusterCLI:
                 # 'serverurl' to figure out what to attach to
                 "http://127.0.0.1",
                 transport=xmlrpc.SupervisorTransport(
-                    serverurl=f"unix://{self.data_root}/supervisor.sock"
+                    serverurl=f"unix:///tmp/supervisor.sock"
                 ),
             )
         return self._supervisorctl.supervisor
@@ -996,8 +996,8 @@ def supervisord_ini_group(chain_ids):
             "supervisor.rpcinterface_factory": "supervisor.rpcinterface:"
             "make_main_rpcinterface",
         },
-        "unix_http_server": {"file": "%(here)s/supervisor.sock"},
-        "supervisorctl": {"serverurl": "unix://%(here)s/supervisor.sock"},
+        "unix_http_server": {"file": "/tmp/supervisor.sock"},
+        "supervisorctl": {"serverurl": "unix:///tmp/supervisor.sock"},
     }
     cfg[f"program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
