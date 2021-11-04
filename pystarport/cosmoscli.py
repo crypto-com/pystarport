@@ -199,7 +199,7 @@ class CosmosCLI:
         return int(coin["amount"])
 
     def query_tx(self, tx_type, tx_value):
-        txs = self.raw(
+        tx = self.raw(
             "query",
             "tx",
             "--type",
@@ -209,7 +209,7 @@ class CosmosCLI:
             chain_id=self.chain_id,
             node=self.node_rpc,
         )
-        return json.loads(txs)
+        return json.loads(tx)
 
     def query_all_txs(self, addr):
         txs = self.raw(
