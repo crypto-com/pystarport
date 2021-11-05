@@ -236,8 +236,8 @@ class ClusterCLI:
                     {
                         "enable": True,
                         "rpc_servers": ",".join(self.node_rpc(i) for i in range(2)),
-                        "trust_height": int(info["earliest_block_height"]),
-                        "trust_hash": info["earliest_block_hash"],
+                        "trust_height": int(info["latest_block_height"]),
+                        "trust_hash": info["latest_block_hash"],
                         "temp_dir": str(self.data_dir),
                         "discovery_time": "5s",
                     }
