@@ -220,3 +220,9 @@ hermes -c data/relayer.toml create channel ibc-0 ibc-1 --port-a transfer --port-
 # start relayer process
 supervisorctl -c data/tasks.ini start relayer-demo
 ```
+
+## FAQ
+
+### Have this error on Mac: `AF_UNIX path too long´
+
+Set environment variable `TMPPATH=/tmp` to shorten the unix domain socket path.
