@@ -18,12 +18,14 @@ import multitail2
 import tomlkit
 import yaml
 from dateutil.parser import isoparse
+from dotenv import dotenv_values, load_dotenv
 from supervisor import xmlrpc
 from supervisor.compat import xmlrpclib
 
 from . import ports
 from .app import CHAIN, IMAGE, SUPERVISOR_CONFIG_FILE
 from .cosmoscli import ChainCommand, CosmosCLI, ModuleAccount, module_address
+from .expansion import expand_posix_vars
 from .ledger import ZEMU_BUTTON_PORT, ZEMU_HOST
 from .utils import format_doc_string, interact, write_ini
 
@@ -906,6 +908,20 @@ def init_cluster(
 ):
     config = yaml.safe_load(open(config_path))
 
+    if "dotenv" in config:
+        dotenv = config.pop("dotenv", {})
+        if not isinstance(dotenv, str):
+            raise ValueError(f"Invalid value passed to dotenv: {dotenv}")
+        config_vars = load_system_envvars()
+        env_path = Path(config_path).parent.joinpath(dotenv)
+        if not env_path.is_file():
+            raise ValueError(
+                f"Dotenv specified in config but not found at path: {env_path}"
+            )
+        config_vars.update(dotenv_values(dotenv_path=env_path))  # type: ignore
+        load_dotenv(dotenv_path=env_path)
+        config = expand_posix_vars(config, config_vars)
+
     relayer_config = config.pop("relayer", {})
     for chain_id, cfg in config.items():
         cfg["path"] = str(config_path)
@@ -1101,3 +1117,8 @@ if __name__ == "__main__":
     supervisord.wait()
     t.stop()
     t.join()
+
+
+def load_system_envvars():
+    config_vars = dict(os.environ)
+    return config_vars
