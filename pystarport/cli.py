@@ -6,7 +6,8 @@ import fire
 
 from .app import CHAIN, IMAGE, SUPERVISOR_CONFIG_FILE
 from .bot import BotCLI, BotClusterCLI
-from .cluster import ClusterCLI, init_cluster, start_cluster, start_tail_logs_thread
+from .cluster import (ClusterCLI, init_cluster, start_cluster,
+                      start_tail_logs_thread)
 from .cosmoscli import CosmosCLI
 from .utils import build_cli_args, interact
 
@@ -15,6 +16,7 @@ def init(
     data,
     config,
     base_port,
+    dotenv,
     *args,
     **kwargs,
 ):
@@ -22,7 +24,7 @@ def init(
         f"rm -r {data}; mkdir {data}",
         ignore_error=True,
     )
-    return init_cluster(data, config, base_port, *args, **kwargs)
+    return init_cluster(data, config, base_port, dotenv, *args, **kwargs)
 
 
 def start(data, quiet):
@@ -42,8 +44,8 @@ def start(data, quiet):
         tailer.join()
 
 
-def serve(data, config, base_port, cmd, quiet):
-    init(data, config, base_port, cmd=cmd)
+def serve(data, config, base_port, dotenv, cmd, quiet):
+    init(data, config, base_port, dotenv, cmd=cmd)
     start(data, quiet)
 
 
@@ -59,6 +61,7 @@ class CLI:
         data: str = "./data",
         config: str = "./config.yaml",
         base_port: int = 26650,
+        dotenv: str = None,
         image: str = IMAGE,
         gen_compose_file: bool = False,
         cmd: str = CHAIN,
@@ -70,11 +73,12 @@ class CLI:
         :param config: path to the configuration file
         :param base_port: the base port to use, the service ports of different nodes
         are calculated based on this
+        :param dotenv: path to .env file
         :param image: the image used in the generated docker-compose.yml
         :param gen_compose_file: generate a docker-compose.yml
         :param cmd: path to chain binary
         """
-        init(Path(data), config, base_port, image, self.cmd, gen_compose_file)
+        init(Path(data), config, base_port, dotenv, image, self.cmd, gen_compose_file)
 
     def start(self, data: str = "./data", quiet: bool = False):
         """
@@ -99,6 +103,7 @@ class CLI:
         data: str = "./data",
         config: str = "./config.yaml",
         base_port: int = 26650,
+        dotenv: str = None,
         quiet: bool = False,
     ):
         """
@@ -108,10 +113,11 @@ class CLI:
         :param config: path to the configuration file
         :param base_port: the base port to use, the service ports of different nodes
         are calculated based on this
+        :param dotenv: path to .env file
         :param cmd: path to chain binary
         :param quiet: don't print logs of subprocesses
         """
-        serve(Path(data), config, base_port, self.cmd, quiet)
+        serve(Path(data), config, base_port, dotenv, self.cmd, quiet)
 
     def supervisorctl(self, *args, data: str = "./data"):
         from supervisor.supervisorctl import main

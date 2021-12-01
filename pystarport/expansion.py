@@ -1,6 +1,10 @@
+import os
 import re
+from pathlib import Path
 from typing import Any, Mapping, Optional, Text
 
+import yaml
+from dotenv import dotenv_values, load_dotenv
 from dotenv.variables import parse_variables
 
 
@@ -56,3 +60,31 @@ def _str_to_python_value(val):
     # elif INT_REGEX.match(val):
     #     return int(val)
     return val
+
+
+def expand_yaml(config_path, dotenv):
+    config = yaml.safe_load(open(config_path))
+
+    def expand(dotenv):
+        if not isinstance(dotenv, str):
+            raise ValueError(f"Invalid value passed to dotenv: {dotenv}")
+        config_vars = dict(os.environ)  # load system env
+        env_path = Path(config_path).parent.joinpath(dotenv)
+        if not env_path.is_file():
+            raise ValueError(
+                f"Dotenv specified in config but not found at path: {env_path}"
+            )
+        config_vars.update(dotenv_values(dotenv_path=env_path))  # type: ignore
+        load_dotenv(dotenv_path=env_path)
+        return expand_posix_vars(config, config_vars)
+
+    if dotenv is not None:
+        if "dotenv" in config:
+            _ = config.pop("dotenv", {})  # remove dotenv field if exists
+        dotenv = dotenv
+        config = expand(dotenv)
+    elif "dotenv" in config:
+        dotenv = config.pop("dotenv", {})  # pop dotenv field if exists
+        config = expand(dotenv)
+
+    return config
