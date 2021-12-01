@@ -6,8 +6,7 @@ import fire
 
 from .app import CHAIN, IMAGE, SUPERVISOR_CONFIG_FILE
 from .bot import BotCLI, BotClusterCLI
-from .cluster import (ClusterCLI, init_cluster, start_cluster,
-                      start_tail_logs_thread)
+from .cluster import ClusterCLI, init_cluster, start_cluster, start_tail_logs_thread
 from .cosmoscli import CosmosCLI
 from .utils import build_cli_args, interact
 
