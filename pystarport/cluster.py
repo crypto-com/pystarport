@@ -1096,7 +1096,7 @@ def format_value(v, ctx):
 if __name__ == "__main__":
     interact("rm -r data; mkdir data", ignore_error=True)
     data_dir = Path("data")
-    init_cluster(data_dir, "config.yaml", 26650)
+    init_cluster(data_dir, "config.yaml", 26650, None)
     supervisord = start_cluster(data_dir)
     t = start_tail_logs_thread(data_dir)
     supervisord.wait()

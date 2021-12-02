@@ -81,10 +81,10 @@ def expand_yaml(config_path, dotenv):
     if dotenv is not None:
         if "dotenv" in config:
             _ = config.pop("dotenv", {})  # remove dotenv field if exists
-        dotenv = dotenv
-        config = expand(dotenv)
+        dotenv_path = dotenv
+        config = expand(dotenv_path)
     elif "dotenv" in config:
-        dotenv = config.pop("dotenv", {})  # pop dotenv field if exists
-        config = expand(dotenv)
+        dotenv_path = config.pop("dotenv", {})  # pop dotenv field if exists
+        config = expand(dotenv_path)
 
     return config
