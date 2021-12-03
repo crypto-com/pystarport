@@ -24,6 +24,7 @@ from supervisor.compat import xmlrpclib
 from . import ports
 from .app import CHAIN, IMAGE, SUPERVISOR_CONFIG_FILE
 from .cosmoscli import ChainCommand, CosmosCLI, ModuleAccount, module_address
+from .expansion import expand_yaml
 from .ledger import ZEMU_BUTTON_PORT, ZEMU_HOST
 from .utils import format_doc_string, interact, write_ini
 
@@ -902,9 +903,9 @@ def relayer_chain_config(data_dir, chain, relayer_chains_config):
 
 
 def init_cluster(
-    data_dir, config_path, base_port, image=IMAGE, cmd=None, gen_compose_file=False
+    data_dir, config_path, base_port, dotenv=None, image=IMAGE, cmd=None, gen_compose_file=False
 ):
-    config = yaml.safe_load(open(config_path))
+    config = expand_yaml(config_path, dotenv)
 
     relayer_config = config.pop("relayer", {})
     for chain_id, cfg in config.items():
