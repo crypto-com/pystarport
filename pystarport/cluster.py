@@ -903,7 +903,7 @@ def relayer_chain_config(data_dir, chain, relayer_chains_config):
 
 
 def init_cluster(
-    data_dir, config_path, base_port, dotenv, image=IMAGE, cmd=None, gen_compose_file=False
+    data_dir, config_path, base_port, dotenv=None, image=IMAGE, cmd=None, gen_compose_file=False
 ):
     config = expand_yaml(config_path, dotenv)
 
@@ -1096,7 +1096,7 @@ def format_value(v, ctx):
 if __name__ == "__main__":
     interact("rm -r data; mkdir data", ignore_error=True)
     data_dir = Path("data")
-    init_cluster(data_dir, "config.yaml", 26650, None)
+    init_cluster(data_dir, "config.yaml", 26650)
     supervisord = start_cluster(data_dir)
     t = start_tail_logs_thread(data_dir)
     supervisord.wait()
