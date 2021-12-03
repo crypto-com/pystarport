@@ -2,7 +2,7 @@
 name = "pystarport"
 version = "0.2.3"
 description = "Spawn local devnets for cosmos-sdk chains"
-authors = ["huangyi <huang@crypto.com>"]
+authors = ["chain-dev-team <chain-dev@crypto.com>"]
 license = "Apache"
 keywords = ["CRO", "blockchain", "crypto.com", "cosmos"]
 readme = "README.md"
