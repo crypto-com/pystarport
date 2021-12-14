@@ -51,9 +51,7 @@ def expand_yaml(config_path, dotenv):
         config_vars = dict(os.environ)  # load system env
         env_path = Path(config_path).parent.joinpath(dotenv)
         if not env_path.is_file():
-            raise ValueError(
-                f"Dotenv specified in config but not found at path: {env_path}"
-            )
+            raise ValueError(f"Dotenv specified in config but not found at path: {env_path}")
         config_vars.update(dotenv_values(dotenv_path=env_path))  # type: ignore
         load_dotenv(dotenv_path=env_path)
         return expand_posix_vars(config, config_vars)

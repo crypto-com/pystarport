@@ -106,18 +106,12 @@ class ClusterCLI:
 
     def nodes_len(self):
         "find how many 'node{i}' sub-directories"
-        return len(
-            [p for p in self.data_dir.iterdir() if re.match(r"^node\d+$", p.name)]
-        )
+        return len([p for p in self.data_dir.iterdir() if re.match(r"^node\d+$", p.name)])
 
     def copy_validator_key(self, from_node=1, to_node=2):
         "Copy the validtor file in from_node to to_node"
-        from_key_file = "{}/node{}/config/priv_validator_key.json".format(
-            self.data_dir, from_node
-        )
-        to_key_file = "{}/node{}/config/priv_validator_key.json".format(
-            self.data_dir, to_node
-        )
+        from_key_file = "{}/node{}/config/priv_validator_key.json".format(self.data_dir, from_node)
+        to_key_file = "{}/node{}/config/priv_validator_key.json".format(self.data_dir, to_node)
         with open(from_key_file, "r") as f:
             key = f.read()
         with open(to_key_file, "w") as f:
@@ -360,9 +354,7 @@ class ClusterCLI:
     def address(self, name, i=0, bech="acc"):
         return self.cosmos_cli(i).address(name, bech)
 
-    @format_doc_string(
-        options=",".join(v.value for v in ModuleAccount.__members__.values())
-    )
+    @format_doc_string(options=",".join(v.value for v in ModuleAccount.__members__.values()))
     def module_address(self, name):
         """
         get address of module accounts
@@ -395,9 +387,7 @@ class ClusterCLI:
     def transfer(self, from_, to, coins, i=0, generate_only=False, fees=None):
         return self.cosmos_cli(i).transfer(from_, to, coins, generate_only, fees)
 
-    def transfer_from_ledger(
-        self, from_, to, coins, i=0, generate_only=False, fees=None
-    ):
+    def transfer_from_ledger(self, from_, to, coins, i=0, generate_only=False, fees=None):
         return self.cosmos_cli(i).transfer_from_ledger(
             from_,
             to,
@@ -417,9 +407,7 @@ class ClusterCLI:
         return self.cosmos_cli(i).unbond_amount(to_addr, amount, from_addr)
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
-    def redelegate_amount(
-        self, to_validator_addr, from_validator_addr, amount, from_addr, i=0
-    ):
+    def redelegate_amount(self, to_validator_addr, from_validator_addr, amount, from_addr, i=0):
         return self.cosmos_cli(i).redelegate_amount(
             to_validator_addr,
             from_validator_addr,
@@ -436,9 +424,7 @@ class ClusterCLI:
     def sign_multisig_tx(self, tx_file, multi_addr, signer_name, i=0):
         return self.cosmos_cli(i).sign_multisig_tx(tx_file, multi_addr, signer_name)
 
-    def sign_batch_multisig_tx(
-        self, tx_file, multi_addr, signer_name, account_num, sequence, i=0
-    ):
+    def sign_batch_multisig_tx(self, tx_file, multi_addr, signer_name, account_num, sequence, i=0):
         return self.cosmos_cli(i).sign_batch_multisig_tx(
             tx_file, multi_addr, signer_name, account_num, sequence
         )
@@ -457,9 +443,7 @@ class ClusterCLI:
             signer2_file,
         )
 
-    def combine_batch_multisig_tx(
-        self, tx_file, multi_name, signer1_file, signer2_file, i=0
-    ):
+    def combine_batch_multisig_tx(self, tx_file, multi_name, signer1_file, signer2_file, i=0):
         return self.cosmos_cli(i).combine_batch_multisig_tx(
             tx_file,
             multi_name,
@@ -570,9 +554,7 @@ class ClusterCLI:
         fees=None,
         i=0,
     ):
-        return self.cosmos_cli(i).create_nft(
-            from_addr, denomid, denomname, schema, fees
-        )
+        return self.cosmos_cli(i).create_nft(from_addr, denomid, denomname, schema, fees)
 
     def query_nft(self, denomid="mydenomid", i=0):
         return self.cosmos_cli(i).query_nft(denomid)
@@ -590,9 +572,7 @@ class ClusterCLI:
         fees=None,
         i=0,
     ):
-        return self.cosmos_cli(i).create_nft_token(
-            from_addr, to_addr, denomid, tokenid, uri, fees
-        )
+        return self.cosmos_cli(i).create_nft_token(from_addr, to_addr, denomid, tokenid, uri, fees)
 
     def query_nft_token(self, denomid="mydenomid", tokenid="mytokenid", i=0):
         return self.cosmos_cli(i).query_nft_token(denomid, tokenid)
@@ -609,16 +589,12 @@ class ClusterCLI:
         newname="newname",
         i=0,
     ):
-        return self.cosmos_cli(i).edit_nft_token(
-            from_addr, denomid, tokenid, newuri, newname
-        )
+        return self.cosmos_cli(i).edit_nft_token(from_addr, denomid, tokenid, newuri, newname)
 
     def transfer_nft_token(
         self, from_addr, to_addr, denomid="mydenomid", tokenid="mytokenid", i=0
     ):
-        return self.cosmos_cli(i).transfer_nft_token(
-            from_addr, to_addr, denomid, tokenid
-        )
+        return self.cosmos_cli(i).transfer_nft_token(from_addr, to_addr, denomid, tokenid)
 
 
 def start_cluster(data_dir):
@@ -690,10 +666,7 @@ def init_devnet(
             acct = cli.create_account_ledger(account["name"])
         elif account.get("address"):
             # if address field exists, will use account with that address directly
-            acct = {
-                "name": account.get("name"),
-                "address": account.get("address")
-            }
+            acct = {"name": account.get("name"), "address": account.get("address")}
         else:
             mnemonic = account.get("mnemonic")
             acct = cli.create_account(account["name"], mnemonic=mnemonic)
@@ -708,7 +681,7 @@ def init_devnet(
                 seconds=durations.Duration(vesting).to_seconds()
             )
             vend = int(end_time.timestamp())
-            # allow vest only some of coins allocated, where account["coins"] must larger than account["vesting_coins"] if any vesting_coins specified in config.yaml.
+            # allow vest only some of coins allocated, where account["coins"] must larger than account["vesting_coins"] if any vesting_coins specified in config.yaml. # noqa 501
             vesting_amount = account.get("vesting_coins", account["coins"])
             cli.add_genesis_account(
                 acct["address"],
@@ -734,14 +707,10 @@ def init_devnet(
         )
         if "consensus_key" in val:
             # restore consensus private key
-            with (home_dir(data_dir, i) / "config/priv_validator_key.json").open(
-                "w"
-            ) as fp:
+            with (home_dir(data_dir, i) / "config/priv_validator_key.json").open("w") as fp:
                 json.dump(
                     {
-                        "address": hashlib.sha256(
-                            base64.b64decode(val["consensus_key"]["pub"])
-                        )
+                        "address": hashlib.sha256(base64.b64decode(val["consensus_key"]["pub"]))
                         .hexdigest()[:40]
                         .upper(),
                         "pub_key": {
@@ -843,8 +812,7 @@ def init_devnet(
     # write tendermint config
     peers = config.get("peers") or ",".join(
         [
-            "tcp://%s@%s:%d"
-            % (cli.node_id(i), val["hostname"], ports.p2p_port(val["base_port"]))
+            "tcp://%s@%s:%d" % (cli.node_id(i), val["hostname"], ports.p2p_port(val["base_port"]))
             for i, val in enumerate(config["validators"])
         ]
     )
@@ -887,19 +855,22 @@ def relayer_chain_config(data_dir, chain, relayer_chains_config):
 
     chain_config = next((i for i in relayer_chains_config if i["id"] == chain["chain_id"]), {})
 
-    return jsonmerge.merge({
-        "key_name": "relayer",
-        "id": chain["chain_id"],
-        "rpc_addr": f"http://localhost:{rpc_port}",
-        "grpc_addr": f"http://localhost:{grpc_port}",
-        "websocket_addr": f"ws://localhost:{rpc_port}/websocket",
-        "rpc_timeout": "10s",
-        "account_prefix": chain.get("account-prefix", "cro"),
-        "store_prefix": "ibc",
-        "max_gas": 300000,
-        "gas_price": {"price": 0, "denom": "basecro"},
-        "trusting_period": "336h",
-    },chain_config)
+    return jsonmerge.merge(
+        {
+            "key_name": "relayer",
+            "id": chain["chain_id"],
+            "rpc_addr": f"http://localhost:{rpc_port}",
+            "grpc_addr": f"http://localhost:{grpc_port}",
+            "websocket_addr": f"ws://localhost:{rpc_port}/websocket",
+            "rpc_timeout": "10s",
+            "account_prefix": chain.get("account-prefix", "cro"),
+            "store_prefix": "ibc",
+            "max_gas": 300000,
+            "gas_price": {"price": 0, "denom": "basecro"},
+            "trusting_period": "336h",
+        },
+        chain_config,
+    )
 
 
 def init_cluster(
@@ -915,9 +886,7 @@ def init_cluster(
     chains = list(config.values())
     for chain in chains:
         (data_dir / chain["chain_id"]).mkdir()
-        init_devnet(
-            data_dir / chain["chain_id"], chain, base_port, image, cmd, gen_compose_file
-        )
+        init_devnet(data_dir / chain["chain_id"], chain, base_port, image, cmd, gen_compose_file)
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
         write_ini(
             fp,
@@ -936,10 +905,11 @@ def init_cluster(
                             "log_level": "info",
                         },
                         "chains": [
-                            relayer_chain_config(data_dir, chain, relayer_chains_config) for chain in chains
+                            relayer_chain_config(data_dir, chain, relayer_chains_config)
+                            for chain in chains
                         ],
                     },
-                    relayer_config
+                    relayer_config,
                 )
             )
         )
@@ -982,11 +952,7 @@ def supervisord_ini(cmd, validators, chain_id, start_flags=""):
 
 def supervisord_ini_group(chain_ids):
     cfg = {
-        "include": {
-            "files": " ".join(
-                f"%(here)s/{chain_id}/tasks.ini" for chain_id in chain_ids
-            )
-        },
+        "include": {"files": " ".join(f"%(here)s/{chain_id}/tasks.ini" for chain_id in chain_ids)},
         "supervisord": {
             "pidfile": "%(here)s/supervisord.pid",
             "nodaemon": "true",
@@ -994,16 +960,15 @@ def supervisord_ini_group(chain_ids):
             "logfile_maxbytes": "0",
         },
         "rpcinterface:supervisor": {
-            "supervisor.rpcinterface_factory": "supervisor.rpcinterface:"
-            "make_main_rpcinterface",
+            "supervisor.rpcinterface_factory": "supervisor.rpcinterface:" "make_main_rpcinterface",
         },
         "unix_http_server": {"file": "%(here)s/supervisor.sock"},
         "supervisorctl": {"serverurl": "unix://%(here)s/supervisor.sock"},
     }
-    cfg[f"program:relayer-demo"] = dict(
+    cfg["program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
-        command=(f"hermes -c %(here)s/relayer.toml start"),
-        stdout_logfile=f"%(here)s/relayer-demo.log",
+        command=("hermes -c %(here)s/relayer.toml start"),
+        stdout_logfile="%(here)s/relayer-demo.log",
         autostart="false",
     )
     return cfg

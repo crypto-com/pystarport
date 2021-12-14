@@ -30,10 +30,7 @@ class TxJobThread(threading.Thread):
         else:
             amount = self.job["amount"]
 
-        print(
-            "[%s] Transfer %s from %s to %s"
-            % (self.label, amount, from_address, to_address)
-        )
+        print("[%s] Transfer %s from %s to %s" % (self.label, amount, from_address, to_address))
         result = self.cosmos_cli.transfer(from_address, to_address, amount)
         print(result)
 
@@ -49,10 +46,7 @@ class TxJobThread(threading.Thread):
         else:
             amount = self.job["amount"]
 
-        print(
-            "[%s] Delegate %s from %s to %s"
-            % (self.label, amount, from_address, to_address)
-        )
+        print("[%s] Delegate %s from %s to %s" % (self.label, amount, from_address, to_address))
         result = self.cosmos_cli.delegate_amount(to_address, amount, from_address)
         print(result)
 

@@ -23,9 +23,7 @@ class ModuleAccount(enum.Enum):
     IBCTransfer = "transfer"
 
 
-@format_doc_string(
-    options=",".join(v.value for v in ModuleAccount.__members__.values())
-)
+@format_doc_string(options=",".join(v.value for v in ModuleAccount.__members__.values()))
 def module_address(name):
     """
     get address of module accounts
@@ -189,9 +187,7 @@ class CosmosCLI:
 
     def balance(self, addr):
         coin = json.loads(
-            self.raw(
-                "query", "bank", "balances", addr, output="json", node=self.node_rpc
-            )
+            self.raw("query", "bank", "balances", addr, output="json", node=self.node_rpc)
         )["balances"]
         if len(coin) == 0:
             return 0
@@ -275,9 +271,7 @@ class CosmosCLI:
 
     def account(self, addr):
         return json.loads(
-            self.raw(
-                "query", "auth", "account", addr, output="json", node=self.node_rpc
-            )
+            self.raw("query", "auth", "account", addr, output="json", node=self.node_rpc)
         )
 
     def supply(self, supply_type):
@@ -299,9 +293,7 @@ class CosmosCLI:
 
     def validators(self):
         return json.loads(
-            self.raw(
-                "query", "staking", "validators", output="json", node=self.node_rpc
-            )
+            self.raw("query", "staking", "validators", output="json", node=self.node_rpc)
         )["validators"]
 
     def staking_params(self):
@@ -311,9 +303,9 @@ class CosmosCLI:
 
     def staking_pool(self, bonded=True):
         return int(
-            json.loads(
-                self.raw("query", "staking", "pool", output="json", node=self.node_rpc)
-            )["bonded_tokens" if bonded else "not_bonded_tokens"]
+            json.loads(self.raw("query", "staking", "pool", output="json", node=self.node_rpc))[
+                "bonded_tokens" if bonded else "not_bonded_tokens"
+            ]
         )
 
     def transfer(self, from_, to, coins, generate_only=False, fees=None):
@@ -385,7 +377,7 @@ class CosmosCLI:
         )
 
     def delegate_amount(self, to_addr, amount, from_addr, gas_price=None):
-        if gas_price == None:
+        if gas_price is None:
             return json.loads(
                 self.raw(
                     "tx",
@@ -438,9 +430,7 @@ class CosmosCLI:
         )
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
-    def redelegate_amount(
-        self, to_validator_addr, from_validator_addr, amount, from_addr
-    ):
+    def redelegate_amount(self, to_validator_addr, from_validator_addr, amount, from_addr):
         return json.loads(
             self.raw(
                 "tx",
@@ -556,9 +546,7 @@ class CosmosCLI:
             )
         )
 
-    def combine_batch_multisig_tx(
-        self, tx_file, multi_name, signer1_file, signer2_file
-    ):
+    def combine_batch_multisig_tx(self, tx_file, multi_name, signer1_file, signer2_file):
         r = self.raw(
             "tx",
             "multisign-batch",
@@ -574,9 +562,7 @@ class CosmosCLI:
         return r.decode("utf-8")
 
     def broadcast_tx(self, tx_file):
-        r = self.raw(
-            "tx", "broadcast", tx_file, node=self.node_rpc, broadcast_mode="block"
-        )
+        r = self.raw("tx", "broadcast", tx_file, node=self.node_rpc, broadcast_mode="block")
         return r.decode("utf-8")
 
     def unjail(self, addr):

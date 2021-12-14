@@ -3,15 +3,14 @@ from pathlib import Path
 
 import yaml
 from deepdiff import DeepDiff
+
 from pystarport.expansion import expand_yaml
 
 
 def test_expansion():
     cronos_has_dotenv = Path(__file__).parent / "cronos_has_dotenv.yaml"
     cronos_no_dotenv = Path(__file__).parent / "cronos_no_dotenv.yaml"
-    cronos_has_posix_no_dotenv = (
-        Path(__file__).parent / "cronos_has_posix_no_dotenv.yaml"
-    )
+    cronos_has_posix_no_dotenv = Path(__file__).parent / "cronos_has_posix_no_dotenv.yaml"
 
     # `expand_yaml` is backward compatible, not expanded, and no diff
     assert yaml.safe_load(open(cronos_no_dotenv)) == expand_yaml(cronos_no_dotenv, None)
