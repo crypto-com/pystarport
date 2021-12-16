@@ -3,6 +3,7 @@ from pathlib import Path
 
 import yaml
 from deepdiff import DeepDiff
+
 from pystarport.expansion import expand_yaml
 
 
@@ -58,6 +59,8 @@ def test_expansion():
     # overriding dotenv with absolute path is expanded and no diff
     assert not DeepDiff(
         yaml.safe_load(open(cronos_no_dotenv)),
-        expand_yaml(cronos_has_posix_no_dotenv, os.path.abspath("test_expansion/dotenv")),
+        expand_yaml(
+            cronos_has_posix_no_dotenv, os.path.abspath("test_expansion/dotenv")
+        ),
         ignore_order=True,
     )

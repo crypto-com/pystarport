@@ -221,6 +221,37 @@ hermes -c data/relayer.toml create channel ibc-0 ibc-1 --port-a transfer --port-
 supervisorctl -c data/tasks.ini start relayer-demo
 ```
 
+## Development
+### Set up development environment
+More about [poetry](https://python-poetry.org/docs/).
+```
+poetry install
+```
+### Recommended VS Code workspace settings
+Remember to run `poetry env info` after `poetry install` and update this `python.defaultInterpreterPath`
+```json
+{
+    "python.formatting.provider": "black",
+    // after running `poetry env info`, change python.defaultInterpreterPath to Path under Virtualenv
+    "python.defaultInterpreterPath": "~/Library/Caches/pypoetry/virtualenvs/to_be_updated",
+    "editor.formatOnSave": true,
+    "python.linting.flake8Enabled": true,
+    "python.formatting.blackArgs": [
+        "--line-length=88"
+    ],
+    "python.sortImports.args": [
+        "--profile",
+        "black"
+    ],
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
+    }
+}
+```
+
+
 ## FAQ
 
 ### Have this error on Mac: `AF_UNIX path too long´

@@ -690,10 +690,7 @@ def init_devnet(
             acct = cli.create_account_ledger(account["name"])
         elif account.get("address"):
             # if address field exists, will use account with that address directly
-            acct = {
-                "name": account.get("name"),
-                "address": account.get("address")
-            }
+            acct = {"name": account.get("name"), "address": account.get("address")}
         else:
             mnemonic = account.get("mnemonic")
             acct = cli.create_account(account["name"], mnemonic=mnemonic)
@@ -708,7 +705,7 @@ def init_devnet(
                 seconds=durations.Duration(vesting).to_seconds()
             )
             vend = int(end_time.timestamp())
-            # allow vest only some of coins allocated, where account["coins"] must larger than account["vesting_coins"] if any vesting_coins specified in config.yaml.
+            # allow vest only some of coins allocated, where account["coins"] must larger than account["vesting_coins"] if any vesting_coins specified in config.yaml. # noqa 501
             vesting_amount = account.get("vesting_coins", account["coins"])
             cli.add_genesis_account(
                 acct["address"],
@@ -885,25 +882,36 @@ def relayer_chain_config(data_dir, chain, relayer_chains_config):
     rpc_port = ports.rpc_port(cfg["validators"][0]["base_port"])
     grpc_port = ports.grpc_port(cfg["validators"][0]["base_port"])
 
-    chain_config = next((i for i in relayer_chains_config if i["id"] == chain["chain_id"]), {})
+    chain_config = next(
+        (i for i in relayer_chains_config if i["id"] == chain["chain_id"]), {}
+    )
 
-    return jsonmerge.merge({
-        "key_name": "relayer",
-        "id": chain["chain_id"],
-        "rpc_addr": f"http://localhost:{rpc_port}",
-        "grpc_addr": f"http://localhost:{grpc_port}",
-        "websocket_addr": f"ws://localhost:{rpc_port}/websocket",
-        "rpc_timeout": "10s",
-        "account_prefix": chain.get("account-prefix", "cro"),
-        "store_prefix": "ibc",
-        "max_gas": 300000,
-        "gas_price": {"price": 0, "denom": "basecro"},
-        "trusting_period": "336h",
-    },chain_config)
+    return jsonmerge.merge(
+        {
+            "key_name": "relayer",
+            "id": chain["chain_id"],
+            "rpc_addr": f"http://localhost:{rpc_port}",
+            "grpc_addr": f"http://localhost:{grpc_port}",
+            "websocket_addr": f"ws://localhost:{rpc_port}/websocket",
+            "rpc_timeout": "10s",
+            "account_prefix": chain.get("account-prefix", "cro"),
+            "store_prefix": "ibc",
+            "max_gas": 300000,
+            "gas_price": {"price": 0, "denom": "basecro"},
+            "trusting_period": "336h",
+        },
+        chain_config,
+    )
 
 
 def init_cluster(
-    data_dir, config_path, base_port, dotenv=None, image=IMAGE, cmd=None, gen_compose_file=False
+    data_dir,
+    config_path,
+    base_port,
+    dotenv=None,
+    image=IMAGE,
+    cmd=None,
+    gen_compose_file=False,
 ):
     config = expand_yaml(config_path, dotenv)
 
@@ -936,10 +944,11 @@ def init_cluster(
                             "log_level": "info",
                         },
                         "chains": [
-                            relayer_chain_config(data_dir, chain, relayer_chains_config) for chain in chains
+                            relayer_chain_config(data_dir, chain, relayer_chains_config)
+                            for chain in chains
                         ],
                     },
-                    relayer_config
+                    relayer_config,
                 )
             )
         )
@@ -1000,10 +1009,10 @@ def supervisord_ini_group(chain_ids):
         "unix_http_server": {"file": "%(here)s/supervisor.sock"},
         "supervisorctl": {"serverurl": "unix://%(here)s/supervisor.sock"},
     }
-    cfg[f"program:relayer-demo"] = dict(
+    cfg["program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
-        command=(f"hermes -c %(here)s/relayer.toml start"),
-        stdout_logfile=f"%(here)s/relayer-demo.log",
+        command=("hermes -c %(here)s/relayer.toml start"),
+        stdout_logfile="%(here)s/relayer-demo.log",
         autostart="false",
     )
     return cfg
