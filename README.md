@@ -237,7 +237,7 @@ Remember to run `poetry env info` after `poetry install` and update this `python
     "editor.formatOnSave": true,
     "python.linting.flake8Enabled": true,
     "python.formatting.blackArgs": [
-        "--line-length=99"
+        "--line-length=88"
     ],
     "python.sortImports.args": [
         "--profile",
