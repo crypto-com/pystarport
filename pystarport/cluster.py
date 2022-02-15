@@ -719,7 +719,7 @@ def init_devnet(
 
     (data_dir / "config.json").write_text(json.dumps(config))
 
-    cmd = config.get("cmd") or cmd or CHAIN
+    cmd = cmd or config.get("cmd") or CHAIN
 
     # init home directories
     for i, val in enumerate(config["validators"]):
