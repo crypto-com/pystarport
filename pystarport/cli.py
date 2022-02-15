@@ -4,7 +4,7 @@ from pathlib import Path
 
 import fire
 
-from .app import CHAIN, IMAGE, SUPERVISOR_CONFIG_FILE
+from .app import IMAGE, SUPERVISOR_CONFIG_FILE
 from .bot import BotCLI, BotClusterCLI
 from .cluster import ClusterCLI, init_cluster, start_cluster, start_tail_logs_thread
 from .cosmoscli import CosmosCLI
@@ -51,7 +51,7 @@ def serve(data, config, base_port, dotenv, cmd, quiet, no_remove=False):
 
 
 class CLI:
-    def __init__(self, /, cmd=CHAIN):
+    def __init__(self, /, cmd=None):
         """
         :param cmd: path to the chain binary
         """

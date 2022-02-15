@@ -48,7 +48,7 @@ class ClusterCLI:
         self,
         data,
         chain_id="chainmaind",
-        cmd=CHAIN,
+        cmd=None,
         zemu_address=ZEMU_HOST,
         zemu_button_port=ZEMU_BUTTON_PORT,
     ):
