@@ -17,12 +17,14 @@ def init(
     base_port,
     dotenv,
     *args,
+    no_remove=False,
     **kwargs,
 ):
-    interact(
-        f"rm -r {data}; mkdir {data}",
-        ignore_error=True,
-    )
+    if not no_remove:
+        interact(
+            f"rm -r {data}; mkdir {data}",
+            ignore_error=True,
+        )
     return init_cluster(data, config, base_port, dotenv, *args, **kwargs)
 
 
@@ -43,8 +45,8 @@ def start(data, quiet):
         tailer.join()
 
 
-def serve(data, config, base_port, dotenv, cmd, quiet):
-    init(data, config, base_port, dotenv, cmd=cmd)
+def serve(data, config, base_port, dotenv, cmd, quiet, no_remove=False):
+    init(data, config, base_port, dotenv, cmd=cmd, no_remove=no_remove)
     start(data, quiet)
 
 
@@ -63,7 +65,7 @@ class CLI:
         dotenv: str = None,
         image: str = IMAGE,
         gen_compose_file: bool = False,
-        cmd: str = CHAIN,
+        no_remove: bool = False,
     ):
         """
         prepare all the configurations of a devnet
@@ -75,9 +77,18 @@ class CLI:
         :param dotenv: path to .env file
         :param image: the image used in the generated docker-compose.yml
         :param gen_compose_file: generate a docker-compose.yml
-        :param cmd: path to chain binary
+        :param no_remove: don't remove existing data directory
         """
-        init(Path(data), config, base_port, dotenv, image, self.cmd, gen_compose_file)
+        init(
+            Path(data),
+            config,
+            base_port,
+            dotenv,
+            image,
+            self.cmd,
+            gen_compose_file,
+            no_remove=no_remove,
+        )
 
     def start(self, data: str = "./data", quiet: bool = False):
         """
@@ -104,6 +115,7 @@ class CLI:
         base_port: int = 26650,
         dotenv: str = None,
         quiet: bool = False,
+        no_remove: bool = False,
     ):
         """
         prepare and start a devnet from scatch
@@ -113,10 +125,12 @@ class CLI:
         :param base_port: the base port to use, the service ports of different nodes
         are calculated based on this
         :param dotenv: path to .env file
-        :param cmd: path to chain binary
         :param quiet: don't print logs of subprocesses
+        :param no_remove: don't remove existing data directory
         """
-        serve(Path(data), config, base_port, dotenv, self.cmd, quiet)
+        serve(
+            Path(data), config, base_port, dotenv, self.cmd, quiet, no_remove=no_remove
+        )
 
     def supervisorctl(self, *args, data: str = "./data"):
         from supervisor.supervisorctl import main
