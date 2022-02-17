@@ -846,10 +846,16 @@ def init_devnet(
         ]
     )
     for i, val in enumerate(config["validators"]):
+        self_peer = "tcp://%s@%s:%d" % (
+            cli.node_id(i),
+            val["hostname"],
+            ports.p2p_port(val["base_port"]),
+        )
+        clean_peers = remove_peer(peers, self_peer)
         edit_tm_cfg(
             data_dir / f"node{i}/config/config.toml",
             val["base_port"],
-            peers,
+            clean_peers,
             val.get("config", {}),
         )
         edit_app_cfg(
@@ -1033,18 +1039,27 @@ def docker_compose_yml(cmd, validators, data_dir, image):
 
 
 def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
+    "field name changed after tendermint 0.35, support both flavours."
     doc = tomlkit.parse(open(path).read())
+    doc["mode"] = "validator"
     # tendermint is start in process, not needed
     # doc['proxy_app'] = 'tcp://127.0.0.1:%d' % abci_port(base_port)
-    doc["rpc"]["laddr"] = "tcp://0.0.0.0:%d" % ports.rpc_port(base_port)
-    doc["rpc"]["pprof_laddr"] = "localhost:%d" % ports.pprof_port(base_port)
-    doc["rpc"]["grpc_laddr"] = "tcp://0.0.0.0:%d" % ports.grpc_port_tx_only(base_port)
-    doc["p2p"]["laddr"] = "tcp://0.0.0.0:%d" % ports.p2p_port(base_port)
-    doc["p2p"]["persistent_peers"] = peers
-    doc["p2p"]["addr_book_strict"] = False
-    doc["p2p"]["allow_duplicate_ip"] = True
-    doc["consensus"]["timeout_commit"] = "1s"
-    doc["rpc"]["timeout_broadcast_tx_commit"] = "30s"
+    rpc = doc["rpc"]
+    rpc["laddr"] = "tcp://0.0.0.0:%d" % ports.rpc_port(base_port)
+    rpc["pprof_laddr"] = rpc["pprof-laddr"] = "localhost:%d" % (
+        ports.pprof_port(base_port),
+    )
+    rpc["timeout_broadcast_tx_commit"] = rpc["timeout-broadcast-tx-commit"] = "30s"
+    rpc["grpc_laddr"] = rpc["grpc-laddr"] = "tcp://0.0.0.0:%d" % (
+        ports.grpc_port_tx_only(base_port),
+    )
+    p2p = doc["p2p"]
+    # p2p["use-legacy"] = True
+    p2p["laddr"] = "tcp://0.0.0.0:%d" % ports.p2p_port(base_port)
+    p2p["persistent_peers"] = p2p["persistent-peers"] = peers
+    p2p["addr_book_strict"] = p2p["addr-book-strict"] = False
+    p2p["allow_duplicate_ip"] = p2p["allow-duplicate-ip"] = True
+    doc["consensus"]["timeout_commit"] = doc["consensus"]["timeout-commit"] = "1s"
     patch_toml_doc(doc, config)
     if custom_edit is not None:
         custom_edit(doc)
@@ -1100,6 +1115,13 @@ def format_value(v, ctx):
         return {k: format_value(vv, ctx) for k, vv in v.items()}
     else:
         return v
+
+
+def remove_peer(peers, peer):
+    "remove peer from peers"
+    items = peers.split(",")
+    items.remove(peer)
+    return ",".join(items)
 
 
 if __name__ == "__main__":
