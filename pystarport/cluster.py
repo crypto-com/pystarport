@@ -791,7 +791,6 @@ def init_devnet(
         config.get("genesis", {}),
     )
     (data_dir / "genesis.json").write_text(json.dumps(genesis))
-    cli.validate_genesis()
 
     # create accounts
     accounts = []
@@ -863,6 +862,12 @@ def init_devnet(
             val["base_port"],
             jsonmerge.merge(config.get("app-config", {}), val.get("app-config", {})),
         )
+
+    # if the first validator is using statesync mode, then don't validate genesis,
+    # because the new binary may be a breaking one.
+    doc = tomlkit.parse((data_dir / "node0/config/config.toml").read_text())
+    if not doc["statesync"]["enable"]:
+        cli.validate_genesis()
 
     # write supervisord config file
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
