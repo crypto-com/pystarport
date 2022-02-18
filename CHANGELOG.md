@@ -1,5 +1,15 @@
 # Changelog
 
+*Feb 18, 2022*
+
+## v0.2.4
+
+- [#41](https://github.com/crypto-com/pystarport/pull/41) don't install the license as data files.
+- [#42](https://github.com/crypto-com/pystarport/pull/42) add `--no_remove` option to keep existing data directory.
+- [#43](https://github.com/crypto-com/pystarport/pull/43) prefer cmd parameter passed in cli to the one in config file.
+- [#46](https://github.com/crypto-com/pystarport/pull/46) support tendermint 0.35.
+- [#48](https://github.com/crypto-com/pystarport/pull/48) don't validate genesis for state-sync mode.
+
 *Dec 3, 2021*
 
 ## v0.2.3
