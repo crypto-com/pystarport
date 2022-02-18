@@ -851,7 +851,7 @@ def init_devnet(
             val["hostname"],
             ports.p2p_port(val["base_port"]),
         )
-        clean_peers = remove_peer(peers, self_peer)
+        clean_peers = try_remove_peer(peers, self_peer)
         edit_tm_cfg(
             data_dir / f"node{i}/config/config.toml",
             val["base_port"],
@@ -1117,11 +1117,15 @@ def format_value(v, ctx):
         return v
 
 
-def remove_peer(peers, peer):
-    "remove peer from peers"
+def try_remove_peer(peers, peer):
+    "try remove peer from peers, do nothing if don't contains the peer."
     items = peers.split(",")
-    items.remove(peer)
-    return ",".join(items)
+    try:
+        items.remove(peer)
+    except ValueError:
+        return peers
+    else:
+        return ",".join(items)
 
 
 if __name__ == "__main__":
