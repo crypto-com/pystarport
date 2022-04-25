@@ -1,9 +1,8 @@
-import os
 from pathlib import Path
 from typing import Any, Mapping, Optional, Text
 
 import yaml
-from dotenv import dotenv_values, load_dotenv
+from dotenv import dotenv_values
 from dotenv.variables import parse_variables
 
 
@@ -48,7 +47,7 @@ def expand_yaml(config_path, dotenv_from_param):
     merged = {}
     parent = Path(config_path).parent
     for d in [dotenv_from_config, dotenv_from_param]:
-        if d:
+        if d not in (None, '', {}):
             env_path = parent.joinpath(d)
             if not env_path.is_file():
                 raise ValueError(
