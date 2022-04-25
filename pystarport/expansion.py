@@ -49,9 +49,14 @@ def expand_yaml(config_path, dotenv_from_param):
     parent = Path(config_path).parent
     for d in [dotenv_from_config, dotenv_from_param]:
         if d:
+            env_path = parent.joinpath(d)
+            if not env_path.is_file():
+                raise ValueError(
+                    f"Dotenv specified in config but not found at path: {env_path}"
+                )
             merged = {
                 **merged,
-                **dotenv_values(parent.joinpath(d)),
+                **dotenv_values(env_path),
             }
     if merged is not {}:
         config = expand_posix_vars(config, merged)
