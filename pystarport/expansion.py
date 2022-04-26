@@ -2,12 +2,12 @@ import os
 from pathlib import Path
 from typing import Any, Mapping, Optional, Text
 
-import yaml
 import jsonmerge
+import yaml
 from dotenv import dotenv_values, load_dotenv
 from dotenv.variables import parse_variables
-
 from yamlinclude import YamlIncludeConstructor
+
 
 def expand_posix_vars(obj: Any, variables: Mapping[Text, Optional[Any]]) -> Any:
     """expand_posix_vars recursively expands POSIX values in an object.
@@ -47,7 +47,10 @@ def _expand(value, variables):
 def expand_yaml(config_path, dotenv):
     path = Path(config_path)
     parent = path.parent
-    YamlIncludeConstructor.add_to_loader_class(loader_class=yaml.FullLoader, base_dir = parent)
+    YamlIncludeConstructor.add_to_loader_class(
+        loader_class=yaml.FullLoader,
+        base_dir=parent,
+    )
 
     with open(path) as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
