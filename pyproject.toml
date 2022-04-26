@@ -23,7 +23,7 @@ bech32 = "^1.1.0"
 multitail2 = "^1.5.2"
 python-dotenv = "^0.19.2"
 pyyaml-include = "^1.3"
-mergedeep = "^1.3.4"
+mergedeep = {git = "https://github.com/mmsqe/mergedeep.git", rev = "nested-merge"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

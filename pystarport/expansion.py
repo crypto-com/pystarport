@@ -7,7 +7,7 @@ from dotenv import dotenv_values, load_dotenv
 from dotenv.variables import parse_variables
 
 from yamlinclude import YamlIncludeConstructor
-from mergedeep import merge
+from mergedeep import merge, Strategy
 
 def expand_posix_vars(obj: Any, variables: Mapping[Text, Optional[Any]]) -> Any:
     """expand_posix_vars recursively expands POSIX values in an object.
@@ -54,7 +54,7 @@ def expand_yaml(config_path, dotenv):
 
     include = config.pop("include", {})
     if include:
-        config = merge(include, config)
+        config = merge(include, config, strategy=Strategy.ADDITIVE)
 
     def expand(dotenv):
         if not isinstance(dotenv, str):
