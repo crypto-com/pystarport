@@ -8,25 +8,26 @@ from pystarport.expansion import expand_yaml
 
 
 def test_expansion():
-    cronos_has_dotenv = Path(__file__).parent / "cronos_has_dotenv.yaml"
-    cronos_no_dotenv = Path(__file__).parent / "cronos_no_dotenv.yaml"
-    cronos_has_posix_no_dotenv = (
-        Path(__file__).parent / "cronos_has_posix_no_dotenv.yaml"
-    )
+    parent = Path(__file__).parent
+    base = parent / "base.yaml"
+    cronos_has_dotenv = parent / "cronos_has_dotenv.yaml"
+    cronos_no_dotenv = parent / "cronos_no_dotenv.yaml"
+    cronos_has_posix_no_dotenv = parent / "cronos_has_posix_no_dotenv.yaml"
 
+    baseConfig = yaml.safe_load(open(base))
     # `expand_yaml` is backward compatible, not expanded, and no diff
-    assert yaml.safe_load(open(cronos_no_dotenv)) == expand_yaml(cronos_no_dotenv, None)
+    assert baseConfig == expand_yaml(cronos_no_dotenv, None)
 
     # `expand_yaml` is expanded but no diff
     assert not DeepDiff(
-        yaml.safe_load(open(cronos_no_dotenv)),
+        baseConfig,
         expand_yaml(cronos_has_dotenv, None),
         ignore_order=True,
     )
 
     # overriding dotenv with relative path is expanded and has diff)
     assert DeepDiff(
-        yaml.safe_load(open(cronos_no_dotenv)),
+        baseConfig,
         expand_yaml(cronos_has_dotenv, "dotenv1"),
         ignore_order=True,
     ) == {
@@ -42,7 +43,7 @@ def test_expansion():
 
     # overriding dotenv with absolute path is expanded and has diff
     assert DeepDiff(
-        yaml.safe_load(open(cronos_no_dotenv)),
+        baseConfig,
         expand_yaml(cronos_has_dotenv, os.path.abspath("test_expansion/dotenv1")),
         ignore_order=True,
     ) == {
@@ -58,7 +59,7 @@ def test_expansion():
 
     # overriding dotenv with absolute path is expanded and no diff
     assert not DeepDiff(
-        yaml.safe_load(open(cronos_no_dotenv)),
+        baseConfig,
         expand_yaml(
             cronos_has_posix_no_dotenv, os.path.abspath("test_expansion/dotenv")
         ),

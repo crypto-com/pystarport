@@ -2,9 +2,11 @@ import os
 from pathlib import Path
 from typing import Any, Mapping, Optional, Text
 
+import jsonmerge
 import yaml
 from dotenv import dotenv_values, load_dotenv
 from dotenv.variables import parse_variables
+from yamlinclude import YamlIncludeConstructor
 
 
 def expand_posix_vars(obj: Any, variables: Mapping[Text, Optional[Any]]) -> Any:
@@ -43,13 +45,25 @@ def _expand(value, variables):
 
 
 def expand_yaml(config_path, dotenv):
-    config = yaml.safe_load(open(config_path))
+    path = Path(config_path)
+    parent = path.parent
+    YamlIncludeConstructor.add_to_loader_class(
+        loader_class=yaml.FullLoader,
+        base_dir=parent,
+    )
+
+    with open(path) as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+
+    include = config.pop("include", {})
+    if include:
+        config = jsonmerge.merge(include, config)
 
     def expand(dotenv):
         if not isinstance(dotenv, str):
             raise ValueError(f"Invalid value passed to dotenv: {dotenv}")
         config_vars = dict(os.environ)  # load system env
-        env_path = Path(config_path).parent.joinpath(dotenv)
+        env_path = parent.joinpath(dotenv)
         if not env_path.is_file():
             raise ValueError(
                 f"Dotenv specified in config but not found at path: {env_path}"
