@@ -11,7 +11,5 @@ length=${#files[@]}
 for (( i=0; i<${length}; i++ ))
 do
     echo "generating "${files[$i]}".yaml"
-    poetry run jsonnet -S ${files[$i]}.jsonnet -o ${files[$i]}.yaml
+    jsonnet -S ${files[$i]}.jsonnet -o ${files[$i]}.yaml
 done
-
-

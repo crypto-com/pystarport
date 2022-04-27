@@ -196,14 +196,6 @@ python-versions = "*"
 jsonschema = "*"
 
 [[package]]
-name = "jsonnet"
-version = "0.18.0"
-description = "Python bindings for Jsonnet - The data templating language"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[[package]]
 name = "jsonschema"
 version = "3.2.0"
 description = "An implementation of JSON Schema validation for Python"
@@ -519,7 +511,7 @@ six = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "efa956449bf81ed2943e0187e12995e54ca4bdd088295ee4be0be55232be5a70"
+content-hash = "c2935da305fc294d57633c7822acd89de94ca2d1ffa322d7fc2d32aeb5ab488b"
 
 [metadata.files]
 atomicwrites = [
@@ -586,9 +578,6 @@ isort = [
 ]
 jsonmerge = [
     {file = "jsonmerge-1.8.0.tar.gz", hash = "sha256:a86bfc44f32f6a28b749743df8960a4ce1930666b3b73882513825f845cb9558"},
-]
-jsonnet = [
-    {file = "jsonnet-0.18.0.tar.gz", hash = "sha256:4ccd13427e9097b6b7d6d38f78f638a55ab8b452a257639e8e9af2178ec235d4"},
 ]
 jsonschema = [
     {file = "jsonschema-3.2.0-py2.py3-none-any.whl", hash = "sha256:4e5b3cf8216f577bee9ce139cbe72eca3ea4f292ec60928ff24758ce626cd163"},

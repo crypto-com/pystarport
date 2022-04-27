@@ -251,6 +251,13 @@ Remember to run `poetry env info` after `poetry install` and update this `python
 }
 ```
 
+## Test
+### Install jsonnet
+More about [jsonnet](https://jsonnet.org).
+```
+make test
+```
+
 
 ## FAQ
 
