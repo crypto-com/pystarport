@@ -199,7 +199,7 @@ jsonschema = "*"
 name = "jsonnet"
 version = "0.18.0"
 description = "Python bindings for Jsonnet - The data templating language"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -519,7 +519,7 @@ six = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "f6255f544271497caa673e7184f00cac3538261f2759051f97de01f8f0e21fef"
+content-hash = "efa956449bf81ed2943e0187e12995e54ca4bdd088295ee4be0be55232be5a70"
 
 [metadata.files]
 atomicwrites = [
