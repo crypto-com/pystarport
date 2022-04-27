@@ -1,0 +1,46 @@
+local config = import './base.jsonnet';
+
+std.manifestYamlDoc(config {
+  'cronos_777-1'+: {
+    validators: [
+      {
+        coins: '1000000000000000000stake,10000000000000000000000basetcro',
+        staked: '1000000000000000000stake',
+        mnemonic: '${VALIDATOR1_MNEMONIC}',
+      },
+      {
+        coins: '1000000000000000000stake,10000000000000000000000basetcro',
+        staked: '1000000000000000000stake',
+        mnemonic: '${VALIDATOR2_MNEMONIC}',
+      },
+    ],
+    accounts: [
+      {
+        name: 'community',
+        coins: '10000000000000000000000basetcro',
+        mnemonic: '${COMMUNITY_MNEMONIC}',
+      },
+      {
+        name: 'signer1',
+        coins: '20000000000000000000000basetcro',
+        mnemonic: '${SIGNER1_MNEMONIC}',
+      },
+      {
+        name: 'signer2',
+        coins: '30000000000000000000000basetcro',
+        mnemonic: '${SIGNER2_MNEMONIC}',
+      },
+    ],
+    genesis+: {
+      app_state+: {
+        cronos: {
+          params: {
+            cronos_admin: '${CRONOS_ADMIN}',
+            enable_auto_deployment: true,
+            ibc_cro_denom: '${IBC_CRO_DENOM}',
+          },
+        },
+      },
+    },
+  },
+}, true, false)
