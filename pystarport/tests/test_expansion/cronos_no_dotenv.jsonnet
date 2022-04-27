@@ -1,3 +1,3 @@
-local config = import './base.jsonnet';
+local config = import './default.jsonnet';
 
 std.manifestYamlDoc(config)
