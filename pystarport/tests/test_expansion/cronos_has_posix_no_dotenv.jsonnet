@@ -1,35 +1,28 @@
 local config = import './default.jsonnet';
+local Utils = import 'utils.jsonnet';
 
 std.manifestYamlDoc(config {
   'cronos_777-1'+: {
     validators: [
-      {
-        coins: '1000000000000000000stake,10000000000000000000000basetcro',
-        staked: '1000000000000000000stake',
-        mnemonic: '${VALIDATOR1_MNEMONIC}',
-      },
-      {
-        coins: '1000000000000000000stake,10000000000000000000000basetcro',
-        staked: '1000000000000000000stake',
-        mnemonic: '${VALIDATOR2_MNEMONIC}',
-      },
+      Utils.validator('${VALIDATOR1_MNEMONIC}'),
+      Utils.validator('${VALIDATOR2_MNEMONIC}'),
     ],
     accounts: [
-      {
-        name: 'community',
-        coins: '10000000000000000000000basetcro',
-        mnemonic: '${COMMUNITY_MNEMONIC}',
-      },
-      {
-        name: 'signer1',
-        coins: '20000000000000000000000basetcro',
-        mnemonic: '${SIGNER1_MNEMONIC}',
-      },
-      {
-        name: 'signer2',
-        coins: '30000000000000000000000basetcro',
-        mnemonic: '${SIGNER2_MNEMONIC}',
-      },
+      Utils.account(
+        'community',
+        '10000000000000000000000basetcro',
+        '${COMMUNITY_MNEMONIC}',
+      ),
+      Utils.account(
+        'signer1',
+        '20000000000000000000000basetcro',
+        '${SIGNER1_MNEMONIC}',
+      ),
+      Utils.account(
+        'signer2',
+        '30000000000000000000000basetcro',
+        '${SIGNER2_MNEMONIC}',
+      ),
     ],
     genesis+: {
       app_state+: {
