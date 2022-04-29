@@ -1,5 +1,8 @@
 # Changelog
 
+## UNRELEASED
+- [#52](https://github.com/crypto-com/pystarport/pull/52) support jsonnet as config language
+
 *Feb 18, 2022*
 
 ## v0.2.4

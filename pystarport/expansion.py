@@ -1,7 +1,9 @@
+import json
 import os
 from pathlib import Path
 from typing import Any, Mapping, Optional, Text
 
+import _jsonnet
 import jsonmerge
 import yaml
 from dotenv import dotenv_values, load_dotenv
@@ -44,12 +46,34 @@ def _expand(value, variables):
     return "".join([str(atom.resolve(variables)) for atom in atoms])
 
 
+def expand(config, dotenv, path):
+    config_vars = dict(os.environ)  # load system env
+
+    if dotenv is not None:
+        if "dotenv" in config:
+            _ = config.pop("dotenv", {})  # remove dotenv field if exists
+    elif "dotenv" in config:
+        dotenv = config.pop("dotenv", {})  # pop dotenv field if exists
+
+    if dotenv:
+        if not isinstance(dotenv, str):
+            raise ValueError(f"Invalid value passed to dotenv: {dotenv}")
+        env_path = path.parent / dotenv
+        if not env_path.is_file():
+            raise ValueError(
+                f"Dotenv specified in config but not found at path: {env_path}"
+            )
+        config_vars.update(dotenv_values(dotenv_path=env_path))  # type: ignore
+        load_dotenv(dotenv_path=env_path)
+
+    return expand_posix_vars(config, config_vars)
+
+
 def expand_yaml(config_path, dotenv):
     path = Path(config_path)
-    parent = path.parent
     YamlIncludeConstructor.add_to_loader_class(
         loader_class=yaml.FullLoader,
-        base_dir=parent,
+        base_dir=path.parent,
     )
 
     with open(path) as f:
@@ -59,26 +83,12 @@ def expand_yaml(config_path, dotenv):
     if include:
         config = jsonmerge.merge(include, config)
 
-    def expand(dotenv):
-        if not isinstance(dotenv, str):
-            raise ValueError(f"Invalid value passed to dotenv: {dotenv}")
-        config_vars = dict(os.environ)  # load system env
-        env_path = parent.joinpath(dotenv)
-        if not env_path.is_file():
-            raise ValueError(
-                f"Dotenv specified in config but not found at path: {env_path}"
-            )
-        config_vars.update(dotenv_values(dotenv_path=env_path))  # type: ignore
-        load_dotenv(dotenv_path=env_path)
-        return expand_posix_vars(config, config_vars)
+    config = expand(config, dotenv, path)
+    return config
 
-    if dotenv is not None:
-        if "dotenv" in config:
-            _ = config.pop("dotenv", {})  # remove dotenv field if exists
-        dotenv_path = dotenv
-        config = expand(dotenv_path)
-    elif "dotenv" in config:
-        dotenv_path = config.pop("dotenv", {})  # pop dotenv field if exists
-        config = expand(dotenv_path)
 
+def expand_jsonnet(config_path, dotenv):
+    path = Path(config_path)
+    config = json.loads(_jsonnet.evaluate_file(str(config_path)))
+    config = expand(config, dotenv, path)
     return config
