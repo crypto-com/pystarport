@@ -9,7 +9,7 @@ import subprocess
 import sys
 import threading
 import time
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import List
 
 import durations
@@ -924,8 +924,8 @@ def init_cluster(
     cmd=None,
     gen_compose_file=False,
 ):
-    extension = config_path.rsplit('.', 1)[1]
-    if extension == "jsonnet":
+    extension = PurePosixPath(config_path).suffix
+    if extension == ".jsonnet":
         config = expand_jsonnet(config_path, dotenv)
     else:
         config = expand_yaml(config_path, dotenv)
