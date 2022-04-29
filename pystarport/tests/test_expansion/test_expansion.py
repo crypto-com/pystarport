@@ -12,21 +12,14 @@ def _get_base_config():
     return yaml.safe_load(open(Path(__file__).parent / "base.yaml"))
 
 
-@pytest.mark.parametrize("type", [".yaml", ".jsonnet"])
-def test_expansion(type):
-    test_yaml = type == ".yaml"
-    print("type", type, test_yaml)
+@pytest.mark.parametrize("type, func", [(".yaml", expand_yaml), (".jsonnet", expand_jsonnet)])
+def test_expansion(type, func):
     parent = Path(__file__).parent
     cronos_has_dotenv = parent / ("cronos_has_dotenv" + type)
     cronos_no_dotenv = parent / ("cronos_no_dotenv" + type)
     cronos_has_posix_no_dotenv = parent / ("cronos_no_dotenv" + type)
     baseConfig = _get_base_config()
     # `expand_yaml` is backward compatible, not expanded, and no diff
-    if test_yaml:
-        func = expand_yaml
-    else:
-        func = expand_jsonnet
-
     config = func(cronos_no_dotenv, None)
     assert baseConfig == config
 
