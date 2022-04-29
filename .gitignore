@@ -139,6 +139,3 @@ cython_debug/
 
 # VS Code configuration
 .vscode
-
-# integration yamls
-pystarport/tests/test_expansion/*.yaml
