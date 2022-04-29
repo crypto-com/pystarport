@@ -1,7 +1,7 @@
 local config = import './default.jsonnet';
 local Utils = import 'utils.jsonnet';
 
-std.manifestYamlDoc(config {
+config {
   dotenv+: 'dotenv',
   'cronos_777-1'+: {
     validators: [
@@ -37,4 +37,4 @@ std.manifestYamlDoc(config {
       },
     },
   },
-}, true, false)
+}

@@ -1,1 +1,1 @@
-std.manifestYamlDoc(import './default.jsonnet', true, false)
+import './default.jsonnet'
