@@ -58,7 +58,7 @@ def expand(config, dotenv, path):
     if dotenv:
         if not isinstance(dotenv, str):
             raise ValueError(f"Invalid value passed to dotenv: {dotenv}")
-        env_path = path.parent.joinpath(dotenv)
+        env_path = path.parent / dotenv
         if not env_path.is_file():
             raise ValueError(
                 f"Dotenv specified in config but not found at path: {env_path}"
