@@ -1,58 +1,49 @@
 import os
 from pathlib import Path
 
+import pytest
 import yaml
 from deepdiff import DeepDiff
 
 from pystarport.expansion import expand_jsonnet, expand_yaml
 
 
-def _cross_check(yaml_config, jsonnet_config):
-    assert not DeepDiff(
-        yaml_config,
-        jsonnet_config,
-        ignore_order=True,
-    )
+def _get_base_config():
+    return yaml.safe_load(open(Path(__file__).parent / "base.yaml"))
 
 
-def test_expansion():
-    bases = []
-    cronos_has_dotenvs = []
-    cronos_no_dotenvs = []
-    cronos_has_posix_no_dotenvs = []
+@pytest.mark.parametrize("type", [".yaml", ".jsonnet"])
+def test_expansion(type):
+    test_yaml = type == ".yaml"
+    print("type", type, test_yaml)
     parent = Path(__file__).parent
-    for type in [".yaml", ".jsonnet"]:
-        bases.append(parent / ("base" + type))
-        cronos_has_dotenvs.append(parent / ("cronos_has_dotenv" + type))
-        cronos_no_dotenvs.append(parent / ("cronos_no_dotenv" + type))
-        cronos_has_posix_no_dotenvs.append(
-            parent / ("cronos_has_posix_no_dotenv" + type)
-        )
-
-    baseConfig = yaml.safe_load(open(bases[0]))
+    cronos_has_dotenv = parent / ("cronos_has_dotenv" + type)
+    cronos_no_dotenv = parent / ("cronos_no_dotenv" + type)
+    cronos_has_posix_no_dotenv = parent / ("cronos_no_dotenv" + type)
+    baseConfig = _get_base_config()
     # `expand_yaml` is backward compatible, not expanded, and no diff
-    yaml_config = expand_yaml(cronos_no_dotenvs[0], None)
-    jsonnet_config = expand_jsonnet(cronos_no_dotenvs[1], None)
-    assert baseConfig == yaml_config
-    _cross_check(yaml_config, jsonnet_config)
+    if test_yaml:
+        func = expand_yaml
+    else:
+        func = expand_jsonnet
+
+    config = func(cronos_no_dotenv, None)
+    assert baseConfig == config
 
     # `expand_yaml` is expanded but no diff
-    yaml_config = expand_yaml(cronos_has_dotenvs[0], None)
-    jsonnet_config = expand_jsonnet(cronos_has_dotenvs[1], None)
+    config = func(cronos_has_dotenv, None)
     assert not DeepDiff(
         baseConfig,
-        yaml_config,
+        config,
         ignore_order=True,
     )
-    _cross_check(yaml_config, jsonnet_config)
 
     # overriding dotenv with relative path is expanded and has diff)
     dotenv = "dotenv1"
-    yaml_config = expand_yaml(cronos_has_dotenvs[0], dotenv)
-    jsonnet_config = expand_jsonnet(cronos_has_dotenvs[1], dotenv)
+    config = func(cronos_has_dotenv, dotenv)
     assert DeepDiff(
         baseConfig,
-        yaml_config,
+        config,
         ignore_order=True,
     ) == {
         "values_changed": {
@@ -64,15 +55,13 @@ def test_expansion():
             }
         }
     }
-    _cross_check(yaml_config, jsonnet_config)
 
     # overriding dotenv with absolute path is expanded and has diff
     dotenv = os.path.abspath("test_expansion/dotenv1")
-    yaml_config = expand_yaml(cronos_has_dotenvs[0], dotenv)
-    jsonnet_config = expand_jsonnet(cronos_has_dotenvs[1], dotenv)
+    config = func(cronos_has_dotenv, dotenv)
     assert DeepDiff(
         baseConfig,
-        yaml_config,
+        config,
         ignore_order=True,
     ) == {
         "values_changed": {
@@ -84,15 +73,12 @@ def test_expansion():
             }
         }
     }
-    _cross_check(yaml_config, jsonnet_config)
 
     # overriding dotenv with absolute path is expanded and no diff
     dotenv = os.path.abspath("test_expansion/dotenv")
-    yaml_config = expand_yaml(cronos_has_posix_no_dotenvs[0], dotenv)
-    jsonnet_config = expand_jsonnet(cronos_has_posix_no_dotenvs[1], dotenv)
+    config = func(cronos_has_posix_no_dotenv, dotenv)
     assert not DeepDiff(
         baseConfig,
-        yaml_config,
+        config,
         ignore_order=True,
     )
-    _cross_check(yaml_config, jsonnet_config)
