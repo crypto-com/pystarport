@@ -12,7 +12,10 @@ def _get_base_config():
     return yaml.safe_load(open(Path(__file__).parent / "base.yaml"))
 
 
-@pytest.mark.parametrize("type, func", [(".yaml", expand_yaml), (".jsonnet", expand_jsonnet)])
+@pytest.mark.parametrize(
+    "type, func",
+    [(".yaml", expand_yaml), (".jsonnet", expand_jsonnet)],
+)
 def test_expansion(type, func):
     parent = Path(__file__).parent
     cronos_has_dotenv = parent / ("cronos_has_dotenv" + type)
