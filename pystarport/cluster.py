@@ -24,7 +24,7 @@ from supervisor.compat import xmlrpclib
 from . import ports
 from .app import CHAIN, IMAGE, SUPERVISOR_CONFIG_FILE
 from .cosmoscli import ChainCommand, CosmosCLI, ModuleAccount, module_address
-from .expansion import expand_yaml
+from .expansion import expand_jsonnet, expand_yaml
 from .ledger import ZEMU_BUTTON_PORT, ZEMU_HOST
 from .utils import format_doc_string, interact, write_ini
 
@@ -924,7 +924,11 @@ def init_cluster(
     cmd=None,
     gen_compose_file=False,
 ):
-    config = expand_yaml(config_path, dotenv)
+    extension = config_path.rsplit('.', 1)[1]
+    if extension == "jsonnet":
+        config = expand_jsonnet(config_path, dotenv)
+    else:
+        config = expand_yaml(config_path, dotenv)
 
     relayer_config = config.pop("relayer", {})
     for chain_id, cfg in config.items():
