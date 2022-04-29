@@ -89,6 +89,6 @@ def expand_yaml(config_path, dotenv):
 
 def expand_jsonnet(config_path, dotenv):
     path = Path(config_path)
-    config = json.loads(_jsonnet.evaluate_file(config_path))
+    config = json.loads(_jsonnet.evaluate_file(str(config_path)))
     config = expand(config, dotenv, path)
     return config
