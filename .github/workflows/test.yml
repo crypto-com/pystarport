@@ -22,7 +22,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: zendesk/setup-jsonnet@v10
       - uses: actions/checkout@v2
       - name: install dependencies
         run: python3 -m pip install --user --upgrade poetry
