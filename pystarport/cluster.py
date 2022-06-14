@@ -855,7 +855,7 @@ def init_devnet(
             data_dir / f"node{i}/config/config.toml",
             val["base_port"],
             clean_peers,
-            val.get("config", {}),
+            jsonmerge.merge(config.get("config", {}), val.get("config", {})),
         )
         edit_app_cfg(
             data_dir / f"node{i}/config/app.toml",

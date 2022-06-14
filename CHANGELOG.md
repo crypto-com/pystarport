@@ -2,6 +2,7 @@
 
 ## UNRELEASED
 - [#52](https://github.com/crypto-com/pystarport/pull/52) support jsonnet as config language
+- [#56](https://github.com/crypto-com/pystarport/pull/56) Support override config.toml for all validators
 
 *Feb 18, 2022*
 
