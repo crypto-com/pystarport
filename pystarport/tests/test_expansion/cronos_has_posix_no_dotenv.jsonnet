@@ -3,27 +3,23 @@ local Utils = import 'utils.jsonnet';
 
 config {
   'cronos_777-1'+: {
-    validators: [
-      Utils.validator('${VALIDATOR1_MNEMONIC}'),
-      Utils.validator('${VALIDATOR2_MNEMONIC}'),
-    ],
-    accounts: [
-      Utils.account(
-        'community',
-        '10000000000000000000000basetcro',
-        '${COMMUNITY_MNEMONIC}',
-      ),
-      Utils.account(
-        'signer1',
-        '20000000000000000000000basetcro',
-        '${SIGNER1_MNEMONIC}',
-      ),
-      Utils.account(
-        'signer2',
-        '30000000000000000000000basetcro',
-        '${SIGNER2_MNEMONIC}',
-      ),
-    ],
+    validators: Utils.validators([
+      '${VALIDATOR1_MNEMONIC}',
+      '${VALIDATOR2_MNEMONIC}',
+    ]),
+    accounts: Utils.accounts([{
+      name: 'community',
+      coins: '10000000000000000000000basetcro',
+      mnemonic: '${COMMUNITY_MNEMONIC}',
+    }, {
+      name: 'signer1',
+      coins: '20000000000000000000000basetcro',
+      mnemonic: '${SIGNER1_MNEMONIC}',
+    }, {
+      name: 'signer2',
+      coins: '30000000000000000000000basetcro',
+      mnemonic: '${SIGNER2_MNEMONIC}',
+    }]),
     genesis+: {
       app_state+: {
         cronos: {

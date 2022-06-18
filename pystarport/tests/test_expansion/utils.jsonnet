@@ -4,9 +4,6 @@
     staked: '1000000000000000000stake',
     mnemonic: mnemonic,
   },
-  account(name, coins, mnemonic):: {
-    name: name,
-    coins: coins,
-    mnemonic: mnemonic,
-  },
+  validators(mnemonics):: [self.validator(mnemonic) for mnemonic in mnemonics],
+  accounts(objs):: [obj for obj in objs],
 }

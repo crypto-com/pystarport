@@ -11,27 +11,23 @@ local Utils = import "utils.jsonnet";
         'ws-address': '0.0.0.0:{EVMRPC_PORT_WS}',
       },
     },
-    validators: [
-      Utils.validator('visit craft resemble online window solution west chuckle music diesel vital settle comic tribe project blame bulb armed flower region sausage mercy arrive release'),
-      Utils.validator('direct travel shrug hand twice agent sail sell jump phone velvet pilot mango charge usual multiply orient garment bleak virtual action mention panda vast'),
-    ],
-    accounts: [
-      Utils.account(
-        'community',
-        '10000000000000000000000basetcro',
-        'notable error gospel wave pair ugly measure elite toddler cost various fly make eye ketchup despair slab throw tribe swarm word fruit into inmate',
-      ),
-      Utils.account(
-        'signer1',
-        '20000000000000000000000basetcro',
-        'shed crumble dismiss loyal latin million oblige gesture shrug still oxygen custom remove ribbon disorder palace addict again blanket sad flock consider obey popular',
-      ),
-      Utils.account(
-        'signer2',
-        '30000000000000000000000basetcro',
-        'night renew tonight dinner shaft scheme domain oppose echo summer broccoli agent face guitar surface belt veteran siren poem alcohol menu custom crunch index',
-      ),
-    ],
+    validators: Utils.validators([
+      'visit craft resemble online window solution west chuckle music diesel vital settle comic tribe project blame bulb armed flower region sausage mercy arrive release',
+      'direct travel shrug hand twice agent sail sell jump phone velvet pilot mango charge usual multiply orient garment bleak virtual action mention panda vast',
+    ]),
+    accounts: Utils.accounts([{
+      name: 'community',
+      coins: '10000000000000000000000basetcro',
+      mnemonic: 'notable error gospel wave pair ugly measure elite toddler cost various fly make eye ketchup despair slab throw tribe swarm word fruit into inmate',
+    }, {
+      name: 'signer1',
+      coins: '20000000000000000000000basetcro',
+      mnemonic: 'shed crumble dismiss loyal latin million oblige gesture shrug still oxygen custom remove ribbon disorder palace addict again blanket sad flock consider obey popular',
+    }, {
+      name: 'signer2',
+      coins: '30000000000000000000000basetcro',
+      mnemonic: 'night renew tonight dinner shaft scheme domain oppose echo summer broccoli agent face guitar surface belt veteran siren poem alcohol menu custom crunch index',
+    }]),
     genesis: {
       consensus_params: {
         block: {
