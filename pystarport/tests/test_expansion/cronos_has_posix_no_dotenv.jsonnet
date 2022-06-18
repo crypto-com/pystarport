@@ -1,4 +1,4 @@
-local config = import './default.jsonnet';
+local config = import './base.jsonnet';
 local Utils = import 'utils.jsonnet';
 
 config {
