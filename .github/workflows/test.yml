@@ -29,3 +29,9 @@ jobs:
         run: poetry install
       - name: Run tests
         run: make test
+  nix-flake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v15
+      - run: nix run

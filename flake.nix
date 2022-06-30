@@ -19,7 +19,7 @@
         });
       in
       rec {
-        defaultPackage = pkgs.poetry2nix.mkPoetryApplication
+        packages.default = pkgs.poetry2nix.mkPoetryApplication
           {
             projectDir = ./.;
             overrides = pkgs.poetry2nix.overrides.withDefaults
@@ -36,9 +36,9 @@
                 );
               });
           };
-        defaultApp = {
+        apps.default = {
           type = "app";
-          program = "${defaultPackage}/bin/pystarport";
+          program = "${packages.default}/bin/pystarport";
         };
         devShell = pkgs.poetry2nix.mkPoetryEnv {
           projectDir = ./.;
