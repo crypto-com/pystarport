@@ -3,11 +3,11 @@ import subprocess
 
 
 def interact(cmd, ignore_error=False, input=None, **kwargs):
+    kwargs.setdefault("stderr", subprocess.STDOUT)
     proc = subprocess.Popen(
         cmd,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
         shell=True,
         **kwargs,
     )
