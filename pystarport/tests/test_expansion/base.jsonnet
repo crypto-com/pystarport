@@ -1,5 +1,3 @@
-local Utils = import 'utils.jsonnet';
-
 {
   'cronos_777-1': {
     cmd: 'cronosd',
@@ -11,11 +9,16 @@ local Utils = import 'utils.jsonnet';
         'ws-address': '0.0.0.0:{EVMRPC_PORT_WS}',
       },
     },
-    validators: Utils.validators([
-      'visit craft resemble online window solution west chuckle music diesel vital settle comic tribe project blame bulb armed flower region sausage mercy arrive release',
-      'direct travel shrug hand twice agent sail sell jump phone velvet pilot mango charge usual multiply orient garment bleak virtual action mention panda vast',
-    ]),
-    accounts: Utils.accounts([{
+    validators: [{
+      coins: '1000000000000000000stake,10000000000000000000000basetcro',
+      staked: '1000000000000000000stake',
+      mnemonic: 'visit craft resemble online window solution west chuckle music diesel vital settle comic tribe project blame bulb armed flower region sausage mercy arrive release',
+    }, {
+      coins: '1000000000000000000stake,10000000000000000000000basetcro',
+      staked: '1000000000000000000stake',
+      mnemonic: 'direct travel shrug hand twice agent sail sell jump phone velvet pilot mango charge usual multiply orient garment bleak virtual action mention panda vast',
+    }],
+    accounts: [{
       name: 'community',
       coins: '10000000000000000000000basetcro',
       mnemonic: 'notable error gospel wave pair ugly measure elite toddler cost various fly make eye ketchup despair slab throw tribe swarm word fruit into inmate',
@@ -27,7 +30,7 @@ local Utils = import 'utils.jsonnet';
       name: 'signer2',
       coins: '30000000000000000000000basetcro',
       mnemonic: 'night renew tonight dinner shaft scheme domain oppose echo summer broccoli agent face guitar surface belt veteran siren poem alcohol menu custom crunch index',
-    }]),
+    }],
     genesis: {
       consensus_params: {
         block: {
