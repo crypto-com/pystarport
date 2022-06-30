@@ -9,12 +9,12 @@
         pkgs = (import nixpkgs { inherit system; config = { }; });
       in
       rec {
-        defaultPackage = pkgs.poetry2nix.mkPoetryApplication {
-            projectDir = ./.;
-          };
-        defaultApp = {
+        packages.default = pkgs.poetry2nix.mkPoetryApplication {
+          projectDir = ./.;
+        };
+        apps.default = {
           type = "app";
-          program = "${defaultPackage}/bin/pystarport";
+          program = "${packages.default}/bin/pystarport";
         };
         devShell = pkgs.poetry2nix.mkPoetryEnv {
           projectDir = ./.;
