@@ -970,7 +970,9 @@ def init_cluster(
 
         # restore the relayer account in relayer
         for chain in chains:
-            mnemonic = find_account(data_dir, chain["chain_id"], "relayer")["mnemonic"]
+            mnemonic = find_account(
+                data_dir, chain["chain_id"], chain.get("key_name", "relayer")
+            )["mnemonic"]
             subprocess.run(
                 [
                     "hermes",
