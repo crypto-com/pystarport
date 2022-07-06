@@ -653,7 +653,7 @@ class CosmosCLI:
     def edit_validator(
         self,
         commission_rate=None,
-        moniker=None,
+        new_moniker=None,
         identity=None,
         website=None,
         security_contact=None,
@@ -663,7 +663,7 @@ class CosmosCLI:
         options = dict(
             commission_rate=commission_rate,
             # description
-            moniker=moniker,
+            new_moniker=new_moniker,
             identity=identity,
             website=website,
             security_contact=security_contact,
