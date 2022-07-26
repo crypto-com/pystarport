@@ -955,7 +955,6 @@ def init_cluster(
                 jsonmerge.merge(
                     {
                         "global": {
-                            "strategy": "all",
                             "log_level": "info",
                         },
                         "chains": [
