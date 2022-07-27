@@ -975,7 +975,7 @@ def init_cluster(
             subprocess.run(
                 [
                     "hermes",
-                    "-c",
+                    "--config",
                     relayer_config_file,
                     "keys",
                     "restore",
@@ -1027,7 +1027,7 @@ def supervisord_ini_group(chain_ids):
     }
     cfg["program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
-        command=("hermes -c %(here)s/relayer.toml start"),
+        command=("hermes --config %(here)s/relayer.toml start"),
         stdout_logfile="%(here)s/relayer-demo.log",
         autostart="false",
     )
