@@ -53,12 +53,12 @@ class ClusterCLI:
         zemu_button_port=ZEMU_BUTTON_PORT,
     ):
         self.data_root = data
-        self.cmd = cmd
         self.zemu_address = zemu_address
         self.zemu_button_port = zemu_button_port
         self.chain_id = chain_id
         self.data_dir = data / self.chain_id
         self.config = json.load((self.data_dir / "config.json").open())
+        self.cmd = cmd or self.config.get("cmd") or CHAIN
 
         self._supervisorctl = None
         self.output = None
