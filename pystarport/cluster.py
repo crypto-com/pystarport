@@ -969,19 +969,24 @@ def init_cluster(
 
         # restore the relayer account in relayer
         for chain in chains:
+            replayer = chain.get("key_name", "relayer")
             mnemonic = find_account(
-                data_dir, chain["chain_id"], chain.get("key_name", "relayer")
+                data_dir, chain["chain_id"], replayer
             )["mnemonic"]
+            mnemonic_path = (Path(data_dir) / "replayer.env")
+            mnemonic_path.write_text(mnemonic)
             subprocess.run(
                 [
                     "hermes",
                     "--config",
                     relayer_config_file,
                     "keys",
-                    "restore",
+                    "add",
+                    "--chain",
                     chain["chain_id"],
-                    "--mnemonic",
-                    mnemonic,
+                    "--mnemonic-file",
+                    str(mnemonic_path),
+                    "--overwrite",
                     "--hd-path",
                     "m/44'/" + str(chain.get("coin-type", 394)) + "'/0'/0/0",
                 ],
