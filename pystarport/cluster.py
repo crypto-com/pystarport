@@ -728,7 +728,7 @@ def init_devnet(
             val["moniker"],
             chain_id=config["chain_id"],
             home=home_dir(data_dir, i),
-            **config.get("init-flags", {}),
+            **config.get("cmd-flags", {}),
         )
         if "consensus_key" in val:
             # restore consensus private key
@@ -810,7 +810,7 @@ def init_devnet(
                 i=i,
                 min_self_delegation=node.get("min_self_delegation", 1),
                 pubkey=node.get("pubkey"),
-                **config.get("init-flags", {}),
+                **config.get("cmd-flags", {}),
             )
 
     # create accounts
@@ -869,7 +869,7 @@ def init_devnet(
     # because the new binary may be a breaking one.
     doc = tomlkit.parse((data_dir / "node0/config/config.toml").read_text())
     if not doc["statesync"]["enable"]:
-        cli.validate_genesis(config.get("init-flags", {}))
+        cli.validate_genesis(config.get("cmd-flags", {}))
 
     # write supervisord config file
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
