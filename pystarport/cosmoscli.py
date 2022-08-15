@@ -150,8 +150,8 @@ class CosmosCLI:
             home=self.data_dir,
         )
 
-    def validate_genesis(self):
-        return self.raw("validate-genesis", home=self.data_dir)
+    def validate_genesis(self, *args):
+        return self.raw("validate-genesis", *args, home=self.data_dir)
 
     def add_genesis_account(self, addr, coins, **kwargs):
         return self.raw(
@@ -163,11 +163,12 @@ class CosmosCLI:
             **kwargs,
         )
 
-    def gentx(self, name, coins, min_self_delegation=1, pubkey=None):
+    def gentx(self, name, coins, *args, min_self_delegation=1, pubkey=None):
         return self.raw(
             "gentx",
             name,
             coins,
+            *args,
             min_self_delegation=str(min_self_delegation),
             home=self.data_dir,
             chain_id=self.chain_id,
