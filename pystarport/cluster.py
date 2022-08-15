@@ -872,6 +872,9 @@ def init_devnet(
         cli.validate_genesis(config.get("cmd-flags", {}))
 
     # write supervisord config file
+    start_flags = " ".join(
+        [config.get("start-flags", ""), config.get("cmd-flags", "")]
+    ).strip()
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
         write_ini(
             fp,
@@ -879,7 +882,7 @@ def init_devnet(
                 cmd,
                 config["validators"],
                 config["chain_id"],
-                config.get("start-flags", ""),
+                start_flags=start_flags,
             ),
         )
 
