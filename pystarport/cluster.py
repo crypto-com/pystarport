@@ -321,14 +321,14 @@ class ClusterCLI:
     def export(self, i=0):
         return self.cosmos_cli(i).export()
 
-    def validate_genesis(self, i=0, **kwargs):
-        return self.cosmos_cli(i).validate_genesis(**kwargs)
+    def validate_genesis(self, *args, i=0):
+        return self.cosmos_cli(i).validate_genesis(*args)
 
     def add_genesis_account(self, addr, coins, i=0, **kwargs):
         return self.cosmos_cli(i).add_genesis_account(addr, coins, **kwargs)
 
-    def gentx(self, name, coins, i=0, min_self_delegation=1, pubkey=None):
-        return self.cosmos_cli(i).gentx(name, coins, min_self_delegation, pubkey)
+    def gentx(self, name, coins, *args, i=0, min_self_delegation=1, pubkey=None):
+        return self.cosmos_cli(i).gentx(name, coins, min_self_delegation, pubkey, *args)
 
     def collect_gentxs(self, gentx_dir, i=0):
         return self.cosmos_cli(i).collect_gentxs(gentx_dir)
@@ -726,9 +726,9 @@ def init_devnet(
         ChainCommand(cmd)(
             "init",
             val["moniker"],
+            config.get("cmd-flags"),
             chain_id=config["chain_id"],
             home=home_dir(data_dir, i),
-            **config.get("cmd-flags", {}),
         )
         if "consensus_key" in val:
             # restore consensus private key
@@ -807,10 +807,10 @@ def init_devnet(
             cli.gentx(
                 "validator",
                 node["staked"],
+                config.get("cmd-flags"),
                 i=i,
                 min_self_delegation=node.get("min_self_delegation", 1),
                 pubkey=node.get("pubkey"),
-                **config.get("cmd-flags", {}),
             )
 
     # create accounts
