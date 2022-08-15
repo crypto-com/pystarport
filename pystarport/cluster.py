@@ -321,8 +321,8 @@ class ClusterCLI:
     def export(self, i=0):
         return self.cosmos_cli(i).export()
 
-    def validate_genesis(self, i=0):
-        return self.cosmos_cli(i).validate_genesis()
+    def validate_genesis(self, i=0, **kwargs):
+        return self.cosmos_cli(i).validate_genesis(**kwargs)
 
     def add_genesis_account(self, addr, coins, i=0, **kwargs):
         return self.cosmos_cli(i).add_genesis_account(addr, coins, **kwargs)
@@ -728,6 +728,7 @@ def init_devnet(
             val["moniker"],
             chain_id=config["chain_id"],
             home=home_dir(data_dir, i),
+            **config.get("init-flags", {}),
         )
         if "consensus_key" in val:
             # restore consensus private key
@@ -809,6 +810,7 @@ def init_devnet(
                 i=i,
                 min_self_delegation=node.get("min_self_delegation", 1),
                 pubkey=node.get("pubkey"),
+                **config.get("init-flags", {}),
             )
 
     # create accounts
@@ -867,7 +869,7 @@ def init_devnet(
     # because the new binary may be a breaking one.
     doc = tomlkit.parse((data_dir / "node0/config/config.toml").read_text())
     if not doc["statesync"]["enable"]:
-        cli.validate_genesis()
+        cli.validate_genesis(config.get("init-flags", {}))
 
     # write supervisord config file
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:

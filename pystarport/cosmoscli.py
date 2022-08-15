@@ -150,8 +150,8 @@ class CosmosCLI:
             home=self.data_dir,
         )
 
-    def validate_genesis(self):
-        return self.raw("validate-genesis", home=self.data_dir)
+    def validate_genesis(self, **kwargs):
+        return self.raw("validate-genesis", home=self.data_dir, **kwargs)
 
     def add_genesis_account(self, addr, coins, **kwargs):
         return self.raw(
