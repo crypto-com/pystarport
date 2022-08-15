@@ -3,7 +3,7 @@
 ## UNRELEASED
 - [#52](https://github.com/crypto-com/pystarport/pull/52) support jsonnet as config language
 - [#56](https://github.com/crypto-com/pystarport/pull/56) Support override config.toml for all validators
-- [#]() Add config item `cmd-flags` to supply custom flags for all chain binary commands other than `start`, which is
+- [#70](https://github.com/crypto-com/pystarport/pull/70) Add config item `cmd-flags` to supply custom flags for all chain binary commands other than `start`, which is
   handled by existing `start-flags`.
 
 *Feb 18, 2022*
