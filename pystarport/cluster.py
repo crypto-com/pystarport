@@ -328,7 +328,9 @@ class ClusterCLI:
         return self.cosmos_cli(i).add_genesis_account(addr, coins, **kwargs)
 
     def gentx(self, name, coins, *args, i=0, min_self_delegation=1, pubkey=None):
-        return self.cosmos_cli(i).gentx(name, coins, min_self_delegation, pubkey, *args)
+        return self.cosmos_cli(i).gentx(
+            name, coins, *args, min_self_delegation=min_self_delegation, pubkey=pubkey
+        )
 
     def collect_gentxs(self, gentx_dir, i=0):
         return self.cosmos_cli(i).collect_gentxs(gentx_dir)
