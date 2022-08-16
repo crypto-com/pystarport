@@ -5,7 +5,7 @@
 - [#56](https://github.com/crypto-com/pystarport/pull/56) Support override config.toml for all validators
 - [#70](https://github.com/crypto-com/pystarport/pull/70) Add config item `cmd-flags` to supply custom flags for all
   chain binary commands
-- [#]() strip ansi codes from the node's output
+- [#71](https://github.com/crypto-com/pystarport/pull/71) strip ansi codes from the node's output
 
 *Feb 18, 2022*
 
