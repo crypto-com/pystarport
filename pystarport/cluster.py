@@ -327,9 +327,16 @@ class ClusterCLI:
     def add_genesis_account(self, addr, coins, i=0, **kwargs):
         return self.cosmos_cli(i).add_genesis_account(addr, coins, **kwargs)
 
-    def gentx(self, name, coins, *args, i=0, min_self_delegation=1, pubkey=None):
+    def gentx(
+        self, name, coins, *args, i=0, min_self_delegation=1, pubkey=None, **kwargs
+    ):
         return self.cosmos_cli(i).gentx(
-            name, coins, *args, min_self_delegation=min_self_delegation, pubkey=pubkey
+            name,
+            coins,
+            *args,
+            min_self_delegation=min_self_delegation,
+            pubkey=pubkey,
+            **kwargs,
         )
 
     def collect_gentxs(self, gentx_dir, i=0):
@@ -806,6 +813,16 @@ def init_devnet(
         if "coins" in node:
             cli.add_genesis_account(account["address"], node["coins"], i)
         if "staked" in node:
+            optional_fields = [
+                "commission_max_change_rate",
+                "commission_max_rate",
+                "commission_rate",
+                "details",
+                "security_contact",
+            ]
+            extra_kwargs = {
+                name: str(node[name]) for name in optional_fields if name in node
+            }
             cli.gentx(
                 "validator",
                 node["staked"],
@@ -813,6 +830,7 @@ def init_devnet(
                 i=i,
                 min_self_delegation=node.get("min_self_delegation", 1),
                 pubkey=node.get("pubkey"),
+                **extra_kwargs,
             )
 
     # create accounts
