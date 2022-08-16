@@ -821,7 +821,7 @@ def init_devnet(
                 "security_contact",
             ]
             extra_kwargs = {
-                name: node["name"] for name in optional_fields if name in node
+                name: node[name] for name in optional_fields if name in node
             }
             cli.gentx(
                 "validator",
