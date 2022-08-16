@@ -163,7 +163,7 @@ class CosmosCLI:
             **kwargs,
         )
 
-    def gentx(self, name, coins, *args, min_self_delegation=1, pubkey=None):
+    def gentx(self, name, coins, *args, min_self_delegation=1, pubkey=None, **kwargs):
         return self.raw(
             "gentx",
             name,
@@ -174,6 +174,7 @@ class CosmosCLI:
             chain_id=self.chain_id,
             keyring_backend="test",
             pubkey=pubkey,
+            **kwargs,
         )
 
     def collect_gentxs(self, gentx_dir):
