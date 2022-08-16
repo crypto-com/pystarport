@@ -1042,6 +1042,7 @@ def supervisord_ini_group(chain_ids):
             "nodaemon": "true",
             "logfile": "/dev/null",
             "logfile_maxbytes": "0",
+            "strip_ansi": "true",
         },
         "rpcinterface:supervisor": {
             "supervisor.rpcinterface_factory": "supervisor.rpcinterface:"
