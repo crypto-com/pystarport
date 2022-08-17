@@ -321,14 +321,23 @@ class ClusterCLI:
     def export(self, i=0):
         return self.cosmos_cli(i).export()
 
-    def validate_genesis(self, i=0):
-        return self.cosmos_cli(i).validate_genesis()
+    def validate_genesis(self, *args, i=0):
+        return self.cosmos_cli(i).validate_genesis(*args)
 
     def add_genesis_account(self, addr, coins, i=0, **kwargs):
         return self.cosmos_cli(i).add_genesis_account(addr, coins, **kwargs)
 
-    def gentx(self, name, coins, i=0, min_self_delegation=1, pubkey=None):
-        return self.cosmos_cli(i).gentx(name, coins, min_self_delegation, pubkey)
+    def gentx(
+        self, name, coins, *args, i=0, min_self_delegation=1, pubkey=None, **kwargs
+    ):
+        return self.cosmos_cli(i).gentx(
+            name,
+            coins,
+            *args,
+            min_self_delegation=min_self_delegation,
+            pubkey=pubkey,
+            **kwargs,
+        )
 
     def collect_gentxs(self, gentx_dir, i=0):
         return self.cosmos_cli(i).collect_gentxs(gentx_dir)
@@ -726,6 +735,7 @@ def init_devnet(
         ChainCommand(cmd)(
             "init",
             val["moniker"],
+            config.get("cmd-flags"),
             chain_id=config["chain_id"],
             home=home_dir(data_dir, i),
         )
@@ -803,12 +813,24 @@ def init_devnet(
         if "coins" in node:
             cli.add_genesis_account(account["address"], node["coins"], i)
         if "staked" in node:
+            optional_fields = [
+                "commission_max_change_rate",
+                "commission_max_rate",
+                "commission_rate",
+                "details",
+                "security_contact",
+            ]
+            extra_kwargs = {
+                name: str(node[name]) for name in optional_fields if name in node
+            }
             cli.gentx(
                 "validator",
                 node["staked"],
+                config.get("cmd-flags"),
                 i=i,
                 min_self_delegation=node.get("min_self_delegation", 1),
                 pubkey=node.get("pubkey"),
+                **extra_kwargs,
             )
 
     # create accounts
@@ -867,9 +889,12 @@ def init_devnet(
     # because the new binary may be a breaking one.
     doc = tomlkit.parse((data_dir / "node0/config/config.toml").read_text())
     if not doc["statesync"]["enable"]:
-        cli.validate_genesis()
+        cli.validate_genesis(config.get("cmd-flags", {}))
 
     # write supervisord config file
+    start_flags = " ".join(
+        [config.get("start-flags", ""), config.get("cmd-flags", "")]
+    ).strip()
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
         write_ini(
             fp,
@@ -877,7 +902,7 @@ def init_devnet(
                 cmd,
                 config["validators"],
                 config["chain_id"],
-                config.get("start-flags", ""),
+                start_flags=start_flags,
             ),
         )
 
@@ -1022,6 +1047,7 @@ def supervisord_ini_group(chain_ids):
             "nodaemon": "true",
             "logfile": "/dev/null",
             "logfile_maxbytes": "0",
+            "strip_ansi": "true",
         },
         "rpcinterface:supervisor": {
             "supervisor.rpcinterface_factory": "supervisor.rpcinterface:"

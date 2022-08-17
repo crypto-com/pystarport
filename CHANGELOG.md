@@ -3,6 +3,11 @@
 ## UNRELEASED
 - [#52](https://github.com/crypto-com/pystarport/pull/52) support jsonnet as config language
 - [#56](https://github.com/crypto-com/pystarport/pull/56) Support override config.toml for all validators
+- [#70](https://github.com/crypto-com/pystarport/pull/70) Add config item `cmd-flags` to supply custom flags for all
+  chain binary commands
+- [#71](https://github.com/crypto-com/pystarport/pull/71) strip ansi codes from the node's output
+- [#73](https://github.com/crypto-com/pystarport/pull/73) Support more optional validator fields:
+  commission_rate/commission_max_rate/commission_max_change_rate/details/security_contact
 
 *Feb 18, 2022*
 
