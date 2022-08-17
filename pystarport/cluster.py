@@ -994,11 +994,11 @@ def init_cluster(
 
         # restore the relayer account in relayer
         for chain in chains:
-            replayer = chain.get("key_name", "relayer")
+            relayer = chain.get("key_name", "relayer")
             mnemonic = find_account(
-                data_dir, chain["chain_id"], replayer
+                data_dir, chain["chain_id"], relayer
             )["mnemonic"]
-            mnemonic_path = (Path(data_dir) / "replayer.env")
+            mnemonic_path = (Path(data_dir) / "relayer.env")
             mnemonic_path.write_text(mnemonic)
             subprocess.run(
                 [
