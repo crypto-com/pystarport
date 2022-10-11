@@ -65,6 +65,7 @@ class CLI:
         dotenv: str = None,
         image: str = IMAGE,
         gen_compose_file: bool = False,
+        ignore_cmd_chain_id: str = None,
         no_remove: bool = False,
     ):
         """
@@ -86,6 +87,7 @@ class CLI:
             dotenv,
             image,
             self.cmd,
+            ignore_cmd_chain_id,
             gen_compose_file,
             no_remove=no_remove,
         )
@@ -129,7 +131,13 @@ class CLI:
         :param no_remove: don't remove existing data directory
         """
         serve(
-            Path(data), config, base_port, dotenv, self.cmd, quiet, no_remove=no_remove
+            Path(data),
+            config,
+            base_port,
+            dotenv,
+            self.cmd,
+            quiet,
+            no_remove=no_remove,
         )
 
     def supervisorctl(self, *args, data: str = "./data"):

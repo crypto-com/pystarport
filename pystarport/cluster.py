@@ -688,6 +688,7 @@ def init_devnet(
     base_port,
     image=IMAGE,
     cmd=None,
+    ignore_cmd_chain_id=None,
     gen_compose_file=False,
 ):
     """
@@ -729,6 +730,8 @@ def init_devnet(
     (data_dir / "config.json").write_text(json.dumps(config))
 
     cmd = cmd or config.get("cmd") or CHAIN
+    if ignore_cmd_chain_id == config["chain_id"]:
+        cmd = config.get("cmd")
 
     # init home directories
     for i, val in enumerate(config["validators"]):
@@ -947,6 +950,7 @@ def init_cluster(
     dotenv=None,
     image=IMAGE,
     cmd=None,
+    ignore_cmd_chain_id=None,
     gen_compose_file=False,
 ):
     extension = Path(config_path).suffix
@@ -962,9 +966,11 @@ def init_cluster(
 
     chains = list(config.values())
     for chain in chains:
-        (data_dir / chain["chain_id"]).mkdir()
+        chain_id = chain["chain_id"]
+        dir = data_dir / chain_id
+        dir.mkdir()
         init_devnet(
-            data_dir / chain["chain_id"], chain, base_port, image, cmd, gen_compose_file
+            dir, chain, base_port, image, cmd, ignore_cmd_chain_id, gen_compose_file
         )
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
         write_ini(
