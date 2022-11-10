@@ -9,7 +9,8 @@ from pystarport.expansion import expand_jsonnet, expand_yaml
 
 
 def _get_base_config():
-    return yaml.safe_load(open(Path(__file__).parent / "base.yaml"))
+    with open(Path(__file__).parent / "base.yaml") as f:
+        return yaml.safe_load(f.read())
 
 
 @pytest.mark.parametrize(

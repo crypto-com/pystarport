@@ -259,7 +259,7 @@ class ClusterCLI:
         # add process config into supervisor
         path = self.data_dir / SUPERVISOR_CONFIG_FILE
         ini = configparser.RawConfigParser()
-        ini.read_file(path.open())
+        ini.read(path)
         chain_id = self.chain_id
         prgname = f"{chain_id}-node{i}"
         section = f"program:{prgname}"
@@ -797,7 +797,7 @@ def init_devnet(
 
     # patch the genesis file
     genesis = jsonmerge.merge(
-        json.load(open(data_dir / "genesis.json")),
+        json.loads((data_dir / "genesis.json").read_text()),
         config.get("genesis", {}),
     )
     (data_dir / "genesis.json").write_text(json.dumps(genesis))

@@ -105,7 +105,8 @@ class BotClusterCLI:
     "transaction bot Cluster CLI"
 
     def __init__(self, config_path, cluster_cli: ClusterCLI):
-        self.config = yaml.safe_load(open(config_path))
+        with open(config_path) as f:
+            self.config = yaml.safe_load(f.read())
         self.cluster_cli = cluster_cli
 
     def start(self):
@@ -134,7 +135,8 @@ class BotCLI:
     "transaction bot CLI"
 
     def __init__(self, config_path, cosmos_cli=None):
-        self.config = yaml.safe_load(open(config_path))
+        with open(config_path) as f:
+            self.config = yaml.safe_load(f.read())
         self.cosmos_cli = cosmos_cli
 
     def start(self):

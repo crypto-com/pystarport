@@ -60,7 +60,8 @@ class CosmosCLI:
     ):
         self.data_dir = data_dir
         if chain_id is None:
-            self._genesis = json.load(open(self.data_dir / "config" / "genesis.json"))
+            src = (self.data_dir / "config" / "genesis.json").read_text()
+            self._genesis = json.loads(src)
             self.chain_id = self._genesis["chain_id"]
         else:
             self.chain_id = chain_id
