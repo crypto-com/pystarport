@@ -763,19 +763,18 @@ def init_devnet(
                     fp,
                 )
     if "genesis_file" in config:
-        genesis_bytes = open(
+        with open(
             config["genesis_file"] % {"here": Path(config["path"]).parent}, "rb"
-        ).read()
+        ) as f:
+            genesis_bytes = f.read()
     else:
         genesis_bytes = (data_dir / "node0/config/genesis.json").read_bytes()
     (data_dir / "genesis.json").write_bytes(genesis_bytes)
     (data_dir / "gentx").mkdir()
     for i in range(len(config["validators"])):
-        try:
-            (data_dir / f"node{i}/config/genesis.json").unlink()
-        except OSError:
-            pass
-        (data_dir / f"node{i}/config/genesis.json").symlink_to("../../genesis.json")
+        src = data_dir / f"node{i}/config/genesis.json"
+        src.unlink()
+        src.symlink_to("../../genesis.json")
         (data_dir / f"node{i}/config/gentx").symlink_to("../../gentx")
 
         # write client config
@@ -1081,7 +1080,8 @@ def docker_compose_yml(cmd, validators, data_dir, image):
 
 def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
     "field name changed after tendermint 0.35, support both flavours."
-    doc = tomlkit.parse(open(path).read())
+    with open(path) as f:
+        doc = tomlkit.parse(f.read())
     doc["mode"] = "validator"
     # tendermint is start in process, not needed
     # doc['proxy_app'] = 'tcp://127.0.0.1:%d' % abci_port(base_port)
@@ -1104,7 +1104,8 @@ def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
     patch_toml_doc(doc, config)
     if custom_edit is not None:
         custom_edit(doc)
-    open(path, "w").write(tomlkit.dumps(doc))
+    with open(path, "w") as f:
+        f.write(tomlkit.dumps(doc))
 
 
 def patch_toml_doc(doc, patch):
@@ -1141,8 +1142,8 @@ def edit_app_cfg(path, base_port, app_config):
             "EVMRPC_PORT_WS": ports.evmrpc_ws_port(base_port),
         },
     )
-
-    doc = tomlkit.parse(open(path).read())
+    with open(path) as f:
+        doc = tomlkit.parse(f.read())
     doc["grpc-web"] = {}
     doc["grpc-web"]["address"] = "0.0.0.0:%d" % ports.grpc_web_port(base_port)
     patch_toml_doc(doc, jsonmerge.merge(default_patch, app_config))
