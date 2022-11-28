@@ -267,7 +267,8 @@ class ClusterCLI:
         ini[section].update(
             dict(
                 COMMON_PROG_OPTIONS,
-                command=f"{self.cmd} start --home %(here)s/node{i}",
+                directory=f"%(here)s/node{i}",
+                command=f"{self.cmd} start --home .",
                 autostart="false",
                 stdout_logfile=f"%(here)s/node{i}.log",
             )
@@ -994,10 +995,8 @@ def init_cluster(
         # restore the relayer account in relayer
         for chain in chains:
             relayer = chain.get("key_name", "relayer")
-            mnemonic = find_account(
-                data_dir, chain["chain_id"], relayer
-            )["mnemonic"]
-            mnemonic_path = (Path(data_dir) / "relayer.env")
+            mnemonic = find_account(data_dir, chain["chain_id"], relayer)["mnemonic"]
+            mnemonic_path = Path(data_dir) / "relayer.env"
             mnemonic_path.write_text(mnemonic)
             subprocess.run(
                 [
@@ -1028,7 +1027,8 @@ def supervisord_ini(cmd, validators, chain_id, start_flags=""):
     for i, node in enumerate(validators):
         ini[f"program:{chain_id}-node{i}"] = dict(
             COMMON_PROG_OPTIONS,
-            command=f"{cmd} start --home %(here)s/node{i} {start_flags}",
+            directory=f"%(here)s/node{i}",
+            command=f"{cmd} start --home . {start_flags}",
             stdout_logfile=f"%(here)s/node{i}.log",
         )
     return ini
@@ -1057,8 +1057,9 @@ def supervisord_ini_group(chain_ids):
     }
     cfg["program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
-        command=("hermes --config %(here)s/relayer.toml start"),
-        stdout_logfile="%(here)s/relayer-demo.log",
+        directory="%(here)s",
+        command=("hermes --config relayer.toml start"),
+        stdout_logfile="relayer-demo.log",
         autostart="false",
     )
     return cfg
