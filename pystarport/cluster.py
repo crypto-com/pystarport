@@ -268,7 +268,7 @@ class ClusterCLI:
             dict(
                 COMMON_PROG_OPTIONS,
                 directory=f"%(here)s/node{i}",
-                command=f"{self.cmd} start --home .",
+                command="{self.cmd} start --home .",
                 autostart="false",
                 stdout_logfile=f"%(here)s/node{i}.log",
             )
@@ -1028,7 +1028,7 @@ def supervisord_ini(cmd, validators, chain_id, start_flags=""):
         ini[f"program:{chain_id}-node{i}"] = dict(
             COMMON_PROG_OPTIONS,
             directory=f"%(here)s/node{i}",
-            command=f"{cmd} start --home . {start_flags}",
+            command="{cmd} start --home . {start_flags}",
             stdout_logfile=f"%(here)s/node{i}.log",
         )
     return ini
@@ -1058,7 +1058,7 @@ def supervisord_ini_group(chain_ids):
     cfg["program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
         directory="%(here)s",
-        command=("hermes --config relayer.toml start"),
+        command="hermes --config relayer.toml start",
         stdout_logfile="relayer-demo.log",
         autostart="false",
     )
