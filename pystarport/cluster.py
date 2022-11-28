@@ -1059,7 +1059,7 @@ def supervisord_ini_group(chain_ids):
         COMMON_PROG_OPTIONS,
         directory="%(here)s",
         command="hermes --config relayer.toml start",
-        stdout_logfile="relayer-demo.log",
+        stdout_logfile="%(here)s/relayer-demo.log",
         autostart="false",
     )
     return cfg
