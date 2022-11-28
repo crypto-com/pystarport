@@ -268,7 +268,7 @@ class ClusterCLI:
             dict(
                 COMMON_PROG_OPTIONS,
                 directory=f"%(here)s/node{i}",
-                command="{self.cmd} start --home .",
+                command=f"{self.cmd} start --home .",
                 autostart="false",
                 stdout_logfile=f"%(here)s/node{i}.log",
             )
@@ -1028,7 +1028,7 @@ def supervisord_ini(cmd, validators, chain_id, start_flags=""):
         ini[f"program:{chain_id}-node{i}"] = dict(
             COMMON_PROG_OPTIONS,
             directory=f"%(here)s/node{i}",
-            command="{cmd} start --home . {start_flags}",
+            command=f"{cmd} start --home . {start_flags}",
             stdout_logfile=f"%(here)s/node{i}.log",
         )
     return ini
