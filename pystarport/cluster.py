@@ -264,13 +264,14 @@ class ClusterCLI:
         prgname = f"{chain_id}-node{i}"
         section = f"program:{prgname}"
         ini.add_section(section)
+        directory = f"%(here)s/node{i}"
         ini[section].update(
             dict(
                 COMMON_PROG_OPTIONS,
-                directory=f"%(here)s/node{i}",
+                directory=directory,
                 command=f"{self.cmd} start --home .",
                 autostart="false",
-                stdout_logfile=f"%(here)s/node{i}.log",
+                stdout_logfile=f"{directory}.log",
             )
         )
         with path.open("w") as fp:
@@ -1025,24 +1026,26 @@ def find_account(data_dir, chain_id, name):
 def supervisord_ini(cmd, validators, chain_id, start_flags=""):
     ini = {}
     for i, node in enumerate(validators):
+        directory = f"%(here)s/node{i}"
         ini[f"program:{chain_id}-node{i}"] = dict(
             COMMON_PROG_OPTIONS,
-            directory=f"%(here)s/node{i}",
+            directory=directory,
             command=f"{cmd} start --home . {start_flags}",
-            stdout_logfile=f"%(here)s/node{i}.log",
+            stdout_logfile=f"{directory}.log",
         )
     return ini
 
 
 def supervisord_ini_group(chain_ids):
+    directory = "%(here)s"
     cfg = {
         "include": {
             "files": " ".join(
-                f"%(here)s/{chain_id}/tasks.ini" for chain_id in chain_ids
+                f"{directory}/{chain_id}/tasks.ini" for chain_id in chain_ids
             )
         },
         "supervisord": {
-            "pidfile": "%(here)s/supervisord.pid",
+            "pidfile": f"{directory}/supervisord.pid",
             "nodaemon": "true",
             "logfile": "/dev/null",
             "logfile_maxbytes": "0",
@@ -1052,14 +1055,14 @@ def supervisord_ini_group(chain_ids):
             "supervisor.rpcinterface_factory": "supervisor.rpcinterface:"
             "make_main_rpcinterface",
         },
-        "unix_http_server": {"file": "%(here)s/supervisor.sock"},
-        "supervisorctl": {"serverurl": "unix://%(here)s/supervisor.sock"},
+        "unix_http_server": {"file": f"{directory}/supervisor.sock"},
+        "supervisorctl": {"serverurl": f"unix://{directory}/supervisor.sock"},
     }
     cfg["program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
-        directory="%(here)s",
+        directory=directory,
         command="hermes --config relayer.toml start",
-        stdout_logfile="%(here)s/relayer-demo.log",
+        stdout_logfile=f"{directory}/relayer-demo.log",
         autostart="false",
     )
     return cfg
