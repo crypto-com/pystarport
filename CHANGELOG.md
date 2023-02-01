@@ -8,6 +8,7 @@
 - [#71](https://github.com/crypto-com/pystarport/pull/71) strip ansi codes from the node's output
 - [#73](https://github.com/crypto-com/pystarport/pull/73) Support more optional validator fields:
   commission_rate/commission_max_rate/commission_max_change_rate/details/security_contact
+- [#]() Fix grpc port in client.toml
 
 *Feb 18, 2022*
 

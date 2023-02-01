@@ -773,7 +773,7 @@ def init_devnet(
         genesis_bytes = (data_dir / "node0/config/genesis.json").read_bytes()
     (data_dir / "genesis.json").write_bytes(genesis_bytes)
     (data_dir / "gentx").mkdir()
-    for i in range(len(config["validators"])):
+    for i, val in enumerate(config["validators"]):
         src = data_dir / f"node{i}/config/genesis.json"
         src.unlink()
         src.symlink_to("../../genesis.json")
