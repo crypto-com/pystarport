@@ -13,7 +13,8 @@
 - [#71](https://github.com/crypto-com/pystarport/pull/71) strip ansi codes from the node's output
 - [#73](https://github.com/crypto-com/pystarport/pull/73) Support more optional validator fields:
   commission_rate/commission_max_rate/commission_max_change_rate/details/security_contact
-- [#78](https://github.com/crypto-com/pystarport/pull/78) [#79](https://github.com/crypto-com/pystarport/pull/79) set working directories for tasks in supervisord
+- [#78](https://github.com/crypto-com/pystarport/pull/78) Set working directory for node processes in supervisor
+- [#79](https://github.com/crypto-com/pystarport/pull/79) Add directory for relayer log
 - [#81](https://github.com/crypto-com/pystarport/pull/81) Fix grpc port in client.toml
 
 *Feb 18, 2022*
