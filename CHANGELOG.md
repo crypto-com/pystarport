@@ -1,13 +1,20 @@
 # Changelog
 
-## UNRELEASED
+*Feb 7, 2023*
+
+## v0.2.5
+
+- [#51](https://github.com/crypto-com/pystarport/pull/51) support include yaml
 - [#52](https://github.com/crypto-com/pystarport/pull/52) support jsonnet as config language
 - [#56](https://github.com/crypto-com/pystarport/pull/56) Support override config.toml for all validators
+- [#69](https://github.com/crypto-com/pystarport/pull/69) Support hermes 1.x
 - [#70](https://github.com/crypto-com/pystarport/pull/70) Add config item `cmd-flags` to supply custom flags for all
   chain binary commands
 - [#71](https://github.com/crypto-com/pystarport/pull/71) strip ansi codes from the node's output
 - [#73](https://github.com/crypto-com/pystarport/pull/73) Support more optional validator fields:
   commission_rate/commission_max_rate/commission_max_change_rate/details/security_contact
+- [#78](https://github.com/crypto-com/pystarport/pull/78) Set working directory for node processes in supervisor
+- [#79](https://github.com/crypto-com/pystarport/pull/79) Add directory for relayer log
 - [#81](https://github.com/crypto-com/pystarport/pull/81) Fix grpc port in client.toml
 
 *Feb 18, 2022*
