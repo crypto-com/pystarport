@@ -227,6 +227,7 @@ class ClusterCLI:
                 }
             )
         )
+
         # use p2p peers from node0's config
         node0 = tomlkit.parse((self.data_dir / "node0/config/config.toml").read_text())
 
@@ -783,13 +784,13 @@ def init_devnet(
         rpc_port = ports.rpc_port(val["base_port"])
         (data_dir / f"node{i}/config/client.toml").write_text(
             tomlkit.dumps(
-                {
+                jsonmerge.merge({
                     "chain-id": config["chain_id"],
                     "keyring-backend": "test",
                     "output": "json",
                     "node": f"tcp://{val['hostname']}:{rpc_port}",
                     "broadcast-mode": "block",
-                }
+                }, val.get("client_config", {}))
             )
         )
 
