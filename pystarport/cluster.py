@@ -915,19 +915,22 @@ def init_devnet(
         )
 
 
-def relayer_chain_config(data_dir, chain, relayer_chains_config):
-    cfg = json.load((data_dir / chain["chain_id"] / "config.json").open())
-    rpc_port = ports.rpc_port(cfg["validators"][0]["base_port"])
-    grpc_port = ports.grpc_port(cfg["validators"][0]["base_port"])
-
-    chain_config = next(
-        (i for i in relayer_chains_config if i["id"] == chain["chain_id"]), {}
+def get_relayer_chain_config(relayer_chains_config, chain_id):
+    return next(
+        (i for i in relayer_chains_config if i["id"] == chain_id), {}
     )
 
+
+def relayer_chain_config_hermes(data_dir, chain, relayer_chains_config):
+    chain_id = chain["chain_id"]
+    cfg = json.load((data_dir / chain_id / "config.json").open())
+    base_port = cfg["validators"][0]["base_port"]
+    rpc_port = ports.rpc_port(base_port)
+    grpc_port = ports.grpc_port(base_port)
     return jsonmerge.merge(
         {
             "key_name": "relayer",
-            "id": chain["chain_id"],
+            "id": chain_id,
             "rpc_addr": f"http://localhost:{rpc_port}",
             "grpc_addr": f"http://localhost:{grpc_port}",
             "websocket_addr": f"ws://localhost:{rpc_port}/websocket",
@@ -938,8 +941,46 @@ def relayer_chain_config(data_dir, chain, relayer_chains_config):
             "gas_price": {"price": 0, "denom": "basecro"},
             "trusting_period": "336h",
         },
-        chain_config,
+        get_relayer_chain_config(relayer_chains_config, chain_id),
     )
+
+
+def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
+    chain_id = chain["chain_id"]
+    folder = data_dir / chain_id
+    cfg = json.load((folder / "config.json").open())
+    base_port = cfg["validators"][0]["base_port"]
+    rpc_port = ports.rpc_port(base_port)
+    chain_config = get_relayer_chain_config(relayer_chains_config, chain_id)
+    address_type = chain_config.get("address_type", {})
+    derivation = address_type.get("derivation")
+    gas_price = chain_config.get("gas_price", {})
+    price = gas_price["price"]
+    denom = gas_price["denom"]
+    return {
+        "type": "cosmos",
+        "value": {
+            "key-directory": f"{folder}/node0",
+            "key": "relayer",
+            "chain-id": chain_id,
+            "rpc-addr": f"http://localhost:{rpc_port}",
+            "account-prefix": chain.get("account-prefix", "cro"),
+            "keyring-backend": "test",
+            "gas-adjustment": 1.2,
+            "gas-prices": f"{price}{denom}",
+            "min-gas-amount": 0,
+            "debug": False,
+            "timeout": "20s",
+            "block-timeout": "",
+            "output-format": "json",
+            "sign-mode": "direct",
+            "extra-codecs": [derivation] if derivation else [],
+            "coin-type": chain.get("coin-type", 118),
+            "signing-algorithm": "",
+            "broadcast-mode": "batch",
+            "min-loop-duration": "0s"
+        }
+    }
 
 
 def init_cluster(
@@ -974,10 +1015,10 @@ def init_cluster(
             supervisord_ini_group(config.keys()),
         )
     if len(chains) > 1:
-        relayer_chains_config = relayer_config.pop("chains", {})
-        relayer_config_file = data_dir / "relayer.toml"
-        # write relayer config
-        relayer_config_file.write_text(
+        cfg = relayer_config.pop("chains", {})
+        # write relayer config for hermes
+        relayer_config_hermes = (data_dir / "relayer.toml")
+        relayer_config_hermes.write_text(
             tomlkit.dumps(
                 jsonmerge.merge(
                     {
@@ -985,26 +1026,47 @@ def init_cluster(
                             "log_level": "info",
                         },
                         "chains": [
-                            relayer_chain_config(data_dir, chain, relayer_chains_config)
-                            for chain in chains
+                            relayer_chain_config_hermes(data_dir, c, cfg)
+                            for c in chains
                         ],
                     },
                     relayer_config,
                 )
             )
         )
-
-        # restore the relayer account in relayer
+        # write relayer config folder for rly
+        relayer_config_rly = data_dir
+        for folder in ["relayer", "config"]:
+            relayer_config_rly = relayer_config_rly / folder
+            relayer_config_rly.mkdir()
+        relayer_config_rly = relayer_config_rly / "config.yaml"
+        relayer_config_rly.write_text(
+            yaml.dump(
+                {
+                    "global": {
+                        "api-listen-addr": ":5183",
+                        "timeout": "10s",
+                        "memo": "",
+                        "light-cache-size": 20
+                    },
+                    "chains": {
+                        c["chain_id"]: relayer_chain_config_rly(data_dir, c, cfg)
+                        for c in chains
+                    },
+                }
+            )
+        )
         for chain in chains:
             relayer = chain.get("key_name", "relayer")
             mnemonic = find_account(data_dir, chain["chain_id"], relayer)["mnemonic"]
             mnemonic_path = Path(data_dir) / "relayer.env"
             mnemonic_path.write_text(mnemonic)
+            # restore the relayer account for hermes
             subprocess.run(
                 [
                     "hermes",
                     "--config",
-                    relayer_config_file,
+                    relayer_config_hermes,
                     "keys",
                     "add",
                     "--chain",
@@ -1014,6 +1076,20 @@ def init_cluster(
                     "--overwrite",
                     "--hd-path",
                     "m/44'/" + str(chain.get("coin-type", 394)) + "'/0'/0/0",
+                ],
+                check=True,
+            )
+            # restore the relayer account for rly
+            subprocess.run(
+                [
+                    "rly",
+                    "keys",
+                    "restore",
+                    chain["chain_id"],
+                    "relayer",
+                    mnemonic,
+                    "--home",
+                    str(data_dir / "relayer"),
                 ],
                 check=True,
             )
