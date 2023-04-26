@@ -966,7 +966,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "rpc-addr": f"http://localhost:{rpc_port}",
             "account-prefix": chain.get("account-prefix", "cro"),
             "keyring-backend": "test",
-            "gas-adjustment": 1.2,
+            "gas-adjustment": chain_config.get("gas_multiplier", 1.2),
             "gas-prices": f"{price}{denom}",
             "min-gas-amount": 0,
             "debug": False,
