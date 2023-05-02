@@ -969,6 +969,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "gas-adjustment": chain_config.get("gas_multiplier", 1.2),
             "gas-prices": f"{price}{denom}",
             "min-gas-amount": 0,
+            "max-gas-amount": chain_config.get("max_gas", 300000),
             "debug": False,
             "timeout": "20s",
             "block-timeout": "",
