@@ -978,6 +978,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "sign-mode": "direct",
             "extra-codecs": [derivation] if derivation else [],
             "coin-type": chain.get("coin-type", 118),
+            "precompiled-contract-address": chain.get("precompiled-contract-address", ""),
             "signing-algorithm": "",
             "broadcast-mode": "batch",
             "min-loop-duration": "0s"
