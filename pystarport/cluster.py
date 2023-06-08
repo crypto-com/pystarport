@@ -33,7 +33,7 @@ COMMON_PROG_OPTIONS = {
     "autostart": "true",
     "autorestart": "true",
     "redirect_stderr": "true",
-    "startsecs": "1",
+    "startsecs": "3",
 }
 
 
