@@ -223,7 +223,7 @@ class ClusterCLI:
                     "keyring-backend": "test",
                     "output": "json",
                     "node": self.node_rpc(i),
-                    "broadcast-mode": "block",
+                    "broadcast-mode": "sync",
                 }
             )
         )
@@ -789,7 +789,7 @@ def init_devnet(
                     "keyring-backend": "test",
                     "output": "json",
                     "node": f"tcp://{val['hostname']}:{rpc_port}",
-                    "broadcast-mode": "block",
+                    "broadcast-mode": "sync",
                 }, val.get("client_config", {}))
             )
         )
