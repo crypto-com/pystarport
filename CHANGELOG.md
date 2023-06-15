@@ -3,6 +3,7 @@
 ## Unreleased
 
 - [#86](https://github.com/crypto-com/pystarport/pull/86) support golang relayer
+- [#91](https://github.com/crypto-com/pystarport/pull/91) replace block with sync broadcast mode
 
 *Feb 7, 2023*
 
