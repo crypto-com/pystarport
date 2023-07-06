@@ -955,8 +955,8 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     address_type = chain_config.get("address_type", {})
     derivation = address_type.get("derivation")
     gas_price = chain_config.get("gas_price", {})
-    price = gas_price.get("price", "")
-    denom = gas_price.get("denom", "")
+    price = gas_price.get("price", 0)
+    denom = gas_price.get("denom", "basecro")
     prices = f"{price}{denom}"
     return {
         "type": "cosmos",
