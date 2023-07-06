@@ -184,6 +184,7 @@ class ClusterCLI:
         hostname="localhost",
         statesync=False,
         mnemonic=None,
+        broadcastmode="sync"
     ):
         """create new node in the data directory,
         process information is written into supervisor config
@@ -214,7 +215,7 @@ class ClusterCLI:
         # init home directory
         self.init(i)
         home = self.home(i)
-        mode = self.config.get("broadcast-mode", "sync")
+        mode = self.config.get("broadcast-mode", broadcastmode)
         (home / "config/genesis.json").unlink()
         (home / "config/genesis.json").symlink_to("../../genesis.json")
         (home / "config/client.toml").write_text(
@@ -783,7 +784,6 @@ def init_devnet(
 
         # write client config
         rpc_port = ports.rpc_port(val["base_port"])
-        mode = config.get("broadcast-mode", "sync")
         (data_dir / f"node{i}/config/client.toml").write_text(
             tomlkit.dumps(
                 jsonmerge.merge({
@@ -791,7 +791,7 @@ def init_devnet(
                     "keyring-backend": "test",
                     "output": "json",
                     "node": f"tcp://{val['hostname']}:{rpc_port}",
-                    "broadcast-mode": mode,
+                    "broadcast-mode": "sync",
                 }, val.get("client_config", {}))
             )
         )
