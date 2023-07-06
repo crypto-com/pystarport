@@ -184,6 +184,7 @@ class ClusterCLI:
         hostname="localhost",
         statesync=False,
         mnemonic=None,
+        broadcastmode="sync"
     ):
         """create new node in the data directory,
         process information is written into supervisor config
@@ -223,7 +224,7 @@ class ClusterCLI:
                     "keyring-backend": "test",
                     "output": "json",
                     "node": self.node_rpc(i),
-                    "broadcast-mode": "sync",
+                    "broadcast-mode": broadcastmode,
                 }
             )
         )
