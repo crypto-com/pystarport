@@ -214,6 +214,7 @@ class ClusterCLI:
         # init home directory
         self.init(i)
         home = self.home(i)
+        mode = self.config.get("broadcast-mode", "sync")
         (home / "config/genesis.json").unlink()
         (home / "config/genesis.json").symlink_to("../../genesis.json")
         (home / "config/client.toml").write_text(
@@ -223,7 +224,7 @@ class ClusterCLI:
                     "keyring-backend": "test",
                     "output": "json",
                     "node": self.node_rpc(i),
-                    "broadcast-mode": "sync",
+                    "broadcast-mode": mode,
                 }
             )
         )
@@ -782,6 +783,7 @@ def init_devnet(
 
         # write client config
         rpc_port = ports.rpc_port(val["base_port"])
+        mode = config.get("broadcast-mode", "sync")
         (data_dir / f"node{i}/config/client.toml").write_text(
             tomlkit.dumps(
                 jsonmerge.merge({
@@ -789,7 +791,7 @@ def init_devnet(
                     "keyring-backend": "test",
                     "output": "json",
                     "node": f"tcp://{val['hostname']}:{rpc_port}",
-                    "broadcast-mode": "sync",
+                    "broadcast-mode": mode,
                 }, val.get("client_config", {}))
             )
         )

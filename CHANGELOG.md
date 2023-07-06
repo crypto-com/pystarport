@@ -5,6 +5,7 @@
 - [#86](https://github.com/crypto-com/pystarport/pull/86) support golang relayer
 - [#91](https://github.com/crypto-com/pystarport/pull/91) replace block with sync broadcast mode
 - [#93](https://github.com/crypto-com/pystarport/pull/93) add default gas prices for golang relayer
+- []() allow custom broadcast mode
 
 *Feb 7, 2023*
 
