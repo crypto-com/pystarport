@@ -1099,7 +1099,7 @@ def init_cluster(
                     check=True,
                 )
             except FileNotFoundError as e:
-                 print(f"golang relayer is not supported:\n"f"{e}")
+                print(f"golang relayer is not supported:\n"f"{e}")
 
 
 def find_account(data_dir, chain_id, name):
