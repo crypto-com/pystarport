@@ -215,7 +215,6 @@ class ClusterCLI:
         # init home directory
         self.init(i)
         home = self.home(i)
-        mode = self.config.get("broadcast-mode", broadcastmode)
         (home / "config/genesis.json").unlink()
         (home / "config/genesis.json").symlink_to("../../genesis.json")
         (home / "config/client.toml").write_text(
@@ -225,7 +224,7 @@ class ClusterCLI:
                     "keyring-backend": "test",
                     "output": "json",
                     "node": self.node_rpc(i),
-                    "broadcast-mode": mode,
+                    "broadcast-mode": broadcastmode,
                 }
             )
         )
