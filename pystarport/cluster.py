@@ -955,8 +955,9 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     address_type = chain_config.get("address_type", {})
     derivation = address_type.get("derivation")
     gas_price = chain_config.get("gas_price", {})
-    price = gas_price["price"]
-    denom = gas_price["denom"]
+    price = gas_price.get("price", "")
+    denom = gas_price.get("denom", "")
+    prices = f"{price}{denom}"
     return {
         "type": "cosmos",
         "value": {
@@ -967,7 +968,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "account-prefix": chain.get("account-prefix", "cro"),
             "keyring-backend": "test",
             "gas-adjustment": chain_config.get("gas_multiplier", 1.2),
-            "gas-prices": f"{price}{denom}",
+            "gas-prices": prices,
             "extension-options": chain_config.get("extension_options", []),
             "min-gas-amount": 0,
             "max-gas-amount": chain_config.get("max_gas", 300000),
