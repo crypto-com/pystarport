@@ -578,7 +578,7 @@ class CosmosCLI:
 
     def broadcast_tx(self, tx_file):
         r = self.raw(
-            "tx", "broadcast", tx_file, node=self.node_rpc, broadcast_mode="block"
+            "tx", "broadcast", tx_file, node=self.node_rpc, broadcast_mode="sync"
         )
         return r.decode("utf-8")
 
