@@ -1083,20 +1083,23 @@ def init_cluster(
                 ],
                 check=True,
             )
-            # restore the relayer account for rly
-            subprocess.run(
-                [
-                    "rly",
-                    "keys",
-                    "restore",
-                    chain["chain_id"],
-                    "relayer",
-                    mnemonic,
-                    "--home",
-                    str(data_dir / "relayer"),
-                ],
-                check=True,
-            )
+            try:
+                # restore the relayer account for rly
+                subprocess.run(
+                    [
+                        "rly",
+                        "keys",
+                        "restore",
+                        chain["chain_id"],
+                        "relayer",
+                        mnemonic,
+                        "--home",
+                        str(data_dir / "relayer"),
+                    ],
+                    check=True,
+                )
+            except FileNotFoundError as e:
+                 print(f"golang relayer is not supported:\n"f"{e}")
 
 
 def find_account(data_dir, chain_id, name):
