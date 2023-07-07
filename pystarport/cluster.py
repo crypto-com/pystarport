@@ -1026,25 +1026,27 @@ def init_cluster(
         )
     if len(chains) > 1:
         cfg = relayer_config.pop("chains", {})
-        # write relayer config for hermes
-        relayer_config_hermes = (data_dir / "relayer.toml")
-        relayer_config_hermes.write_text(
-            tomlkit.dumps(
-                jsonmerge.merge(
-                    {
-                        "global": {
-                            "log_level": "info",
+        is_hermes = relayer == Relayer.HERMES
+        is_rly = relayer == Relayer.RLY
+        if is_hermes:
+            # write relayer config for hermes
+            relayer_config_hermes = (data_dir / "relayer.toml")
+            relayer_config_hermes.write_text(
+                tomlkit.dumps(
+                    jsonmerge.merge(
+                        {
+                            "global": {
+                                "log_level": "info",
+                            },
+                            "chains": [
+                                relayer_chain_config_hermes(data_dir, c, cfg)
+                                for c in chains
+                            ],
                         },
-                        "chains": [
-                            relayer_chain_config_hermes(data_dir, c, cfg)
-                            for c in chains
-                        ],
-                    },
-                    relayer_config,
+                        relayer_config,
+                    )
                 )
             )
-        )
-        is_rly = relayer == Relayer.RLY
         if is_rly:
             # write relayer config folder for rly
             relayer_config_rly = data_dir
@@ -1073,24 +1075,25 @@ def init_cluster(
             mnemonic = find_account(data_dir, chain["chain_id"], key_name)["mnemonic"]
             mnemonic_path = Path(data_dir) / "relayer.env"
             mnemonic_path.write_text(mnemonic)
-            # restore the relayer account for hermes
-            subprocess.run(
-                [
-                    "hermes",
-                    "--config",
-                    relayer_config_hermes,
-                    "keys",
-                    "add",
-                    "--chain",
-                    chain["chain_id"],
-                    "--mnemonic-file",
-                    str(mnemonic_path),
-                    "--overwrite",
-                    "--hd-path",
-                    "m/44'/" + str(chain.get("coin-type", 394)) + "'/0'/0/0",
-                ],
-                check=True,
-            )
+            if is_hermes:
+                # restore the relayer account for hermes
+                subprocess.run(
+                    [
+                        "hermes",
+                        "--config",
+                        relayer_config_hermes,
+                        "keys",
+                        "add",
+                        "--chain",
+                        chain["chain_id"],
+                        "--mnemonic-file",
+                        str(mnemonic_path),
+                        "--overwrite",
+                        "--hd-path",
+                        "m/44'/" + str(chain.get("coin-type", 394)) + "'/0'/0/0",
+                    ],
+                    check=True,
+                )
             if is_rly:
                 # restore the relayer account for rly
                 subprocess.run(
