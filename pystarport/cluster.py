@@ -9,6 +9,7 @@ import subprocess
 import sys
 import threading
 import time
+from enum import IntEnum
 from pathlib import Path
 from typing import List
 
@@ -987,6 +988,10 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     }
 
 
+class Relayer(IntEnum):
+    (HERMES, RLY) = range(2)
+
+
 def init_cluster(
     data_dir,
     config_path,
@@ -995,6 +1000,7 @@ def init_cluster(
     image=IMAGE,
     cmd=None,
     gen_compose_file=False,
+    relayer=Relayer.HERMES,
 ):
     extension = Path(config_path).suffix
     if extension == ".jsonnet":
@@ -1038,31 +1044,33 @@ def init_cluster(
                 )
             )
         )
-        # write relayer config folder for rly
-        relayer_config_rly = data_dir
-        for folder in ["relayer", "config"]:
-            relayer_config_rly = relayer_config_rly / folder
-            relayer_config_rly.mkdir()
-        relayer_config_rly = relayer_config_rly / "config.yaml"
-        relayer_config_rly.write_text(
-            yaml.dump(
-                {
-                    "global": {
-                        "api-listen-addr": ":5183",
-                        "timeout": "10s",
-                        "memo": "",
-                        "light-cache-size": 20
-                    },
-                    "chains": {
-                        c["chain_id"]: relayer_chain_config_rly(data_dir, c, cfg)
-                        for c in chains
-                    },
-                }
+        is_rly = relayer == Relayer.RLY
+        if is_rly:
+            # write relayer config folder for rly
+            relayer_config_rly = data_dir
+            for folder in ["relayer", "config"]:
+                relayer_config_rly = relayer_config_rly / folder
+                relayer_config_rly.mkdir()
+            relayer_config_rly = relayer_config_rly / "config.yaml"
+            relayer_config_rly.write_text(
+                yaml.dump(
+                    {
+                        "global": {
+                            "api-listen-addr": ":5183",
+                            "timeout": "10s",
+                            "memo": "",
+                            "light-cache-size": 20
+                        },
+                        "chains": {
+                            c["chain_id"]: relayer_chain_config_rly(data_dir, c, cfg)
+                            for c in chains
+                        },
+                    }
+                )
             )
-        )
         for chain in chains:
-            relayer = chain.get("key_name", "relayer")
-            mnemonic = find_account(data_dir, chain["chain_id"], relayer)["mnemonic"]
+            key_name = chain.get("key_name", "relayer")
+            mnemonic = find_account(data_dir, chain["chain_id"], key_name)["mnemonic"]
             mnemonic_path = Path(data_dir) / "relayer.env"
             mnemonic_path.write_text(mnemonic)
             # restore the relayer account for hermes
@@ -1083,7 +1091,7 @@ def init_cluster(
                 ],
                 check=True,
             )
-            try:
+            if is_rly:
                 # restore the relayer account for rly
                 subprocess.run(
                     [
@@ -1098,8 +1106,6 @@ def init_cluster(
                     ],
                     check=True,
                 )
-            except FileNotFoundError as e:
-                print(f"golang relayer is not supported:\n"f"{e}")
 
 
 def find_account(data_dir, chain_id, name):
