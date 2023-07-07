@@ -9,6 +9,7 @@ import subprocess
 import sys
 import threading
 import time
+from enum import IntEnum
 from pathlib import Path
 from typing import List
 
@@ -987,6 +988,10 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     }
 
 
+class Relayer(IntEnum):
+    (HERMES, RLY) = range(2)
+
+
 def init_cluster(
     data_dir,
     config_path,
@@ -995,7 +1000,10 @@ def init_cluster(
     image=IMAGE,
     cmd=None,
     gen_compose_file=False,
+    relayer=Relayer.HERMES,
 ):
+    is_hermes = relayer == Relayer.HERMES
+    is_rly = relayer == Relayer.RLY
     extension = Path(config_path).suffix
     if extension == ".jsonnet":
         config = expand_jsonnet(config_path, dotenv)
@@ -1020,83 +1028,85 @@ def init_cluster(
         )
     if len(chains) > 1:
         cfg = relayer_config.pop("chains", {})
-        # write relayer config for hermes
-        relayer_config_hermes = (data_dir / "relayer.toml")
-        relayer_config_hermes.write_text(
-            tomlkit.dumps(
-                jsonmerge.merge(
-                    {
-                        "global": {
-                            "log_level": "info",
+        if is_hermes:
+            # write relayer config for hermes
+            relayer_config_hermes = (data_dir / "relayer.toml")
+            relayer_config_hermes.write_text(
+                tomlkit.dumps(
+                    jsonmerge.merge(
+                        {
+                            "global": {
+                                "log_level": "info",
+                            },
+                            "chains": [
+                                relayer_chain_config_hermes(data_dir, c, cfg)
+                                for c in chains
+                            ],
                         },
-                        "chains": [
-                            relayer_chain_config_hermes(data_dir, c, cfg)
-                            for c in chains
-                        ],
-                    },
-                    relayer_config,
+                        relayer_config,
+                    )
                 )
             )
-        )
-        # write relayer config folder for rly
-        relayer_config_rly = data_dir
-        for folder in ["relayer", "config"]:
-            relayer_config_rly = relayer_config_rly / folder
-            relayer_config_rly.mkdir()
-        relayer_config_rly = relayer_config_rly / "config.yaml"
-        relayer_config_rly.write_text(
-            yaml.dump(
-                {
-                    "global": {
-                        "api-listen-addr": ":5183",
-                        "timeout": "10s",
-                        "memo": "",
-                        "light-cache-size": 20
-                    },
-                    "chains": {
-                        c["chain_id"]: relayer_chain_config_rly(data_dir, c, cfg)
-                        for c in chains
-                    },
-                }
+        elif is_rly:
+            # write relayer config folder for rly
+            relayer_config_dir = (data_dir / "relayer/config")
+            relayer_config_dir.mkdir(parents=True, exist_ok=True)
+            relayer_config_rly = (relayer_config_dir / "config.yaml")
+            relayer_config_rly.write_text(
+                yaml.dump(
+                    {
+                        "global": {
+                            "api-listen-addr": ":5183",
+                            "timeout": "10s",
+                            "memo": "",
+                            "light-cache-size": 20
+                        },
+                        "chains": {
+                            c["chain_id"]: relayer_chain_config_rly(data_dir, c, cfg)
+                            for c in chains
+                        },
+                    }
+                )
             )
-        )
         for chain in chains:
-            relayer = chain.get("key_name", "relayer")
-            mnemonic = find_account(data_dir, chain["chain_id"], relayer)["mnemonic"]
+            key_name = chain.get("key_name", "relayer")
+            mnemonic = find_account(data_dir, chain["chain_id"], key_name)["mnemonic"]
             mnemonic_path = Path(data_dir) / "relayer.env"
             mnemonic_path.write_text(mnemonic)
-            # restore the relayer account for hermes
-            subprocess.run(
-                [
-                    "hermes",
-                    "--config",
-                    relayer_config_hermes,
-                    "keys",
-                    "add",
-                    "--chain",
-                    chain["chain_id"],
-                    "--mnemonic-file",
-                    str(mnemonic_path),
-                    "--overwrite",
-                    "--hd-path",
-                    "m/44'/" + str(chain.get("coin-type", 394)) + "'/0'/0/0",
-                ],
-                check=True,
-            )
-            # restore the relayer account for rly
-            subprocess.run(
-                [
-                    "rly",
-                    "keys",
-                    "restore",
-                    chain["chain_id"],
-                    "relayer",
-                    mnemonic,
-                    "--home",
-                    str(data_dir / "relayer"),
-                ],
-                check=True,
-            )
+            if is_hermes:
+                # restore the relayer account for hermes
+                subprocess.run(
+                    [
+                        "hermes",
+                        "--config",
+                        relayer_config_hermes,
+                        "keys",
+                        "add",
+                        "--chain",
+                        chain["chain_id"],
+                        "--mnemonic-file",
+                        str(mnemonic_path),
+                        "--overwrite",
+                        "--hd-path",
+                        "m/44'/" + str(chain.get("coin-type", 394)) + "'/0'/0/0",
+                    ],
+                    check=True,
+                )
+            elif is_rly:
+                # restore the relayer account for rly
+                subprocess.run(
+                    [
+                        "rly",
+                        "keys",
+                        "restore",
+                        chain["chain_id"],
+                        "relayer",
+                        mnemonic,
+                        "--home",
+                        str(data_dir / "relayer"),
+                    ],
+                    check=True,
+                )
 
 
 def find_account(data_dir, chain_id, name):
