@@ -1002,6 +1002,8 @@ def init_cluster(
     gen_compose_file=False,
     relayer=Relayer.HERMES,
 ):
+    is_hermes = relayer == Relayer.HERMES
+    is_rly = relayer == Relayer.RLY
     extension = Path(config_path).suffix
     if extension == ".jsonnet":
         config = expand_jsonnet(config_path, dotenv)
@@ -1026,8 +1028,6 @@ def init_cluster(
         )
     if len(chains) > 1:
         cfg = relayer_config.pop("chains", {})
-        is_hermes = relayer == Relayer.HERMES
-        is_rly = relayer == Relayer.RLY
         if is_hermes:
             # write relayer config for hermes
             relayer_config_hermes = (data_dir / "relayer.toml")
@@ -1047,13 +1047,11 @@ def init_cluster(
                     )
                 )
             )
-        if is_rly:
+        elif is_rly:
             # write relayer config folder for rly
-            relayer_config_rly = data_dir
-            for folder in ["relayer", "config"]:
-                relayer_config_rly = relayer_config_rly / folder
-                relayer_config_rly.mkdir()
-            relayer_config_rly = relayer_config_rly / "config.yaml"
+            relayer_config_dir = (data_dir / "relayer/config")
+            relayer_config_dir.mkdir(parents=True, exist_ok=True)
+            relayer_config_rly = (relayer_config_dir / "config.yaml")
             relayer_config_rly.write_text(
                 yaml.dump(
                     {
@@ -1094,7 +1092,7 @@ def init_cluster(
                     ],
                     check=True,
                 )
-            if is_rly:
+            elif is_rly:
                 # restore the relayer account for rly
                 subprocess.run(
                     [
