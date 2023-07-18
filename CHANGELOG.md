@@ -7,7 +7,7 @@
 - [#93](https://github.com/crypto-com/pystarport/pull/93) add default gas prices for golang relayer
 - [#94](https://github.com/crypto-com/pystarport/pull/94) allow custom broadcast mode when create node
 - [#95](https://github.com/crypto-com/pystarport/pull/95) make golang relayer optional
-- [#96](https://github.com/crypto-com/pystarport/pull/96) change defafault listen address to localhost
+- [#96](https://github.com/crypto-com/pystarport/pull/96) change default listen address to localhost
 
 *Feb 7, 2023*
 
