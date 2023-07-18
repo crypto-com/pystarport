@@ -1181,12 +1181,12 @@ def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
     # tendermint is start in process, not needed
     # doc['proxy_app'] = 'tcp://127.0.0.1:%d' % abci_port(base_port)
     rpc = doc["rpc"]
-    rpc["laddr"] = "tcp://0.0.0.0:%d" % ports.rpc_port(base_port)
+    rpc["laddr"] = "tcp://127.0.0.1:%d" % ports.rpc_port(base_port)
     rpc["pprof_laddr"] = rpc["pprof-laddr"] = "localhost:%d" % (
         ports.pprof_port(base_port),
     )
     rpc["timeout_broadcast_tx_commit"] = rpc["timeout-broadcast-tx-commit"] = "30s"
-    rpc["grpc_laddr"] = rpc["grpc-laddr"] = "tcp://0.0.0.0:%d" % (
+    rpc["grpc_laddr"] = rpc["grpc-laddr"] = "tcp://127.0.0.1:%d" % (
         ports.grpc_port_tx_only(base_port),
     )
     p2p = doc["p2p"]
@@ -1217,10 +1217,10 @@ def edit_app_cfg(path, base_port, app_config):
             "enable": True,
             "swagger": True,
             "enable-unsafe-cors": True,
-            "address": "tcp://0.0.0.0:%d" % ports.api_port(base_port),
+            "address": "tcp://127.0.0.1:%d" % ports.api_port(base_port),
         },
         "grpc": {
-            "address": "0.0.0.0:%d" % ports.grpc_port(base_port),
+            "address": "127.0.0.1:%d" % ports.grpc_port(base_port),
         },
         "pruning": "nothing",
         "state-sync": {
@@ -1240,7 +1240,7 @@ def edit_app_cfg(path, base_port, app_config):
     with open(path) as f:
         doc = tomlkit.parse(f.read())
     doc["grpc-web"] = {}
-    doc["grpc-web"]["address"] = "0.0.0.0:%d" % ports.grpc_web_port(base_port)
+    doc["grpc-web"]["address"] = "127.0.0.1:%d" % ports.grpc_web_port(base_port)
     patch_toml_doc(doc, jsonmerge.merge(default_patch, app_config))
     open(path, "w").write(tomlkit.dumps(doc))
 
