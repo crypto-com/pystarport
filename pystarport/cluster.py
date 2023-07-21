@@ -935,7 +935,11 @@ def relayer_chain_config_hermes(data_dir, chain, relayer_chains_config):
             "id": chain_id,
             "rpc_addr": f"http://localhost:{rpc_port}",
             "grpc_addr": f"http://localhost:{grpc_port}",
-            "websocket_addr": f"ws://localhost:{rpc_port}/websocket",
+            "event_source": {
+                "mode": "push", 
+                "url": f"ws://127.0.0.1:{rpc_port}/websocket",
+                "batch_delay": "200ms",
+            },
             "rpc_timeout": "10s",
             "account_prefix": chain.get("account-prefix", "cro"),
             "store_prefix": "ibc",
