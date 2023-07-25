@@ -3,6 +3,11 @@
 ## Unreleased
 
 - [#86](https://github.com/crypto-com/pystarport/pull/86) support golang relayer
+- [#91](https://github.com/crypto-com/pystarport/pull/91) replace block with sync broadcast mode
+- [#93](https://github.com/crypto-com/pystarport/pull/93) add default gas prices for golang relayer
+- [#94](https://github.com/crypto-com/pystarport/pull/94) allow custom broadcast mode when create node
+- [#95](https://github.com/crypto-com/pystarport/pull/95) make golang relayer optional
+- [#96](https://github.com/crypto-com/pystarport/pull/96) change default listen address to 127.0.0.1
 
 *Feb 7, 2023*
 
