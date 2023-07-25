@@ -7,6 +7,7 @@
 - [#93](https://github.com/crypto-com/pystarport/pull/93) add default gas prices for golang relayer
 - [#94](https://github.com/crypto-com/pystarport/pull/94) allow custom broadcast mode when create node
 - [#95](https://github.com/crypto-com/pystarport/pull/95) make golang relayer optional
+- [#97](https://github.com/crypto-com/pystarport/pull/97) update `websocket_addr` to `event_source` for hermes v1.6.0
 
 *Feb 7, 2023*
 
