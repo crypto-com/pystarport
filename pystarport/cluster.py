@@ -182,7 +182,7 @@ class ClusterCLI:
         self,
         base_port=None,
         moniker=None,
-        hostname="localhost",
+        hostname="127.0.0.1",
         statesync=False,
         mnemonic=None,
         broadcastmode="sync"
@@ -684,7 +684,7 @@ def process_config(config, base_port):
         if "base_port" not in val:
             val["base_port"] = base_port + i * 10
         if "hostname" not in val:
-            val["hostname"] = "localhost"
+            val["hostname"] = "127.0.0.1"
 
 
 def init_devnet(
@@ -933,9 +933,9 @@ def relayer_chain_config_hermes(data_dir, chain, relayer_chains_config):
         {
             "key_name": "relayer",
             "id": chain_id,
-            "rpc_addr": f"http://localhost:{rpc_port}",
-            "grpc_addr": f"http://localhost:{grpc_port}",
-            "websocket_addr": f"ws://localhost:{rpc_port}/websocket",
+            "rpc_addr": f"http://127.0.0.1:{rpc_port}",
+            "grpc_addr": f"http://127.0.0.1:{grpc_port}",
+            "websocket_addr": f"ws://127.0.0.1:{rpc_port}/websocket",
             "rpc_timeout": "10s",
             "account_prefix": chain.get("account-prefix", "cro"),
             "store_prefix": "ibc",
@@ -966,7 +966,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "key-directory": f"{folder}/node0",
             "key": "relayer",
             "chain-id": chain_id,
-            "rpc-addr": f"http://localhost:{rpc_port}",
+            "rpc-addr": f"http://127.0.0.1:{rpc_port}",
             "account-prefix": chain.get("account-prefix", "cro"),
             "keyring-backend": "test",
             "gas-adjustment": chain_config.get("gas_multiplier", 1.2),
@@ -1181,17 +1181,17 @@ def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
     # tendermint is start in process, not needed
     # doc['proxy_app'] = 'tcp://127.0.0.1:%d' % abci_port(base_port)
     rpc = doc["rpc"]
-    rpc["laddr"] = "tcp://0.0.0.0:%d" % ports.rpc_port(base_port)
-    rpc["pprof_laddr"] = rpc["pprof-laddr"] = "localhost:%d" % (
+    rpc["laddr"] = "tcp://127.0.0.1:%d" % ports.rpc_port(base_port)
+    rpc["pprof_laddr"] = rpc["pprof-laddr"] = "127.0.0.1:%d" % (
         ports.pprof_port(base_port),
     )
     rpc["timeout_broadcast_tx_commit"] = rpc["timeout-broadcast-tx-commit"] = "30s"
-    rpc["grpc_laddr"] = rpc["grpc-laddr"] = "tcp://0.0.0.0:%d" % (
+    rpc["grpc_laddr"] = rpc["grpc-laddr"] = "tcp://127.0.0.1:%d" % (
         ports.grpc_port_tx_only(base_port),
     )
     p2p = doc["p2p"]
     # p2p["use-legacy"] = True
-    p2p["laddr"] = "tcp://0.0.0.0:%d" % ports.p2p_port(base_port)
+    p2p["laddr"] = "tcp://127.0.0.1:%d" % ports.p2p_port(base_port)
     p2p["persistent_peers"] = p2p["persistent-peers"] = peers
     p2p["addr_book_strict"] = p2p["addr-book-strict"] = False
     p2p["allow_duplicate_ip"] = p2p["allow-duplicate-ip"] = True
@@ -1217,10 +1217,10 @@ def edit_app_cfg(path, base_port, app_config):
             "enable": True,
             "swagger": True,
             "enable-unsafe-cors": True,
-            "address": "tcp://0.0.0.0:%d" % ports.api_port(base_port),
+            "address": "tcp://127.0.0.1:%d" % ports.api_port(base_port),
         },
         "grpc": {
-            "address": "0.0.0.0:%d" % ports.grpc_port(base_port),
+            "address": "127.0.0.1:%d" % ports.grpc_port(base_port),
         },
         "pruning": "nothing",
         "state-sync": {
@@ -1240,7 +1240,7 @@ def edit_app_cfg(path, base_port, app_config):
     with open(path) as f:
         doc = tomlkit.parse(f.read())
     doc["grpc-web"] = {}
-    doc["grpc-web"]["address"] = "0.0.0.0:%d" % ports.grpc_web_port(base_port)
+    doc["grpc-web"]["address"] = "127.0.0.1:%d" % ports.grpc_web_port(base_port)
     patch_toml_doc(doc, jsonmerge.merge(default_patch, app_config))
     open(path, "w").write(tomlkit.dumps(doc))
 
