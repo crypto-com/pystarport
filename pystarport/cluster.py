@@ -960,6 +960,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     price = gas_price.get("price", 0)
     denom = gas_price.get("denom", "basecro")
     prices = f"{price}{denom}"
+    precompiled = chain.get("precompiled-contract-address", "")
     return {
         "type": "cosmos",
         "value": {
@@ -981,6 +982,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "sign-mode": "direct",
             "extra-codecs": [derivation] if derivation else [],
             "coin-type": chain.get("coin-type", 118),
+            "precompiled-contract-address": precompiled,
             "signing-algorithm": "",
             "broadcast-mode": "batch",
             "min-loop-duration": "0s"
