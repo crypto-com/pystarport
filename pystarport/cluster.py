@@ -9,7 +9,7 @@ import subprocess
 import sys
 import threading
 import time
-from enum import IntEnum
+from enum import Enum
 from pathlib import Path
 from typing import List
 
@@ -990,8 +990,9 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     }
 
 
-class Relayer(IntEnum):
-    (HERMES, RLY) = range(2)
+class Relayer(Enum):
+    HERMES = "hermes"
+    RLY = "rly"
 
 
 def init_cluster(
@@ -1002,10 +1003,9 @@ def init_cluster(
     image=IMAGE,
     cmd=None,
     gen_compose_file=False,
-    relayer=Relayer.HERMES,
+    relayer=Relayer.HERMES.value,
 ):
-    is_hermes = relayer == Relayer.HERMES
-    is_rly = relayer == Relayer.RLY
+    is_hermes = relayer == Relayer.HERMES.value
     extension = Path(config_path).suffix
     if extension == ".jsonnet":
         config = expand_jsonnet(config_path, dotenv)
@@ -1049,7 +1049,7 @@ def init_cluster(
                     )
                 )
             )
-        elif is_rly:
+        else:
             # write relayer config folder for rly
             relayer_config_dir = (data_dir / "relayer/config")
             relayer_config_dir.mkdir(parents=True, exist_ok=True)
@@ -1094,7 +1094,7 @@ def init_cluster(
                     ],
                     check=True,
                 )
-            elif is_rly:
+            else:
                 # restore the relayer account for rly
                 subprocess.run(
                     [
