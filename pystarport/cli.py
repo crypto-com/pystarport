@@ -6,7 +6,13 @@ import fire
 
 from .app import IMAGE, SUPERVISOR_CONFIG_FILE
 from .bot import BotCLI, BotClusterCLI
-from .cluster import ClusterCLI, init_cluster, start_cluster, start_tail_logs_thread
+from .cluster import (
+    ClusterCLI,
+    Relayer,
+    init_cluster,
+    start_cluster,
+    start_tail_logs_thread,
+)
 from .cosmoscli import CosmosCLI
 from .utils import build_cli_args, interact
 
@@ -18,6 +24,7 @@ def init(
     dotenv,
     *args,
     no_remove=False,
+    relayer=Relayer.HERMES.value,
     **kwargs,
 ):
     if not no_remove:
@@ -25,7 +32,15 @@ def init(
             f"rm -r {data}; mkdir {data}",
             ignore_error=True,
         )
-    return init_cluster(data, config, base_port, dotenv, *args, **kwargs)
+    return init_cluster(
+        data,
+        config,
+        base_port,
+        dotenv,
+        relayer=relayer,
+        *args,
+        **kwargs,
+    )
 
 
 def start(data, quiet):
@@ -45,8 +60,17 @@ def start(data, quiet):
         tailer.join()
 
 
-def serve(data, config, base_port, dotenv, cmd, quiet, no_remove=False):
-    init(data, config, base_port, dotenv, cmd=cmd, no_remove=no_remove)
+def serve(
+    data,
+    config,
+    base_port,
+    dotenv,
+    cmd,
+    quiet,
+    no_remove=False,
+    relayer=Relayer.HERMES.value,
+):
+    init(data, config, base_port, dotenv, cmd=cmd, no_remove=no_remove, relayer=relayer)
     start(data, quiet)
 
 
@@ -66,6 +90,7 @@ class CLI:
         image: str = IMAGE,
         gen_compose_file: bool = False,
         no_remove: bool = False,
+        relayer: str = Relayer.HERMES.value,
     ):
         """
         prepare all the configurations of a devnet
@@ -88,6 +113,7 @@ class CLI:
             self.cmd,
             gen_compose_file,
             no_remove=no_remove,
+            relayer=relayer,
         )
 
     def start(self, data: str = "./data", quiet: bool = False):
@@ -116,6 +142,7 @@ class CLI:
         dotenv: str = None,
         quiet: bool = False,
         no_remove: bool = False,
+        relayer: str = Relayer.HERMES.value,
     ):
         """
         prepare and start a devnet from scatch
@@ -129,7 +156,14 @@ class CLI:
         :param no_remove: don't remove existing data directory
         """
         serve(
-            Path(data), config, base_port, dotenv, self.cmd, quiet, no_remove=no_remove
+            Path(data),
+            config,
+            base_port,
+            dotenv,
+            self.cmd,
+            quiet,
+            no_remove=no_remove,
+            relayer=relayer,
         )
 
     def supervisorctl(self, *args, data: str = "./data"):
