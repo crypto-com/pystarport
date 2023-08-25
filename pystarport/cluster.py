@@ -936,7 +936,7 @@ def relayer_chain_config_hermes(data_dir, chain, relayer_chains_config):
             "rpc_addr": f"http://127.0.0.1:{rpc_port}",
             "grpc_addr": f"http://127.0.0.1:{grpc_port}",
             "event_source": {
-                "mode": "push", 
+                "mode": "push",
                 "url": f"ws://127.0.0.1:{rpc_port}/websocket",
                 "batch_delay": "200ms",
             },
