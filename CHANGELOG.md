@@ -8,6 +8,7 @@
 - [#94](https://github.com/crypto-com/pystarport/pull/94) allow custom broadcast mode when create node
 - [#95](https://github.com/crypto-com/pystarport/pull/95) make golang relayer optional
 - [#96](https://github.com/crypto-com/pystarport/pull/96) change default listen address to 127.0.0.1
+- [#97](https://github.com/crypto-com/pystarport/pull/97) update `websocket_addr` to `event_source` for hermes v1.6.0
 - [#99](https://github.com/crypto-com/pystarport/pull/99) add relayer related flag when init cluster
 
 *Feb 7, 2023*
