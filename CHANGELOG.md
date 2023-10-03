@@ -10,6 +10,7 @@
 - [#96](https://github.com/crypto-com/pystarport/pull/96) change default listen address to 127.0.0.1
 - [#97](https://github.com/crypto-com/pystarport/pull/97) update `websocket_addr` to `event_source` for hermes v1.6.0
 - [#99](https://github.com/crypto-com/pystarport/pull/99) add relayer related flag when init cluster
+- [#](https://github.com/crypto-com/pystarport/pull/) manage golang relayer under supervisord
 
 *Feb 7, 2023*
 
