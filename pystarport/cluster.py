@@ -964,7 +964,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     price = gas_price.get("price", 0)
     denom = gas_price.get("denom", "basecro")
     prices = f"{price}{denom}"
-    precompiled = chain.get("precompiled-contract-address", "")
+    precompiled = chain_config.get("precompiled_contract_address", "")
     return {
         "type": "cosmos",
         "value": {
