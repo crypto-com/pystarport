@@ -1030,7 +1030,7 @@ def init_cluster(
     with (data_dir / SUPERVISOR_CONFIG_FILE).open("w") as fp:
         write_ini(
             fp,
-            supervisord_ini_group(config.keys()),
+            supervisord_ini_group(config.keys(), is_hermes),
         )
     if len(chains) > 1:
         cfg = relayer_config.pop("chains", {})
@@ -1133,7 +1133,7 @@ def supervisord_ini(cmd, validators, chain_id, start_flags=""):
     return ini
 
 
-def supervisord_ini_group(chain_ids):
+def supervisord_ini_group(chain_ids, is_hermes):
     directory = "%(here)s"
     cfg = {
         "include": {
@@ -1155,10 +1155,13 @@ def supervisord_ini_group(chain_ids):
         "unix_http_server": {"file": f"{directory}/supervisor.sock"},
         "supervisorctl": {"serverurl": f"unix://{directory}/supervisor.sock"},
     }
+    command = "hermes --config relayer.toml start"
+    if not is_hermes:
+        command = "rly start chainmain-cronos --home relayer"
     cfg["program:relayer-demo"] = dict(
         COMMON_PROG_OPTIONS,
         directory=directory,
-        command="hermes --config relayer.toml start",
+        command=command,
         stdout_logfile=f"{directory}/relayer-demo.log",
         autostart="false",
     )
