@@ -929,24 +929,31 @@ def relayer_chain_config_hermes(data_dir, chain, relayer_chains_config):
     base_port = cfg["validators"][0]["base_port"]
     rpc_port = ports.rpc_port(base_port)
     grpc_port = ports.grpc_port(base_port)
+    config = {
+        "key_name": "relayer",
+        "id": chain_id,
+        "rpc_addr": f"http://127.0.0.1:{rpc_port}",
+        "grpc_addr": f"http://127.0.0.1:{grpc_port}",
+        "rpc_timeout": "10s",
+        "account_prefix": chain.get("account-prefix", "cro"),
+        "store_prefix": "ibc",
+        "max_gas": 300000,
+        "gas_price": {"price": 0, "denom": "basecro"},
+        "trusting_period": "336h",
+    }
+    raw = subprocess.check_output(["hermes", "--version"]).decode("utf-8")
+    version = raw.strip().split("+")[0].removeprefix("hermes ")
+    is_legacy = tuple(map(int, version.split("."))) < (1, 6, 0)
+    if is_legacy:
+        config["websocket_addr"] = f"ws://localhost:{rpc_port}/websocket"
+    else:
+        config["event_source"] = {
+            "mode": "push",
+            "url": f"ws://127.0.0.1:{rpc_port}/websocket",
+            "batch_delay": "200ms",
+        }
     return jsonmerge.merge(
-        {
-            "key_name": "relayer",
-            "id": chain_id,
-            "rpc_addr": f"http://127.0.0.1:{rpc_port}",
-            "grpc_addr": f"http://127.0.0.1:{grpc_port}",
-            "event_source": {
-                "mode": "push",
-                "url": f"ws://127.0.0.1:{rpc_port}/websocket",
-                "batch_delay": "200ms",
-            },
-            "rpc_timeout": "10s",
-            "account_prefix": chain.get("account-prefix", "cro"),
-            "store_prefix": "ibc",
-            "max_gas": 300000,
-            "gas_price": {"price": 0, "denom": "basecro"},
-            "trusting_period": "336h",
-        },
+        config,
         get_relayer_chain_config(relayer_chains_config, chain_id),
     )
 
