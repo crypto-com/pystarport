@@ -942,7 +942,7 @@ def relayer_chain_config_hermes(data_dir, chain, relayer_chains_config):
         "trusting_period": "336h",
     }
     raw = subprocess.check_output(["hermes", "--version"]).decode("utf-8")
-    version = re.sub(r"\n", "", raw).split("+")[0].removeprefix("hermes ")
+    version = raw.strip().split("+")[0].removeprefix("hermes ")
     is_legacy = tuple(map(int, version.split("."))) < (1, 6, 0)
     if is_legacy:
         config["websocket_addr"] = f"ws://localhost:{rpc_port}/websocket"
