@@ -12,6 +12,7 @@
 - [#99](https://github.com/crypto-com/pystarport/pull/99) add relayer related flag when init cluster
 - [#100](https://github.com/crypto-com/pystarport/pull/100) manage golang relayer under supervisord
 - [#101](https://github.com/crypto-com/pystarport/pull/101) support legacy hermes before v1.6.0
+- [#104](https://github.com/crypto-com/pystarport/pull/104) support json_rpc_addr in relayer config
 
 *Feb 7, 2023*
 

@@ -964,6 +964,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     cfg = json.load((folder / "config.json").open())
     base_port = cfg["validators"][0]["base_port"]
     rpc_port = ports.rpc_port(base_port)
+    json_rpc_addr = ports.evmrpc_port(base_port)
     chain_config = get_relayer_chain_config(relayer_chains_config, chain_id)
     address_type = chain_config.get("address_type", {})
     derivation = address_type.get("derivation")
@@ -979,6 +980,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "key": "relayer",
             "chain-id": chain_id,
             "rpc-addr": f"http://127.0.0.1:{rpc_port}",
+            "json-rpc-addr": f"http://127.0.0.1:{json_rpc_addr}",
             "account-prefix": chain.get("account-prefix", "cro"),
             "keyring-backend": "test",
             "gas-adjustment": chain_config.get("gas_multiplier", 1.2),
