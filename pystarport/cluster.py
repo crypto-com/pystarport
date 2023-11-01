@@ -823,7 +823,7 @@ def init_devnet(
                 "commission_rate",
                 "details",
                 "security_contact",
-                "gas-prices"
+                "gas_prices"
             ]
             extra_kwargs = {
                 name: str(node[name]) for name in optional_fields if name in node
