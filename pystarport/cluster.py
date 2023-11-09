@@ -989,7 +989,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "extension-options": chain_config.get("extension_options", []),
             "min-gas-amount": 0,
             "max-gas-amount": chain_config.get("max_gas", 300000),
-            "debug": False,
+            "debug": chain_config.get("debug", False),
             "timeout": "20s",
             "block-timeout": "",
             "output-format": "json",
@@ -1068,6 +1068,7 @@ def init_cluster(
             relayer_config_dir = (data_dir / "relayer/config")
             relayer_config_dir.mkdir(parents=True, exist_ok=True)
             relayer_config_rly = (relayer_config_dir / "config.yaml")
+            log_level = relayer_config.get("global", {}).get("log_level", "")
             relayer_config_rly.write_text(
                 yaml.dump(
                     {
@@ -1075,7 +1076,8 @@ def init_cluster(
                             "api-listen-addr": ":5183",
                             "timeout": "10s",
                             "memo": "",
-                            "light-cache-size": 20
+                            "light-cache-size": 20,
+                            "log-level": log_level,
                         },
                         "chains": {
                             c["chain_id"]: relayer_chain_config_rly(data_dir, c, cfg)
