@@ -985,6 +985,7 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "account-prefix": chain.get("account-prefix", "cro"),
             "keyring-backend": chain_config.get("keyring-backend", "test"),
             "gas-adjustment": chain_config.get("gas_multiplier", 1.2),
+            "feegrants": chain_config.get("feegrants", None),
             "gas-prices": prices,
             "extension-options": chain_config.get("extension_options", []),
             "min-gas-amount": 0,
