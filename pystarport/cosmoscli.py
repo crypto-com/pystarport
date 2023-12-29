@@ -341,23 +341,27 @@ class CosmosCLI:
     def transfer_from_ledger(self, from_, to, coins, generate_only=False, fees=None):
         def send_request():
             try:
-                self.output = self.raw(
-                    "tx",
-                    "bank",
-                    "send",
-                    from_,
-                    to,
-                    coins,
-                    "-y",
-                    "--generate-only" if generate_only else "",
-                    "--ledger",
-                    home=self.data_dir,
-                    keyring_backend="test",
-                    chain_id=self.chain_id,
-                    node=self.node_rpc,
-                    fees=fees,
-                    sign_mode="amino-json",
+                self.output = json.loads(
+                    self.raw(
+                        "tx",
+                        "bank",
+                        "send",
+                        from_,
+                        to,
+                        coins,
+                        "-y",
+                        "--generate-only" if generate_only else "",
+                        "--ledger",
+                        home=self.data_dir,
+                        keyring_backend="test",
+                        chain_id=self.chain_id,
+                        node=self.node_rpc,
+                        fees=fees,
+                        sign_mode="amino-json",
+                    )
                 )
+                if self.output["code"] == 0:
+                    self.output = self.event_query_tx_for(self.output["txhash"])
             except Exception as e:
                 self.error = e
 
@@ -371,7 +375,7 @@ class CosmosCLI:
         t.join()
         if self.error:
             raise self.error
-        return json.loads(self.output)
+        return self.output
 
     def get_delegated_amount(self, which_addr):
         return json.loads(
