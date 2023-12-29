@@ -753,11 +753,11 @@ class CosmosCLI:
                     )
                 )
 
-    def gov_vote(self, voter, proposal_id, option):
+    def gov_vote(self, voter, proposal_id, option, event_query_tx=True):
         print(voter)
         print(proposal_id)
         print(option)
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "gov",
@@ -772,9 +772,12 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
+        if rsp["code"] == 0 and event_query_tx:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
-    def gov_deposit(self, depositor, proposal_id, amount):
-        return json.loads(
+    def gov_deposit(self, depositor, proposal_id, amount, event_query_tx=True):
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "gov",
@@ -789,6 +792,9 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
+        if rsp["code"] == 0 and event_query_tx:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     def query_proposals(self, depositor=None, limit=None, status=None, voter=None):
         return json.loads(
