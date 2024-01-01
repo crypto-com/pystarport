@@ -850,7 +850,7 @@ class CosmosCLI:
         target_version,  # chain version number of target chain
         i=0,
     ):
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "ibc-transfer",
@@ -871,6 +871,9 @@ class CosmosCLI:
                 packet_timeout_timestamp=0,
             )
         )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     def export(self):
         return self.raw("export", home=self.data_dir)
