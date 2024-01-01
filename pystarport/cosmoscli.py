@@ -395,39 +395,25 @@ class CosmosCLI:
         )
 
     def delegate_amount(self, to_addr, amount, from_addr, gas_price=None):
-        if gas_price is None:
-            return json.loads(
-                self.raw(
-                    "tx",
-                    "staking",
-                    "delegate",
-                    to_addr,
-                    amount,
-                    "-y",
-                    home=self.data_dir,
-                    from_=from_addr,
-                    keyring_backend="test",
-                    chain_id=self.chain_id,
-                    node=self.node_rpc,
-                )
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "staking",
+                "delegate",
+                to_addr,
+                amount,
+                "-y",
+                home=self.data_dir,
+                from_=from_addr,
+                keyring_backend="test",
+                chain_id=self.chain_id,
+                node=self.node_rpc,
+                gas_prices=gas_price,
             )
-        else:
-            return json.loads(
-                self.raw(
-                    "tx",
-                    "staking",
-                    "delegate",
-                    to_addr,
-                    amount,
-                    "-y",
-                    home=self.data_dir,
-                    from_=from_addr,
-                    keyring_backend="test",
-                    chain_id=self.chain_id,
-                    node=self.node_rpc,
-                    gas_prices=gas_price,
-                )
-            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     # to_addr: croclcl1...  , from_addr: cro1...
     def unbond_amount(self, to_addr, amount, from_addr):
