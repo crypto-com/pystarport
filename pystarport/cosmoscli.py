@@ -190,16 +190,22 @@ class CosmosCLI:
     def block_time(self):
         return isoparse(self.status()["SyncInfo"]["latest_block_time"])
 
-    def balance(self, addr):
-        coin = json.loads(
+    def balances(self, addr, height=0):
+        return json.loads(
             self.raw(
-                "query", "bank", "balances", addr, output="json", node=self.node_rpc
+                "query", "bank", "balances", addr, height=height, home=self.data_dir
             )
         )["balances"]
-        if len(coin) == 0:
-            return 0
-        coin = coin[0]
-        return int(coin["amount"])
+
+    def balance(self, addr, denom=None, height=0):
+        coins = self.balances(addr, height=height)
+        if denom is None:
+            if len(coins) == 0:
+                return 0
+            coin = coins[0]
+            return int(coin["amount"])
+        denoms = {coin["denom"]: int(coin["amount"]) for coin in coins}
+        return denoms.get(denom, 0)
 
     def query_tx(self, tx_type, tx_value):
         tx = self.raw(

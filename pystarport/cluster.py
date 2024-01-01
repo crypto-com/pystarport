@@ -356,8 +356,11 @@ class ClusterCLI:
     def block_time(self, i=0):
         return self.cosmos_cli(i).block_time()
 
-    def balance(self, addr, i=0):
-        return self.cosmos_cli(i).balance(addr)
+    def balances(self, addr, height=0, i=0):
+        return self.cosmos_cli(i).balances(addr, height)
+
+    def balance(self, addr, denom=None, height=0, i=0):
+        return self.cosmos_cli(i).balance(addr, denom, height)
 
     def query_all_txs(self, addr, i=0):
         return self.cosmos_cli(i).query_all_txs(addr)
