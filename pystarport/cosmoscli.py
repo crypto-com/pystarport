@@ -360,7 +360,7 @@ class CosmosCLI:
                         sign_mode="amino-json",
                     )
                 )
-                if self.output["code"] == 0:
+                if not generate_only and self.output["code"] == 0:
                     self.output = self.event_query_tx_for(self.output["txhash"])
             except Exception as e:
                 self.error = e
