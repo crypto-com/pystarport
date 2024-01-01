@@ -469,7 +469,7 @@ class CosmosCLI:
 
     # from_delegator can be account name or address
     def withdraw_all_rewards(self, from_delegator):
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "distribution",
@@ -482,6 +482,9 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     def make_multisig(self, name, signer1, signer2):
         self.raw(
@@ -634,7 +637,7 @@ class CosmosCLI:
             )
             + "'"
         )
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "staking",
@@ -661,6 +664,9 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     def edit_validator(
         self,
