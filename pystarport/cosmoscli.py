@@ -965,7 +965,6 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-
     def query_nft_token(self, denomid, tokenid):
         return json.loads(
             self.raw(
@@ -1000,7 +999,6 @@ class CosmosCLI:
         if rsp["code"] == 0:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
-
 
     def edit_nft_token(self, from_addr, denomid, tokenid, newuri, newname):
         rsp = json.loads(
