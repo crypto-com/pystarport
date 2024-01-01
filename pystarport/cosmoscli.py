@@ -320,7 +320,7 @@ class CosmosCLI:
         )
 
     def transfer(self, from_, to, coins, generate_only=False, fees=None):
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "bank",
@@ -337,6 +337,9 @@ class CosmosCLI:
                 fees=fees,
             )
         )
+        if not generate_only and rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     def transfer_from_ledger(self, from_, to, coins, generate_only=False, fees=None):
         def send_request():
