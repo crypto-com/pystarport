@@ -438,9 +438,9 @@ class CosmosCLI:
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
     def redelegate_amount(
-        self, to_validator_addr, from_validator_addr, amount, from_addr
+        self, to_validator_addr, from_validator_addr, amount, from_addr, **kwargs,
     ):
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "staking",
@@ -454,8 +454,12 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     # from_delegator can be account name or address
     def withdraw_all_rewards(self, from_delegator):

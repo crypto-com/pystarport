@@ -432,13 +432,14 @@ class ClusterCLI:
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
     def redelegate_amount(
-        self, to_validator_addr, from_validator_addr, amount, from_addr, i=0
+        self, to_validator_addr, from_validator_addr, amount, from_addr, i=0, **kwargs,
     ):
         return self.cosmos_cli(i).redelegate_amount(
             to_validator_addr,
             from_validator_addr,
             amount,
             from_addr,
+            **kwargs,
         )
 
     def withdraw_all_rewards(self, from_delegator, i=0):
