@@ -668,7 +668,7 @@ class CosmosCLI:
             security_contact=security_contact,
             details=details,
         )
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "staking",
@@ -682,6 +682,9 @@ class CosmosCLI:
                 **{k: v for k, v in options.items() if v is not None},
             )
         )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     def gov_propose(self, proposer, kind, proposal):
         if kind == "software-upgrade":
