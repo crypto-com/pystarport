@@ -590,7 +590,7 @@ class CosmosCLI:
         return r.decode("utf-8")
 
     def unjail(self, addr):
-        return json.loads(
+        rsp = json.loads(
             self.raw(
                 "tx",
                 "slashing",
@@ -603,6 +603,9 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
 
     def create_validator(
         self,
