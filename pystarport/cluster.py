@@ -604,9 +604,10 @@ class ClusterCLI:
         '"image":{"type":"string","description":"testdescription"}}}',
         fees=None,
         i=0,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).create_nft(
-            from_addr, denomid, denomname, schema, fees
+            from_addr, denomid, denomname, schema, fees, event_query_tx,
         )
 
     def query_nft(self, denomid="mydenomid", i=0):

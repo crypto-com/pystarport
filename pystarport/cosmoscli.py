@@ -904,7 +904,9 @@ class CosmosCLI:
     def unsaferesetall(self):
         return self.raw("unsafe-reset-all")
 
-    def create_nft(self, from_addr, denomid, denomname, schema, fees):
+    def create_nft(
+        self, from_addr, denomid, denomname, schema, fees, event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -922,7 +924,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
