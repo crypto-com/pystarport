@@ -1,6 +1,7 @@
 import enum
 import hashlib
 import json
+import subprocess
 import tempfile
 import threading
 import time
@@ -40,10 +41,10 @@ class ChainCommand:
     def __init__(self, cmd=None):
         self.cmd = cmd or CHAIN
 
-    def __call__(self, cmd, *args, stdin=None, **kwargs):
+    def __call__(self, cmd, *args, stdin=None, stderr=subprocess.STDOUT, **kwargs):
         "execute chain-maind"
         args = " ".join(build_cli_args_safe(cmd, *args, **kwargs))
-        return interact(f"{self.cmd} {args}", input=stdin)
+        return interact(f"{self.cmd} {args}", input=stdin, stderr=stderr)
 
 
 class CosmosCLI:
@@ -325,7 +326,15 @@ class CosmosCLI:
             )["bonded_tokens" if bonded else "not_bonded_tokens"]
         )
 
-    def transfer(self, from_, to, coins, generate_only=False, fees=None):
+    def transfer(
+        self,
+        from_,
+        to,
+        coins,
+        generate_only=False,
+        fees=None,
+        event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -343,7 +352,7 @@ class CosmosCLI:
                 fees=fees,
             )
         )
-        if not generate_only and rsp["code"] == 0:
+        if not generate_only and rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -400,7 +409,9 @@ class CosmosCLI:
             )
         )
 
-    def delegate_amount(self, to_addr, amount, from_addr, gas_price=None):
+    def delegate_amount(
+        self, to_addr, amount, from_addr, gas_price=None, event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -417,7 +428,7 @@ class CosmosCLI:
                 gas_prices=gas_price,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -893,7 +904,9 @@ class CosmosCLI:
     def unsaferesetall(self):
         return self.raw("unsafe-reset-all")
 
-    def create_nft(self, from_addr, denomid, denomname, schema, fees):
+    def create_nft(
+        self, from_addr, denomid, denomname, schema, fees, event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -911,7 +924,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -1042,3 +1055,15 @@ class CosmosCLI:
         if rsp["code"] == 0:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
+
+    def event_query_tx_for(self, hash):
+        return json.loads(
+            self.raw(
+                "query",
+                "event-query-tx-for",
+                hash,
+                "-y",
+                home=self.data_dir,
+                stderr=subprocess.DEVNULL,
+            )
+        )

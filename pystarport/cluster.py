@@ -409,8 +409,19 @@ class ClusterCLI:
     def transfer_offline(self, from_, to, coins, sequence, i=0, fees=None):
         return self.cosmos_cli(i).transfer_offline(from_, to, coins, sequence, fees)
 
-    def transfer(self, from_, to, coins, i=0, generate_only=False, fees=None):
-        return self.cosmos_cli(i).transfer(from_, to, coins, generate_only, fees)
+    def transfer(
+        self,
+        from_,
+        to,
+        coins,
+        i=0,
+        generate_only=False,
+        fees=None,
+        event_query_tx=True,
+    ):
+        return self.cosmos_cli(i).transfer(
+            from_, to, coins, generate_only, fees, event_query_tx,
+        )
 
     def transfer_from_ledger(
         self, from_, to, coins, i=0, generate_only=False, fees=None
@@ -426,8 +437,12 @@ class ClusterCLI:
     def get_delegated_amount(self, which_addr, i=0):
         return self.cosmos_cli(i).get_delegated_amount(which_addr)
 
-    def delegate_amount(self, to_addr, amount, from_addr, i=0, gas_price=None):
-        return self.cosmos_cli(i).delegate_amount(to_addr, amount, from_addr, gas_price)
+    def delegate_amount(
+        self, to_addr, amount, from_addr, i=0, gas_price=None, event_query_tx=True,
+    ):
+        return self.cosmos_cli(i).delegate_amount(
+            to_addr, amount, from_addr, gas_price, event_query_tx,
+        )
 
     # to_addr: croclcl1...  , from_addr: cro1...
     def unbond_amount(self, to_addr, amount, from_addr, i=0):
@@ -543,11 +558,13 @@ class ClusterCLI:
     def gov_propose(self, proposer, kind, proposal, i=0):
         return self.cosmos_cli(i).gov_propose(proposer, kind, proposal)
 
-    def gov_vote(self, voter, proposal_id, option, i=0):
-        return self.cosmos_cli(i).gov_vote(voter, proposal_id, option)
+    def gov_vote(self, voter, proposal_id, option, i=0, event_query_tx=True):
+        return self.cosmos_cli(i).gov_vote(voter, proposal_id, option, event_query_tx)
 
-    def gov_deposit(self, depositor, proposal_id, amount, i=0):
-        return self.cosmos_cli(i).gov_deposit(depositor, proposal_id, amount)
+    def gov_deposit(self, depositor, proposal_id, amount, i=0, event_query_tx=True):
+        return self.cosmos_cli(i).gov_deposit(
+            depositor, proposal_id, amount, event_query_tx,
+        )
 
     def query_proposals(self, depositor=None, limit=None, status=None, voter=None, i=0):
         return self.cosmos_cli(i).query_proposals(depositor, limit, status, voter)
@@ -587,9 +604,10 @@ class ClusterCLI:
         '"image":{"type":"string","description":"testdescription"}}}',
         fees=None,
         i=0,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).create_nft(
-            from_addr, denomid, denomname, schema, fees
+            from_addr, denomid, denomname, schema, fees, event_query_tx,
         )
 
     def query_nft(self, denomid="mydenomid", i=0):
@@ -637,6 +655,9 @@ class ClusterCLI:
         return self.cosmos_cli(i).transfer_nft_token(
             from_addr, to_addr, denomid, tokenid
         )
+
+    def event_query_tx_for(self, hash, i=0):
+        return self.cosmos_cli(i).event_query_tx_for(hash)
 
 
 def start_cluster(data_dir):
