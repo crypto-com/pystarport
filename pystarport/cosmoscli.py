@@ -786,21 +786,23 @@ class CosmosCLI:
         print(voter)
         print(proposal_id)
         print(option)
-        rsp = json.loads(
-            self.raw(
-                "tx",
-                "gov",
-                "vote",
-                proposal_id,
-                option,
-                "-y",
-                from_=voter,
-                home=self.data_dir,
-                node=self.node_rpc,
-                keyring_backend="test",
-                chain_id=self.chain_id,
-            )
+        raw = self.raw(
+            "tx",
+            "gov",
+            "vote",
+            proposal_id,
+            option,
+            "-y",
+            from_=voter,
+            home=self.data_dir,
+            node=self.node_rpc,
+            keyring_backend="test",
+            chain_id=self.chain_id,
         )
+        # skip success log info that breaks json.loads
+        brace_index = raw.index(b"{")
+        json_part = raw[brace_index:]
+        rsp = json.loads(json_part)
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
