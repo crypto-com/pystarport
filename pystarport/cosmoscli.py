@@ -1067,3 +1067,6 @@ class CosmosCLI:
                 stderr=subprocess.DEVNULL,
             )
         )
+
+    def migrate_keystore(self):
+        return self.raw("keys", "migrate", home=self.data_dir)

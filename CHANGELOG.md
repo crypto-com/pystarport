@@ -15,6 +15,7 @@
 - [#104](https://github.com/crypto-com/pystarport/pull/104) support json_rpc_addr in relayer config
 - [#109](https://github.com/crypto-com/pystarport/pull/109) add feegrants in relayer config
 - [#110](https://github.com/crypto-com/pystarport/pull/110) add event_query_tx_for to allow subscribe and wait for transaction.
+- [#112](https://github.com/crypto-com/pystarport/pull/112) add cmd for migrate keystore.
 
 *Feb 7, 2023*
 
