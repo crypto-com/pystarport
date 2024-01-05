@@ -659,6 +659,9 @@ class ClusterCLI:
     def event_query_tx_for(self, hash, i=0):
         return self.cosmos_cli(i).event_query_tx_for(hash)
 
+    def migrate_keystore(self, i=0):
+        return self.cosmos_cli(i).migrate_keystore()
+
 
 def start_cluster(data_dir):
     cmd = [
