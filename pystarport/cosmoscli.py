@@ -1070,3 +1070,19 @@ class CosmosCLI:
 
     def migrate_keystore(self):
         return self.raw("keys", "migrate", home=self.data_dir)
+
+    def ibc_query_channels(self, connid, **kwargs):
+        default_kwargs = {
+            "node": self.node_rpc,
+            "output": "json",
+        }
+        return json.loads(
+            self.raw(
+                "q",
+                "ibc",
+                "channel",
+                "connections",
+                connid,
+                **(default_kwargs | kwargs),
+            )
+        )

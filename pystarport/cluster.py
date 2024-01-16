@@ -662,6 +662,9 @@ class ClusterCLI:
     def migrate_keystore(self, i=0):
         return self.cosmos_cli(i).migrate_keystore()
 
+    def ibc_query_channels(self, connid, i=0):
+        return self.cosmos_cli(i).ibc_query_channels(connid)
+
 
 def start_cluster(data_dir):
     cmd = [
