@@ -1109,3 +1109,26 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
+    def icaauth_submit_tx(self, connid, tx, timeout_duration="1h", **kwargs):
+        default_kwargs = {
+            "home": self.data_dir,
+            "node": self.node_rpc,
+            "chain_id": self.chain_id,
+            "keyring_backend": "test",
+        }
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "icaauth",
+                "submit-tx",
+                connid,
+                tx,
+                "--timeout-duration" if timeout_duration else None,
+                timeout_duration if timeout_duration else None,
+                "-y",
+                **(default_kwargs | kwargs),
+            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
