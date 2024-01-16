@@ -665,6 +665,9 @@ class ClusterCLI:
     def ibc_query_channels(self, connid, i=0):
         return self.cosmos_cli(i).ibc_query_channels(connid)
 
+    def icaauth_register_account(self, connid, i=0):
+        return self.cosmos_cli(i).icaauth_register_account(connid)
+
 
 def start_cluster(data_dir):
     cmd = [

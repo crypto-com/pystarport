@@ -1086,3 +1086,26 @@ class CosmosCLI:
                 **(default_kwargs | kwargs),
             )
         )
+
+    def icaauth_register_account(self, connid, **kwargs):
+        "execute on host chain to attach an account to the connection"
+        default_kwargs = {
+            "home": self.data_dir,
+            "node": self.node_rpc,
+            "chain_id": self.chain_id,
+            "keyring_backend": "test",
+        }
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "icaauth",
+                "register-account",
+                connid,
+                "-y",
+                **(default_kwargs | kwargs),
+            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
+
