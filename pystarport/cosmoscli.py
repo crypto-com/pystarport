@@ -1070,3 +1070,81 @@ class CosmosCLI:
 
     def migrate_keystore(self):
         return self.raw("keys", "migrate", home=self.data_dir)
+
+    def ibc_query_channels(self, connid, **kwargs):
+        default_kwargs = {
+            "node": self.node_rpc,
+            "output": "json",
+        }
+        return json.loads(
+            self.raw(
+                "q",
+                "ibc",
+                "channel",
+                "connections",
+                connid,
+                **(default_kwargs | kwargs),
+            )
+        )
+
+    def icaauth_register_account(self, connid, **kwargs):
+        "execute on host chain to attach an account to the connection"
+        default_kwargs = {
+            "home": self.data_dir,
+            "node": self.node_rpc,
+            "chain_id": self.chain_id,
+            "keyring_backend": "test",
+        }
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "icaauth",
+                "register-account",
+                connid,
+                "-y",
+                **(default_kwargs | kwargs),
+            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
+
+    def ica_query_account(self, connid, owner, **kwargs):
+        default_kwargs = {
+            "node": self.node_rpc,
+            "output": "json",
+        }
+        return json.loads(
+            self.raw(
+                "q",
+                "icaauth",
+                "interchain-account-address",
+                connid,
+                owner,
+                **(default_kwargs | kwargs),
+            )
+        )
+
+    def icaauth_submit_tx(self, connid, tx, timeout_duration="1h", **kwargs):
+        default_kwargs = {
+            "home": self.data_dir,
+            "node": self.node_rpc,
+            "chain_id": self.chain_id,
+            "keyring_backend": "test",
+        }
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "icaauth",
+                "submit-tx",
+                connid,
+                tx,
+                "--timeout-duration" if timeout_duration else None,
+                timeout_duration if timeout_duration else None,
+                "-y",
+                **(default_kwargs | kwargs),
+            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
