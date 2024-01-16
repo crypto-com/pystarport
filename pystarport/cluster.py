@@ -668,6 +668,9 @@ class ClusterCLI:
     def icaauth_register_account(self, connid, i=0):
         return self.cosmos_cli(i).icaauth_register_account(connid)
 
+    def ica_query_account(self, connid, owner, i=0, **kwargs):
+        return self.cosmos_cli(i).ica_query_account(connid, owner, **kwargs)
+
     def icaauth_submit_tx(self, connid, tx, timeout_duration="1h", i=0):
         return self.cosmos_cli(i).icaauth_submit_tx(connid, tx, timeout_duration)
 

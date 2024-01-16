@@ -1109,6 +1109,22 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
+    def ica_query_account(self, connid, owner, **kwargs):
+        default_kwargs = {
+            "node": self.node_rpc,
+            "output": "json",
+        }
+        return json.loads(
+            self.raw(
+                "q",
+                "icaauth",
+                "interchain-account-address",
+                connid,
+                owner,
+                **(default_kwargs | kwargs),
+            )
+        )
+
     def icaauth_submit_tx(self, connid, tx, timeout_duration="1h", **kwargs):
         default_kwargs = {
             "home": self.data_dir,
