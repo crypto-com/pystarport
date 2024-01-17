@@ -17,7 +17,7 @@
 - [#110](https://github.com/crypto-com/pystarport/pull/110) add event_query_tx_for to allow subscribe and wait for transaction.
 - [#112](https://github.com/crypto-com/pystarport/pull/112) add cmd for migrate keystore.
 - [#113](https://github.com/crypto-com/pystarport/pull/113) support ibc related cmd.
-- [#](https://github.com/crypto-com/pystarport/pull/) remove extra overwrite in edit_app_cfg.
+- [#114](https://github.com/crypto-com/pystarport/pull/114) remove extra overwrite in edit_app_cfg.
 
 
 *Feb 7, 2023*
