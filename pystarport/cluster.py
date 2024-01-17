@@ -1284,12 +1284,6 @@ def edit_app_cfg(path, base_port, app_config):
         "grpc": {
             "address": "127.0.0.1:%d" % ports.grpc_port(base_port),
         },
-        "pruning": "nothing",
-        "state-sync": {
-            "snapshot-interval": 5,
-            "snapshot-keep-recent": 10,
-        },
-        "minimum-gas-prices": "0basecro",
     }
 
     app_config = format_value(
