@@ -799,6 +799,7 @@ class CosmosCLI:
                 node=self.node_rpc,
                 keyring_backend="test",
                 chain_id=self.chain_id,
+                stderr=subprocess.DEVNULL,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
