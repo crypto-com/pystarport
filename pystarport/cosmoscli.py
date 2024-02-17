@@ -493,7 +493,7 @@ class CosmosCLI:
         return rsp
 
     # from_delegator can be account name or address
-    def withdraw_all_rewards(self, from_delegator):
+    def withdraw_all_rewards(self, from_delegator, event_query_tx=True):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -507,7 +507,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 

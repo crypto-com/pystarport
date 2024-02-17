@@ -478,8 +478,8 @@ class ClusterCLI:
             **kwargs,
         )
 
-    def withdraw_all_rewards(self, from_delegator, i=0):
-        return self.cosmos_cli(i).withdraw_all_rewards(from_delegator)
+    def withdraw_all_rewards(self, from_delegator, i=0, event_query_tx=True):
+        return self.cosmos_cli(i).withdraw_all_rewards(from_delegator, event_query_tx)
 
     def make_multisig(self, name, signer1, signer2, i=0):
         return self.cosmos_cli(i).make_multisig(name, signer1, signer2)
