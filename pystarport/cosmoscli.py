@@ -356,7 +356,15 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def transfer_from_ledger(self, from_, to, coins, generate_only=False, fees=None):
+    def transfer_from_ledger(
+        self,
+        from_,
+        to,
+        coins,
+        generate_only=False,
+        fees=None,
+        event_query_tx=True,
+    ):
         def send_request():
             try:
                 self.output = json.loads(
@@ -378,7 +386,7 @@ class CosmosCLI:
                         sign_mode="amino-json",
                     )
                 )
-                if not generate_only and self.output["code"] == 0:
+                if not generate_only and self.output["code"] == 0 and event_query_tx:
                     self.output = self.event_query_tx_for(self.output["txhash"])
             except Exception as e:
                 self.error = e

@@ -424,7 +424,14 @@ class ClusterCLI:
         )
 
     def transfer_from_ledger(
-        self, from_, to, coins, i=0, generate_only=False, fees=None
+        self,
+        from_,
+        to,
+        coins,
+        i=0,
+        generate_only=False,
+        fees=None,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).transfer_from_ledger(
             from_,
@@ -432,6 +439,7 @@ class ClusterCLI:
             coins,
             generate_only,
             fees,
+            event_query_tx,
         )
 
     def get_delegated_amount(self, which_addr, i=0):
