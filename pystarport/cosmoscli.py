@@ -441,7 +441,7 @@ class CosmosCLI:
         return rsp
 
     # to_addr: croclcl1...  , from_addr: cro1...
-    def unbond_amount(self, to_addr, amount, from_addr):
+    def unbond_amount(self, to_addr, amount, from_addr, event_query_tx=True):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -457,7 +457,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 

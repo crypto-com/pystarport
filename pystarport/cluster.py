@@ -453,8 +453,10 @@ class ClusterCLI:
         )
 
     # to_addr: croclcl1...  , from_addr: cro1...
-    def unbond_amount(self, to_addr, amount, from_addr, i=0):
-        return self.cosmos_cli(i).unbond_amount(to_addr, amount, from_addr)
+    def unbond_amount(self, to_addr, amount, from_addr, i=0, event_query_tx=True):
+        return self.cosmos_cli(i).unbond_amount(
+            to_addr, amount, from_addr, event_query_tx,
+        )
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
     def redelegate_amount(
