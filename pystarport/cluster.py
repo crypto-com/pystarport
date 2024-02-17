@@ -658,8 +658,17 @@ class ClusterCLI:
     def query_nft_token(self, denomid="mydenomid", tokenid="mytokenid", i=0):
         return self.cosmos_cli(i).query_nft_token(denomid, tokenid)
 
-    def burn_nft_token(self, from_addr, denomid="mydenomid", tokenid="mytokenid", i=0):
-        return self.cosmos_cli(i).burn_nft_token(from_addr, denomid, tokenid)
+    def burn_nft_token(
+        self,
+        from_addr,
+        denomid="mydenomid",
+        tokenid="mytokenid",
+        i=0,
+        event_query_tx=True,
+    ):
+        return self.cosmos_cli(i).burn_nft_token(
+            from_addr, denomid, tokenid, event_query_tx,
+        )
 
     def edit_nft_token(
         self,
