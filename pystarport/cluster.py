@@ -521,8 +521,8 @@ class ClusterCLI:
     def broadcast_tx(self, tx_file, i=0):
         return self.cosmos_cli(i).broadcast_tx(tx_file)
 
-    def unjail(self, addr, i=0):
-        return self.cosmos_cli(i).unjail(addr)
+    def unjail(self, addr, i=0, event_query_tx=True):
+        return self.cosmos_cli(i).unjail(addr, event_query_tx)
 
     def create_validator(
         self,

@@ -616,7 +616,7 @@ class CosmosCLI:
         )
         return r.decode("utf-8")
 
-    def unjail(self, addr):
+    def unjail(self, addr, event_query_tx=True):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -630,7 +630,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
