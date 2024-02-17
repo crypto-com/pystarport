@@ -678,9 +678,10 @@ class ClusterCLI:
         newuri="newuri",
         newname="newname",
         i=0,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).edit_nft_token(
-            from_addr, denomid, tokenid, newuri, newname
+            from_addr, denomid, tokenid, newuri, newname, event_query_tx
         )
 
     def transfer_nft_token(
