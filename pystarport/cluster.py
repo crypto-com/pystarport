@@ -537,6 +537,7 @@ class ClusterCLI:
         website="",
         security_contact="",
         details="",
+        event_query_tx=True,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
@@ -551,6 +552,7 @@ class ClusterCLI:
             website,
             security_contact,
             details,
+            event_query_tx,
         )
 
     def edit_validator(

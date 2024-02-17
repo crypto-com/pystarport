@@ -646,6 +646,7 @@ class CosmosCLI:
         website="",
         security_contact="",
         details="",
+        event_query_tx=True,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
@@ -689,7 +690,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
