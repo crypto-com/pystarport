@@ -685,10 +685,16 @@ class ClusterCLI:
         )
 
     def transfer_nft_token(
-        self, from_addr, to_addr, denomid="mydenomid", tokenid="mytokenid", i=0
+        self,
+        from_addr,
+        to_addr,
+        denomid="mydenomid",
+        tokenid="mytokenid",
+        i=0,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).transfer_nft_token(
-            from_addr, to_addr, denomid, tokenid
+            from_addr, to_addr, denomid, tokenid, event_query_tx
         )
 
     def event_query_tx_for(self, hash, i=0):

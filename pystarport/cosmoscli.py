@@ -1057,7 +1057,9 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def transfer_nft_token(self, from_addr, to_addr, denomid, tokenid):
+    def transfer_nft_token(
+        self, from_addr, to_addr, denomid, tokenid, event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -1074,7 +1076,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
