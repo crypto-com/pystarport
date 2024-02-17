@@ -889,6 +889,7 @@ class CosmosCLI:
         channel,  # src channel
         target_version,  # chain version number of target chain
         i=0,
+        event_query_tx=True,
     ):
         rsp = json.loads(
             self.raw(
@@ -911,7 +912,7 @@ class CosmosCLI:
                 packet_timeout_timestamp=0,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 

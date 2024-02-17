@@ -605,6 +605,7 @@ class ClusterCLI:
         channel,  # src channel
         target_version,  # chain version number of target chain
         i=0,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).ibc_transfer(
             from_,
@@ -612,6 +613,7 @@ class ClusterCLI:
             amount,
             channel,
             target_version,
+            event_query_tx,
         )
 
     def create_nft(
