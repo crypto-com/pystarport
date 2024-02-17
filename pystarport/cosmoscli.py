@@ -1149,7 +1149,9 @@ class CosmosCLI:
             )
         )
 
-    def icaauth_submit_tx(self, connid, tx, timeout_duration="1h", **kwargs):
+    def icaauth_submit_tx(
+        self, connid, tx, timeout_duration="1h", event_query_tx=True, **kwargs,
+    ):
         default_kwargs = {
             "home": self.data_dir,
             "node": self.node_rpc,
@@ -1169,6 +1171,6 @@ class CosmosCLI:
                 **(default_kwargs | kwargs),
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
