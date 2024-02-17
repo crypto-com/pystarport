@@ -564,6 +564,7 @@ class ClusterCLI:
         website=None,
         security_contact=None,
         details=None,
+        event_query_tx=True,
     ):
         """MsgEditValidator"""
         return self.cosmos_cli(i).edit_validator(
@@ -573,6 +574,7 @@ class ClusterCLI:
             website,
             security_contact,
             details,
+            event_query_tx,
         )
 
     def gov_propose(self, proposer, kind, proposal, i=0):

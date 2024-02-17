@@ -702,6 +702,7 @@ class CosmosCLI:
         website=None,
         security_contact=None,
         details=None,
+        event_query_tx=True,
     ):
         """MsgEditValidator"""
         options = dict(
@@ -727,7 +728,7 @@ class CosmosCLI:
                 **{k: v for k, v in options.items() if v is not None},
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
