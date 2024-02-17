@@ -463,7 +463,13 @@ class CosmosCLI:
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
     def redelegate_amount(
-        self, to_validator_addr, from_validator_addr, amount, from_addr, **kwargs,
+        self,
+        to_validator_addr,
+        from_validator_addr,
+        amount,
+        from_addr,
+        event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -482,7 +488,7 @@ class CosmosCLI:
                 **kwargs,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
