@@ -649,9 +649,10 @@ class ClusterCLI:
         uri="myuri",
         fees=None,
         i=0,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).create_nft_token(
-            from_addr, to_addr, denomid, tokenid, uri, fees
+            from_addr, to_addr, denomid, tokenid, uri, fees, event_query_tx
         )
 
     def query_nft_token(self, denomid="mydenomid", tokenid="mytokenid", i=0):
