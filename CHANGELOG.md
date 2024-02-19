@@ -18,6 +18,7 @@
 - [#112](https://github.com/crypto-com/pystarport/pull/112) add cmd for migrate keystore.
 - [#113](https://github.com/crypto-com/pystarport/pull/113) support ibc related cmd.
 - [#115](https://github.com/crypto-com/pystarport/pull/115) avoid cli redundant migrated key log in stdout.
+- [#117](https://github.com/crypto-com/pystarport/pull/117) make event_query_tx_for optional.
 
 
 *Feb 7, 2023*

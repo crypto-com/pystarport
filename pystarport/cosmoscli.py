@@ -356,7 +356,15 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def transfer_from_ledger(self, from_, to, coins, generate_only=False, fees=None):
+    def transfer_from_ledger(
+        self,
+        from_,
+        to,
+        coins,
+        generate_only=False,
+        fees=None,
+        event_query_tx=True,
+    ):
         def send_request():
             try:
                 self.output = json.loads(
@@ -378,7 +386,7 @@ class CosmosCLI:
                         sign_mode="amino-json",
                     )
                 )
-                if not generate_only and self.output["code"] == 0:
+                if not generate_only and self.output["code"] == 0 and event_query_tx:
                     self.output = self.event_query_tx_for(self.output["txhash"])
             except Exception as e:
                 self.error = e
@@ -433,7 +441,7 @@ class CosmosCLI:
         return rsp
 
     # to_addr: croclcl1...  , from_addr: cro1...
-    def unbond_amount(self, to_addr, amount, from_addr):
+    def unbond_amount(self, to_addr, amount, from_addr, event_query_tx=True):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -449,13 +457,19 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
     def redelegate_amount(
-        self, to_validator_addr, from_validator_addr, amount, from_addr, **kwargs,
+        self,
+        to_validator_addr,
+        from_validator_addr,
+        amount,
+        from_addr,
+        event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -474,12 +488,12 @@ class CosmosCLI:
                 **kwargs,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
     # from_delegator can be account name or address
-    def withdraw_all_rewards(self, from_delegator):
+    def withdraw_all_rewards(self, from_delegator, event_query_tx=True):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -493,7 +507,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -602,7 +616,7 @@ class CosmosCLI:
         )
         return r.decode("utf-8")
 
-    def unjail(self, addr):
+    def unjail(self, addr, event_query_tx=True):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -616,7 +630,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -632,6 +646,7 @@ class CosmosCLI:
         website="",
         security_contact="",
         details="",
+        event_query_tx=True,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
@@ -675,7 +690,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -687,6 +702,7 @@ class CosmosCLI:
         website=None,
         security_contact=None,
         details=None,
+        event_query_tx=True,
     ):
         """MsgEditValidator"""
         options = dict(
@@ -712,7 +728,7 @@ class CosmosCLI:
                 **{k: v for k, v in options.items() if v is not None},
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -872,7 +888,7 @@ class CosmosCLI:
         amount,
         channel,  # src channel
         target_version,  # chain version number of target chain
-        i=0,
+        event_query_tx=True,
     ):
         rsp = json.loads(
             self.raw(
@@ -895,7 +911,7 @@ class CosmosCLI:
                 packet_timeout_timestamp=0,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -957,7 +973,9 @@ class CosmosCLI:
             )
         )
 
-    def create_nft_token(self, from_addr, to_addr, denomid, tokenid, uri, fees):
+    def create_nft_token(
+        self, from_addr, to_addr, denomid, tokenid, uri, fees, event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -975,7 +993,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -994,7 +1012,7 @@ class CosmosCLI:
             )
         )
 
-    def burn_nft_token(self, from_addr, denomid, tokenid):
+    def burn_nft_token(self, from_addr, denomid, tokenid, event_query_tx=True):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -1010,11 +1028,13 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def edit_nft_token(self, from_addr, denomid, tokenid, newuri, newname):
+    def edit_nft_token(
+        self, from_addr, denomid, tokenid, newuri, newname, event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -1032,11 +1052,13 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def transfer_nft_token(self, from_addr, to_addr, denomid, tokenid):
+    def transfer_nft_token(
+        self, from_addr, to_addr, denomid, tokenid, event_query_tx=True,
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -1053,7 +1075,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -1088,7 +1110,7 @@ class CosmosCLI:
             )
         )
 
-    def icaauth_register_account(self, connid, **kwargs):
+    def icaauth_register_account(self, connid, event_query_tx=True, **kwargs):
         "execute on host chain to attach an account to the connection"
         default_kwargs = {
             "home": self.data_dir,
@@ -1106,7 +1128,7 @@ class CosmosCLI:
                 **(default_kwargs | kwargs),
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -1126,7 +1148,9 @@ class CosmosCLI:
             )
         )
 
-    def icaauth_submit_tx(self, connid, tx, timeout_duration="1h", **kwargs):
+    def icaauth_submit_tx(
+        self, connid, tx, timeout_duration="1h", event_query_tx=True, **kwargs,
+    ):
         default_kwargs = {
             "home": self.data_dir,
             "node": self.node_rpc,
@@ -1146,6 +1170,6 @@ class CosmosCLI:
                 **(default_kwargs | kwargs),
             )
         )
-        if rsp["code"] == 0:
+        if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
