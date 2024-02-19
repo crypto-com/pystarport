@@ -888,7 +888,6 @@ class CosmosCLI:
         amount,
         channel,  # src channel
         target_version,  # chain version number of target chain
-        i=0,
         event_query_tx=True,
     ):
         rsp = json.loads(
