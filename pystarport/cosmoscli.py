@@ -418,7 +418,12 @@ class CosmosCLI:
         )
 
     def delegate_amount(
-        self, to_addr, amount, from_addr, gas_price=None, event_query_tx=True,
+        self,
+        to_addr,
+        amount,
+        from_addr,
+        gas_price=None,
+        event_query_tx=True,
     ):
         rsp = json.loads(
             self.raw(
@@ -922,7 +927,13 @@ class CosmosCLI:
         return self.raw("unsafe-reset-all")
 
     def create_nft(
-        self, from_addr, denomid, denomname, schema, fees, event_query_tx=True,
+        self,
+        from_addr,
+        denomid,
+        denomname,
+        schema,
+        fees,
+        event_query_tx=True,
     ):
         rsp = json.loads(
             self.raw(
@@ -974,7 +985,14 @@ class CosmosCLI:
         )
 
     def create_nft_token(
-        self, from_addr, to_addr, denomid, tokenid, uri, fees, event_query_tx=True,
+        self,
+        from_addr,
+        to_addr,
+        denomid,
+        tokenid,
+        uri,
+        fees,
+        event_query_tx=True,
     ):
         rsp = json.loads(
             self.raw(
@@ -1033,7 +1051,13 @@ class CosmosCLI:
         return rsp
 
     def edit_nft_token(
-        self, from_addr, denomid, tokenid, newuri, newname, event_query_tx=True,
+        self,
+        from_addr,
+        denomid,
+        tokenid,
+        newuri,
+        newname,
+        event_query_tx=True,
     ):
         rsp = json.loads(
             self.raw(
@@ -1057,7 +1081,12 @@ class CosmosCLI:
         return rsp
 
     def transfer_nft_token(
-        self, from_addr, to_addr, denomid, tokenid, event_query_tx=True,
+        self,
+        from_addr,
+        to_addr,
+        denomid,
+        tokenid,
+        event_query_tx=True,
     ):
         rsp = json.loads(
             self.raw(
@@ -1149,7 +1178,12 @@ class CosmosCLI:
         )
 
     def icaauth_submit_tx(
-        self, connid, tx, timeout_duration="1h", event_query_tx=True, **kwargs,
+        self,
+        connid,
+        tx,
+        timeout_duration="1h",
+        event_query_tx=True,
+        **kwargs,
     ):
         default_kwargs = {
             "home": self.data_dir,

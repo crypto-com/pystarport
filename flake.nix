@@ -24,6 +24,8 @@
               durations = [ "setuptools" ];
               multitail2 = [ "setuptools" ];
               pytest-github-actions-annotate-failures = [ "setuptools" ];
+              flake8-black = [ "setuptools" ];
+              flake8-isort = [ "hatchling" ];
             };
           in
           pkgs.lib.mapAttrs
@@ -44,9 +46,13 @@
           type = "app";
           program = "${packages.default}/bin/pystarport";
         };
-        devShell = pkgs.poetry2nix.mkPoetryEnv {
-          projectDir = ./.;
-          inherit overrides;
+        devShells.default = pkgs.mkShell {
+          buildInputs = [
+            (pkgs.poetry2nix.mkPoetryEnv {
+              projectDir = ./.;
+              inherit overrides;
+            })
+          ];
         };
       }
     ));
