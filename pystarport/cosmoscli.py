@@ -41,6 +41,16 @@ class ChainCommand:
     def __init__(self, cmd=None):
         self.cmd = cmd or CHAIN
 
+    def prob_genesis_subcommand(self):
+        'test if the command has "genesis" subcommand, introduced in sdk 0.50'
+        try:
+            output = self("genesis")
+        except AssertionError:
+            # non-zero return code
+            return False
+
+        return "Available Commands" in output.decode()
+
     def __call__(self, cmd, *args, stdin=None, stderr=subprocess.STDOUT, **kwargs):
         "execute chain-maind"
         args = " ".join(build_cli_args_safe(cmd, *args, **kwargs))
@@ -71,6 +81,7 @@ class CosmosCLI:
         self.leger_button = LedgerButton(zemu_address, zemu_button_port)
         self.output = None
         self.error = None
+        self.has_genesis_subcommand = self.raw.prob_genesis_subcommand()
 
     def node_id(self):
         "get tendermint node id"
@@ -152,11 +163,17 @@ class CosmosCLI:
             home=self.data_dir,
         )
 
+    def genesis_subcommand(self, *args, **kwargs):
+        if self.has_genesis_subcommand:
+            return self.raw("genesis", *args, **kwargs)
+        else:
+            return self.raw(*args, **kwargs)
+
     def validate_genesis(self, *args):
-        return self.raw("validate-genesis", *args, home=self.data_dir)
+        return self.genesis_subcommand("validate-genesis", *args, home=self.data_dir)
 
     def add_genesis_account(self, addr, coins, **kwargs):
-        return self.raw(
+        return self.genesis_subcommand(
             "add-genesis-account",
             addr,
             coins,
@@ -166,7 +183,7 @@ class CosmosCLI:
         )
 
     def gentx(self, name, coins, *args, min_self_delegation=1, pubkey=None, **kwargs):
-        return self.raw(
+        return self.genesis_subcommand(
             "gentx",
             name,
             coins,
@@ -180,7 +197,7 @@ class CosmosCLI:
         )
 
     def collect_gentxs(self, gentx_dir):
-        return self.raw("collect-gentxs", gentx_dir, home=self.data_dir)
+        return self.genesis_subcommand("collect-gentxs", gentx_dir, home=self.data_dir)
 
     def status(self):
         return json.loads(self.raw("status", node=self.node_rpc))
