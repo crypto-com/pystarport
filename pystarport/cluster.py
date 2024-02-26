@@ -185,7 +185,7 @@ class ClusterCLI:
         hostname="127.0.0.1",
         statesync=False,
         mnemonic=None,
-        broadcastmode="sync"
+        broadcastmode="sync",
     ):
         """create new node in the data directory,
         process information is written into supervisor config
@@ -410,36 +410,70 @@ class ClusterCLI:
         return self.cosmos_cli(i).transfer_offline(from_, to, coins, sequence, fees)
 
     def transfer(
-        self, from_, to, coins, i=0, generate_only=False, fees=None,
+        self,
+        from_,
+        to,
+        coins,
+        i=0,
+        generate_only=False,
+        fees=None,
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).transfer(
-            from_, to, coins, generate_only, fees, event_query_tx=event_query_tx,
+            from_,
+            to,
+            coins,
+            generate_only,
+            fees,
+            event_query_tx=event_query_tx,
         )
 
     def transfer_from_ledger(
-        self, from_, to, coins, i=0, generate_only=False, fees=None,
+        self,
+        from_,
+        to,
+        coins,
+        i=0,
+        generate_only=False,
+        fees=None,
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).transfer_from_ledger(
-            from_, to, coins, generate_only, fees, event_query_tx=event_query_tx,
+            from_,
+            to,
+            coins,
+            generate_only,
+            fees,
+            event_query_tx=event_query_tx,
         )
 
     def get_delegated_amount(self, which_addr, i=0):
         return self.cosmos_cli(i).get_delegated_amount(which_addr)
 
     def delegate_amount(
-        self, to_addr, amount, from_addr, i=0, gas_price=None, event_query_tx=True,
+        self,
+        to_addr,
+        amount,
+        from_addr,
+        i=0,
+        gas_price=None,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).delegate_amount(
-            to_addr, amount, from_addr, gas_price,
+            to_addr,
+            amount,
+            from_addr,
+            gas_price,
             event_query_tx=event_query_tx,
         )
 
     # to_addr: croclcl1...  , from_addr: cro1...
     def unbond_amount(self, to_addr, amount, from_addr, i=0, event_query_tx=True):
         return self.cosmos_cli(i).unbond_amount(
-            to_addr, amount, from_addr, event_query_tx=event_query_tx,
+            to_addr,
+            amount,
+            from_addr,
+            event_query_tx=event_query_tx,
         )
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
@@ -454,14 +488,18 @@ class ClusterCLI:
         **kwargs,
     ):
         return self.cosmos_cli(i).redelegate_amount(
-            to_validator_addr, from_validator_addr, amount, from_addr,
+            to_validator_addr,
+            from_validator_addr,
+            amount,
+            from_addr,
             event_query_tx=event_query_tx,
             **kwargs,
         )
 
     def withdraw_all_rewards(self, from_delegator, i=0, event_query_tx=True):
         return self.cosmos_cli(i).withdraw_all_rewards(
-            from_delegator, event_query_tx=event_query_tx,
+            from_delegator,
+            event_query_tx=event_query_tx,
         )
 
     def make_multisig(self, name, signer1, signer2, i=0):
@@ -551,7 +589,12 @@ class ClusterCLI:
     ):
         """MsgEditValidator"""
         return self.cosmos_cli(i).edit_validator(
-            commission_rate, moniker, identity, website, security_contact, details,
+            commission_rate,
+            moniker,
+            identity,
+            website,
+            security_contact,
+            details,
             event_query_tx=event_query_tx,
         )
 
@@ -560,12 +603,18 @@ class ClusterCLI:
 
     def gov_vote(self, voter, proposal_id, option, i=0, event_query_tx=True):
         return self.cosmos_cli(i).gov_vote(
-            voter, proposal_id, option, event_query_tx=event_query_tx,
+            voter,
+            proposal_id,
+            option,
+            event_query_tx=event_query_tx,
         )
 
     def gov_deposit(self, depositor, proposal_id, amount, i=0, event_query_tx=True):
         return self.cosmos_cli(i).gov_deposit(
-            depositor, proposal_id, amount, event_query_tx=event_query_tx,
+            depositor,
+            proposal_id,
+            amount,
+            event_query_tx=event_query_tx,
         )
 
     def query_proposals(self, depositor=None, limit=None, status=None, voter=None, i=0):
@@ -588,7 +637,12 @@ class ClusterCLI:
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).ibc_transfer(
-            from_, to, amount, channel, target_version, event_query_tx=event_query_tx,
+            from_,
+            to,
+            amount,
+            channel,
+            target_version,
+            event_query_tx=event_query_tx,
         )
 
     def create_nft(
@@ -606,7 +660,12 @@ class ClusterCLI:
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).create_nft(
-            from_addr, denomid, denomname, schema, fees, event_query_tx=event_query_tx,
+            from_addr,
+            denomid,
+            denomname,
+            schema,
+            fees,
+            event_query_tx=event_query_tx,
         )
 
     def query_nft(self, denomid="mydenomid", i=0):
@@ -627,7 +686,12 @@ class ClusterCLI:
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).create_nft_token(
-            from_addr, to_addr, denomid, tokenid, uri, fees,
+            from_addr,
+            to_addr,
+            denomid,
+            tokenid,
+            uri,
+            fees,
             event_query_tx=event_query_tx,
         )
 
@@ -643,7 +707,10 @@ class ClusterCLI:
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).burn_nft_token(
-            from_addr, denomid, tokenid, event_query_tx=event_query_tx,
+            from_addr,
+            denomid,
+            tokenid,
+            event_query_tx=event_query_tx,
         )
 
     def edit_nft_token(
@@ -657,7 +724,12 @@ class ClusterCLI:
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).edit_nft_token(
-            from_addr, denomid, tokenid, newuri, newname, event_query_tx=event_query_tx,
+            from_addr,
+            denomid,
+            tokenid,
+            newuri,
+            newname,
+            event_query_tx=event_query_tx,
         )
 
     def transfer_nft_token(
@@ -670,7 +742,11 @@ class ClusterCLI:
         event_query_tx=True,
     ):
         return self.cosmos_cli(i).transfer_nft_token(
-            from_addr, to_addr, denomid, tokenid, event_query_tx=event_query_tx,
+            from_addr,
+            to_addr,
+            denomid,
+            tokenid,
+            event_query_tx=event_query_tx,
         )
 
     def event_query_tx_for(self, hash, i=0):
@@ -684,17 +760,26 @@ class ClusterCLI:
 
     def icaauth_register_account(self, connid, i=0, event_query_tx=True):
         return self.cosmos_cli(i).icaauth_register_account(
-            connid, event_query_tx=event_query_tx,
+            connid,
+            event_query_tx=event_query_tx,
         )
 
     def ica_query_account(self, connid, owner, i=0, **kwargs):
         return self.cosmos_cli(i).ica_query_account(connid, owner, **kwargs)
 
     def icaauth_submit_tx(
-        self, connid, tx, timeout_duration="1h", i=0, event_query_tx=True,
+        self,
+        connid,
+        tx,
+        timeout_duration="1h",
+        i=0,
+        event_query_tx=True,
     ):
         return self.cosmos_cli(i).icaauth_submit_tx(
-            connid, tx, timeout_duration, event_query_tx=event_query_tx,
+            connid,
+            tx,
+            timeout_duration,
+            event_query_tx=event_query_tx,
         )
 
 
@@ -849,13 +934,16 @@ def init_devnet(
         rpc_port = ports.rpc_port(val["base_port"])
         (data_dir / f"node{i}/config/client.toml").write_text(
             tomlkit.dumps(
-                jsonmerge.merge({
-                    "chain-id": config["chain_id"],
-                    "keyring-backend": "test",
-                    "output": "json",
-                    "node": f"tcp://{val['hostname']}:{rpc_port}",
-                    "broadcast-mode": "sync",
-                }, val.get("client_config", {}))
+                jsonmerge.merge(
+                    {
+                        "chain-id": config["chain_id"],
+                        "keyring-backend": "test",
+                        "output": "json",
+                        "node": f"tcp://{val['hostname']}:{rpc_port}",
+                        "broadcast-mode": "sync",
+                    },
+                    val.get("client_config", {}),
+                )
             )
         )
 
@@ -886,7 +974,7 @@ def init_devnet(
                 "commission_rate",
                 "details",
                 "security_contact",
-                "gas_prices"
+                "gas_prices",
             ]
             extra_kwargs = {
                 name: str(node[name]) for name in optional_fields if name in node
@@ -982,9 +1070,7 @@ def init_devnet(
 
 
 def get_relayer_chain_config(relayer_chains_config, chain_id):
-    return next(
-        (i for i in relayer_chains_config if i["id"] == chain_id), {}
-    )
+    return next((i for i in relayer_chains_config if i["id"] == chain_id), {})
 
 
 def relayer_chain_config_hermes(data_dir, chain, relayer_chains_config):
@@ -1063,8 +1149,8 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "precompiled-contract-address": precompiled,
             "signing-algorithm": "",
             "broadcast-mode": "batch",
-            "min-loop-duration": "0s"
-        }
+            "min-loop-duration": "0s",
+        },
     }
 
 
@@ -1110,7 +1196,7 @@ def init_cluster(
         cfg = relayer_config.pop("chains", {})
         if is_hermes:
             # write relayer config for hermes
-            relayer_config_hermes = (data_dir / "relayer.toml")
+            relayer_config_hermes = data_dir / "relayer.toml"
             relayer_config_hermes.write_text(
                 tomlkit.dumps(
                     jsonmerge.merge(
@@ -1129,9 +1215,9 @@ def init_cluster(
             )
         else:
             # write relayer config folder for rly
-            relayer_config_dir = (data_dir / "relayer/config")
+            relayer_config_dir = data_dir / "relayer/config"
             relayer_config_dir.mkdir(parents=True, exist_ok=True)
-            relayer_config_rly = (relayer_config_dir / "config.yaml")
+            relayer_config_rly = relayer_config_dir / "config.yaml"
             log_level = relayer_config.get("global", {}).get("log_level", "")
             relayer_config_rly.write_text(
                 yaml.dump(
