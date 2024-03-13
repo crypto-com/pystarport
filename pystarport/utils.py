@@ -61,3 +61,7 @@ def format_doc_string(**kwargs):
         return target
 
     return decorator
+
+
+def get_sync_info(s):
+    return s.get("SyncInfo") if s.get("SyncInfo") else s.get("sync_info")
