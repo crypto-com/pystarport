@@ -889,7 +889,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        return res.get("proposal") if res.get("proposal") else res
+        return res.get("proposal") or res
 
     def query_tally(self, proposal_id):
         res = json.loads(
