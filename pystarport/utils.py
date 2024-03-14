@@ -64,4 +64,4 @@ def format_doc_string(**kwargs):
 
 
 def get_sync_info(s):
-    return s.get("SyncInfo") if s.get("SyncInfo") else s.get("sync_info")
+    return s.get("SyncInfo") or s.get("sync_info")
