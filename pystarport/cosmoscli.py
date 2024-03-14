@@ -339,7 +339,7 @@ class CosmosCLI:
     def staking_pool(self, bonded=True):
         res = self.raw("query", "staking", "pool", output="json", node=self.node_rpc)
         res = json.loads(res)
-        res = res.get("pool") if res.get("pool") else res
+        res = res.get("pool") or res
         return int(res["bonded_tokens" if bonded else "not_bonded_tokens"])
 
     def transfer(
