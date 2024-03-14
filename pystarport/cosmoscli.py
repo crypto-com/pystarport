@@ -902,7 +902,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        return res.get("tally") if res.get("tally") else res
+        return res.get("tally") or res
 
     def ibc_transfer(
         self,

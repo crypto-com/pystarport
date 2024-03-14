@@ -621,7 +621,8 @@ class ClusterCLI:
         return self.cosmos_cli(i).query_proposals(depositor, limit, status, voter)
 
     def query_proposal(self, proposal_id, i=0):
-        return self.cosmos_cli(i).query_proposal(proposal_id)["proposal"]
+        res = self.cosmos_cli(i).query_proposal(proposal_id)
+        return res.get("proposal") or res
 
     def query_tally(self, proposal_id, i=0):
         return self.cosmos_cli(i).query_tally(proposal_id)
