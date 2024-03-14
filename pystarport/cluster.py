@@ -27,7 +27,7 @@ from .app import CHAIN, IMAGE, SUPERVISOR_CONFIG_FILE
 from .cosmoscli import ChainCommand, CosmosCLI, ModuleAccount, module_address
 from .expansion import expand_jsonnet, expand_yaml
 from .ledger import ZEMU_BUTTON_PORT, ZEMU_HOST
-from .utils import format_doc_string, interact, write_ini
+from .utils import format_doc_string, get_sync_info, interact, write_ini
 
 COMMON_PROG_OPTIONS = {
     # redirect to supervisord's stdout, easier to collect all logs
@@ -235,7 +235,7 @@ class ClusterCLI:
 
         def custom_edit_tm(doc):
             if statesync:
-                info = self.status()["SyncInfo"]
+                info = get_sync_info(self.status())
                 doc["statesync"].update(
                     {
                         "enable": True,
@@ -621,7 +621,8 @@ class ClusterCLI:
         return self.cosmos_cli(i).query_proposals(depositor, limit, status, voter)
 
     def query_proposal(self, proposal_id, i=0):
-        return self.cosmos_cli(i).query_proposal(proposal_id)
+        res = self.cosmos_cli(i).query_proposal(proposal_id)
+        return res.get("proposal") or res
 
     def query_tally(self, proposal_id, i=0):
         return self.cosmos_cli(i).query_tally(proposal_id)

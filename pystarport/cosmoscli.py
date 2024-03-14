@@ -11,7 +11,7 @@ from dateutil.parser import isoparse
 
 from .app import CHAIN
 from .ledger import ZEMU_BUTTON_PORT, ZEMU_HOST, LedgerButton
-from .utils import build_cli_args_safe, format_doc_string, interact
+from .utils import build_cli_args_safe, format_doc_string, get_sync_info, interact
 
 
 class ModuleAccount(enum.Enum):
@@ -203,10 +203,10 @@ class CosmosCLI:
         return json.loads(self.raw("status", node=self.node_rpc))
 
     def block_height(self):
-        return int(self.status()["SyncInfo"]["latest_block_height"])
+        return int(get_sync_info(self.status())["latest_block_height"])
 
     def block_time(self):
-        return isoparse(self.status()["SyncInfo"]["latest_block_time"])
+        return isoparse(get_sync_info(self.status())["latest_block_time"])
 
     def balances(self, addr, height=0):
         return json.loads(
@@ -337,11 +337,10 @@ class CosmosCLI:
         )
 
     def staking_pool(self, bonded=True):
-        return int(
-            json.loads(
-                self.raw("query", "staking", "pool", output="json", node=self.node_rpc)
-            )["bonded_tokens" if bonded else "not_bonded_tokens"]
-        )
+        res = self.raw("query", "staking", "pool", output="json", node=self.node_rpc)
+        res = json.loads(res)
+        res = res.get("pool") or res
+        return int(res["bonded_tokens" if bonded else "not_bonded_tokens"])
 
     def transfer(
         self,
@@ -880,7 +879,7 @@ class CosmosCLI:
         )
 
     def query_proposal(self, proposal_id):
-        return json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "gov",
@@ -890,9 +889,10 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
+        return res.get("proposal") or res
 
     def query_tally(self, proposal_id):
-        return json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "gov",
@@ -902,6 +902,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
+        return res.get("tally") or res
 
     def ibc_transfer(
         self,

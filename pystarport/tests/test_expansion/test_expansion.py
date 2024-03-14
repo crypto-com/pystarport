@@ -22,15 +22,15 @@ def test_expansion(type, func):
     cronos_has_dotenv = parent / ("cronos_has_dotenv" + type)
     cronos_no_dotenv = parent / ("cronos_no_dotenv" + type)
     cronos_has_posix_no_dotenv = parent / ("cronos_no_dotenv" + type)
-    baseConfig = _get_base_config()
+    base_config = _get_base_config()
     # `expand_yaml` is backward compatible, not expanded, and no diff
     config = func(cronos_no_dotenv, None)
-    assert baseConfig == config
+    assert base_config == config
 
     # `expand_yaml` is expanded but no diff
     config = func(cronos_has_dotenv, None)
     assert not DeepDiff(
-        baseConfig,
+        base_config,
         config,
         ignore_order=True,
     )
@@ -39,7 +39,7 @@ def test_expansion(type, func):
     dotenv = "dotenv1"
     config = func(cronos_has_dotenv, dotenv)
     assert DeepDiff(
-        baseConfig,
+        base_config,
         config,
         ignore_order=True,
     ) == {
@@ -57,7 +57,7 @@ def test_expansion(type, func):
     dotenv = os.path.abspath("test_expansion/dotenv1")
     config = func(cronos_has_dotenv, dotenv)
     assert DeepDiff(
-        baseConfig,
+        base_config,
         config,
         ignore_order=True,
     ) == {
@@ -75,7 +75,7 @@ def test_expansion(type, func):
     dotenv = os.path.abspath("test_expansion/dotenv")
     config = func(cronos_has_posix_no_dotenv, dotenv)
     assert not DeepDiff(
-        baseConfig,
+        base_config,
         config,
         ignore_order=True,
     )
