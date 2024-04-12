@@ -239,7 +239,6 @@ class CosmosCLI:
             tx_type,
             tx_value,
             home=self.data_dir,
-            chain_id=self.chain_id,
             node=self.node_rpc,
         )
         return json.loads(tx)
@@ -251,7 +250,6 @@ class CosmosCLI:
             addr,
             home=self.data_dir,
             keyring_backend="test",
-            chain_id=self.chain_id,
             node=self.node_rpc,
         )
         return json.loads(txs)
@@ -433,6 +431,7 @@ class CosmosCLI:
                 "delegations",
                 which_addr,
                 home=self.data_dir,
+                node=self.node_rpc,
                 output="json",
             )
         )
@@ -987,7 +986,6 @@ class CosmosCLI:
                 denomid,
                 output="json",
                 home=self.data_dir,
-                chain_id=self.chain_id,
                 node=self.node_rpc,
             )
         )
@@ -1001,7 +999,6 @@ class CosmosCLI:
                 denomname,
                 output="json",
                 home=self.data_dir,
-                chain_id=self.chain_id,
                 node=self.node_rpc,
             )
         )
@@ -1047,7 +1044,6 @@ class CosmosCLI:
                 tokenid,
                 output="json",
                 home=self.data_dir,
-                chain_id=self.chain_id,
                 node=self.node_rpc,
             )
         )
