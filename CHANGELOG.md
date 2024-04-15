@@ -21,6 +21,7 @@
 - [#117](https://github.com/crypto-com/pystarport/pull/117) make event_query_tx_for optional.
 - [#121](https://github.com/crypto-com/pystarport/pull/121) Support sdk 0.50
 - [#122](https://github.com/crypto-com/pystarport/pull/122) Adjust status and staking related cli for sdk 0.50
+- [#127](https://github.com/crypto-com/pystarport/pull/127) Support adding new key when patching config
 
 
 *Feb 7, 2023*
