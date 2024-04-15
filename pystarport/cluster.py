@@ -1378,7 +1378,7 @@ def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
 def patch_toml_doc(doc, patch):
     for k, v in patch.items():
         if isinstance(v, dict):
-            patch_toml_doc(doc[k], v)
+            patch_toml_doc(doc.setdefault(k, {}), v)
         else:
             doc[k] = v
 
