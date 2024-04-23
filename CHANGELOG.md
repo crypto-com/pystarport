@@ -21,6 +21,7 @@
 - [#117](https://github.com/crypto-com/pystarport/pull/117) make event_query_tx_for optional.
 - [#121](https://github.com/crypto-com/pystarport/pull/121), [#122](https://github.com/crypto-com/pystarport/pull/122), [#125](https://github.com/crypto-com/pystarport/pull/125) Support sdk 0.50.
 - [#127](https://github.com/crypto-com/pystarport/pull/127) Support adding new key when patching config
+- [#](https://github.com/crypto-com/pystarport/pull/) fix wrong description on empty flag when create validator.
 
 *Feb 7, 2023*
 

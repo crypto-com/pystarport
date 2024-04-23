@@ -554,11 +554,8 @@ class ClusterCLI:
         commission_rate="0.1",
         commission_max_rate="0.2",
         min_self_delegation="1",
-        identity="",
-        website="",
-        security_contact="",
-        details="",
         event_query_tx=True,
+        **kwargs,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
@@ -569,11 +566,8 @@ class ClusterCLI:
             commission_rate,
             commission_max_rate,
             min_self_delegation,
-            identity,
-            website,
-            security_contact,
-            details,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def edit_validator(
