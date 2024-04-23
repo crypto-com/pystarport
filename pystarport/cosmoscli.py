@@ -715,6 +715,7 @@ class CosmosCLI:
         security_contact=None,
         details=None,
         event_query_tx=True,
+        **kwargs,
     ):
         """MsgEditValidator"""
         options = dict(
@@ -738,6 +739,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 **{k: v for k, v in options.items() if v is not None},
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
