@@ -346,8 +346,8 @@ class CosmosCLI:
         to,
         coins,
         generate_only=False,
-        fees=None,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -363,7 +363,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
-                fees=fees,
+                **kwargs,
             )
         )
         if not generate_only and rsp["code"] == 0 and event_query_tx:
