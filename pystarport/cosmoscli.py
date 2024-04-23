@@ -346,8 +346,8 @@ class CosmosCLI:
         to,
         coins,
         generate_only=False,
-        fees=None,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -363,7 +363,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
-                fees=fees,
+                **kwargs,
             )
         )
         if not generate_only and rsp["code"] == 0 and event_query_tx:
@@ -660,11 +660,8 @@ class CosmosCLI:
         commission_rate="0.1",
         commission_max_rate="0.2",
         min_self_delegation="1",
-        identity="",
-        website="",
-        security_contact="",
-        details="",
         event_query_tx=True,
+        **kwargs,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
@@ -697,15 +694,12 @@ class CosmosCLI:
                 commission_max_change_rate=commission_max_change_rate,
                 # description
                 moniker=moniker,
-                identity=identity,
-                website=website,
-                security_contact=security_contact,
-                details=details,
                 # basic
                 home=self.data_dir,
                 node=self.node_rpc,
                 keyring_backend="test",
                 chain_id=self.chain_id,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -721,6 +715,7 @@ class CosmosCLI:
         security_contact=None,
         details=None,
         event_query_tx=True,
+        **kwargs,
     ):
         """MsgEditValidator"""
         options = dict(
@@ -744,6 +739,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 **{k: v for k, v in options.items() if v is not None},
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:

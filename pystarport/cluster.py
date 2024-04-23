@@ -416,16 +416,16 @@ class ClusterCLI:
         coins,
         i=0,
         generate_only=False,
-        fees=None,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).transfer(
             from_,
             to,
             coins,
             generate_only,
-            fees,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def transfer_from_ledger(
@@ -554,11 +554,8 @@ class ClusterCLI:
         commission_rate="0.1",
         commission_max_rate="0.2",
         min_self_delegation="1",
-        identity="",
-        website="",
-        security_contact="",
-        details="",
         event_query_tx=True,
+        **kwargs,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
@@ -569,11 +566,8 @@ class ClusterCLI:
             commission_rate,
             commission_max_rate,
             min_self_delegation,
-            identity,
-            website,
-            security_contact,
-            details,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def edit_validator(
@@ -586,6 +580,7 @@ class ClusterCLI:
         security_contact=None,
         details=None,
         event_query_tx=True,
+        **kwargs,
     ):
         """MsgEditValidator"""
         return self.cosmos_cli(i).edit_validator(
@@ -596,6 +591,7 @@ class ClusterCLI:
             security_contact,
             details,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def gov_propose(self, proposer, kind, proposal, i=0):
