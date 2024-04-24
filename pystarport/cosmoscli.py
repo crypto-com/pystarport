@@ -311,7 +311,7 @@ class CosmosCLI:
         )
 
     def validator(self, addr):
-        return json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "staking",
@@ -321,6 +321,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
+        return res.get("validator") or res
 
     def validators(self):
         return json.loads(
@@ -661,47 +662,64 @@ class CosmosCLI:
         commission_max_rate="0.2",
         min_self_delegation="1",
         event_query_tx=True,
+        sdk47_compact=True,
         **kwargs,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
         pubkey = (
-            "'"
-            + (
-                self.raw(
-                    "tendermint",
-                    "show-validator",
-                    home=self.data_dir,
-                )
-                .strip()
-                .decode()
-            )
-            + "'"
-        )
-        rsp = json.loads(
             self.raw(
+                "tendermint",
+                "show-validator",
+                home=self.data_dir,
+            )
+            .strip()
+            .decode()
+        )
+        options = {
+            "amount": amount,
+            "min-self-delegation": min_self_delegation,
+            "commission-rate": commission_rate,
+            "commission-max-rate": commission_max_rate,
+            "commission-max-change-rate": commission_max_change_rate,
+            "moniker": moniker,
+        }
+        if sdk47_compact:
+            options["pubkey"] = "'" + pubkey + "'"
+            raw = self.raw(
                 "tx",
                 "staking",
                 "create-validator",
                 "-y",
                 from_=self.address("validator"),
-                amount=amount,
-                pubkey=pubkey,
-                min_self_delegation=min_self_delegation,
-                # commision
-                commission_rate=commission_rate,
-                commission_max_rate=commission_max_rate,
-                commission_max_change_rate=commission_max_change_rate,
-                # description
-                moniker=moniker,
                 # basic
                 home=self.data_dir,
                 node=self.node_rpc,
                 keyring_backend="test",
                 chain_id=self.chain_id,
+                **{k: v for k, v in options.items() if v is not None},
                 **kwargs,
             )
-        )
+        else:
+            options["pubkey"] = json.loads(pubkey)
+            with tempfile.NamedTemporaryFile("w") as fp:
+                json.dump(options, fp)
+                fp.flush()
+                raw = self.raw(
+                    "tx",
+                    "staking",
+                    "create-validator",
+                    fp.name,
+                    "-y",
+                    from_=self.address("validator"),
+                    # basic
+                    home=self.data_dir,
+                    node=self.node_rpc,
+                    keyring_backend="test",
+                    chain_id=self.chain_id,
+                    **kwargs,
+                )
+        rsp = json.loads(raw)
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
