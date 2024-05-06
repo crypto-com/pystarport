@@ -22,6 +22,7 @@
 - [#121](https://github.com/crypto-com/pystarport/pull/121), [#122](https://github.com/crypto-com/pystarport/pull/122), [#125](https://github.com/crypto-com/pystarport/pull/125) Support sdk 0.50.
 - [#127](https://github.com/crypto-com/pystarport/pull/127) Support adding new key when patching config
 - [#128](https://github.com/crypto-com/pystarport/pull/128) fix wrong description on empty flag when create validator and align flags for edit validator.
+- [#](https://github.com/crypto-com/pystarport/pull/) replace mode with seed_mode for cometbft config.
 
 *Feb 7, 2023*
 

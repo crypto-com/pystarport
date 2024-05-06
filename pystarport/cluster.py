@@ -1345,7 +1345,6 @@ def edit_tm_cfg(path, base_port, peers, config, *, custom_edit=None):
     "field name changed after tendermint 0.35, support both flavours."
     with open(path) as f:
         doc = tomlkit.parse(f.read())
-    doc["mode"] = "validator"
     # tendermint is start in process, not needed
     # doc['proxy_app'] = 'tcp://127.0.0.1:%d' % abci_port(base_port)
     rpc = doc["rpc"]
