@@ -26,6 +26,7 @@
               pytest-github-actions-annotate-failures = [ "setuptools" ];
               flake8-black = [ "setuptools" ];
               flake8-isort = [ "hatchling" ];
+              docker = [ "hatchling" "hatch-vcs" ];
             };
           in
           pkgs.lib.mapAttrs
