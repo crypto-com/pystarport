@@ -1120,6 +1120,8 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
     denom = gas_price.get("denom", "basecro")
     prices = f"{price}{denom}"
     precompiled = chain_config.get("precompiled_contract_address", "")
+    broadcast_mode = chain_config.get("broadcast-mode", "batch")
+    max_msg_num = chain_config.get("max_msg_num", 0)
     return {
         "type": "cosmos",
         "value": {
@@ -1145,7 +1147,8 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
             "coin-type": chain.get("coin-type", 118),
             "precompiled-contract-address": precompiled,
             "signing-algorithm": "",
-            "broadcast-mode": "batch",
+            "broadcast-mode": broadcast_mode,
+            "max-msg-num": max_msg_num,
             "min-loop-duration": "0s",
         },
     }
