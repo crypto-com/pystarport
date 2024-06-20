@@ -555,6 +555,7 @@ class ClusterCLI:
         commission_max_rate="0.2",
         min_self_delegation="1",
         event_query_tx=True,
+        sdk47_compact=True,
         **kwargs,
     ):
         """MsgCreateValidator
@@ -567,6 +568,7 @@ class ClusterCLI:
             commission_max_rate,
             min_self_delegation,
             event_query_tx=event_query_tx,
+            sdk47_compact=sdk47_compact,
             **kwargs,
         )
 
