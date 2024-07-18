@@ -1,6 +1,7 @@
 import enum
 import hashlib
 import json
+import re
 import subprocess
 import tempfile
 import threading
@@ -249,7 +250,7 @@ class CosmosCLI:
         return json.loads(txs)
 
     def distribution_commission(self, addr):
-        coin = json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "distribution",
@@ -258,11 +259,13 @@ class CosmosCLI:
                 output="json",
                 node=self.node_rpc,
             )
-        )["commission"][0]
-        return float(coin["amount"])
+        )["commission"]
+        coin = (res.get("commission") or res)[0]
+        amt = re.search(r"\d+\.?\d*", coin)
+        return float(amt.group()) if amt else 0.0
 
     def distribution_community(self):
-        coin = json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "distribution",
@@ -270,11 +273,13 @@ class CosmosCLI:
                 output="json",
                 node=self.node_rpc,
             )
-        )["pool"][0]
-        return float(coin["amount"])
+        )
+        coin = res["pool"][0]
+        amt = re.search(r"\d+\.?\d*", coin)
+        return float(amt.group()) if amt else 0.0
 
     def distribution_reward(self, delegator_addr):
-        coin = json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "distribution",
@@ -283,8 +288,10 @@ class CosmosCLI:
                 output="json",
                 node=self.node_rpc,
             )
-        )["total"][0]
-        return float(coin["amount"])
+        )
+        coin = res["total"][0]
+        amt = re.search(r"\d+\.?\d*", coin)
+        return float(amt.group()) if amt else 0.0
 
     def address(self, name, bech="acc"):
         output = self.raw(
@@ -331,9 +338,10 @@ class CosmosCLI:
         )["validators"]
 
     def staking_params(self):
-        return json.loads(
+        res = json.loads(
             self.raw("query", "staking", "params", output="json", node=self.node_rpc)
         )
+        return res.get("params") or res
 
     def staking_pool(self, bonded=True):
         res = self.raw("query", "staking", "pool", output="json", node=self.node_rpc)
