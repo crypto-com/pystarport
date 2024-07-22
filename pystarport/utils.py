@@ -1,6 +1,6 @@
 import configparser
-from itertools import takewhile
 import subprocess
+from itertools import takewhile
 
 
 def interact(cmd, ignore_error=False, input=None, **kwargs):
