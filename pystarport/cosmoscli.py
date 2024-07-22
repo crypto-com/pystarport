@@ -7,6 +7,7 @@ import threading
 import time
 
 import bech32
+import durations
 from dateutil.parser import isoparse
 
 from .app import CHAIN
@@ -57,6 +58,16 @@ class ChainCommand:
 
         return "Available Commands" in output.decode()
 
+    def prob_icaauth_subcommand(self):
+        'test if the command has "icaauth" subcommand, removed after ibc 8.3'
+        try:
+            output = self("q", "icaauth")
+        except AssertionError:
+            # non-zero return code
+            return False
+
+        return "Available Commands" in output.decode()
+
     def __call__(self, cmd, *args, stdin=None, stderr=subprocess.STDOUT, **kwargs):
         "execute chain-maind"
         args = " ".join(build_cli_args_safe(cmd, *args, **kwargs))
@@ -88,6 +99,7 @@ class CosmosCLI:
         self.output = None
         self.error = None
         self.has_genesis_subcommand = self.raw.prob_genesis_subcommand()
+        self.has_icaauth_subcommand = self.raw.prob_icaauth_subcommand()
 
     def node_id(self):
         "get tendermint node id"
@@ -1199,7 +1211,13 @@ class CosmosCLI:
             )
         )
 
-    def icaauth_register_account(self, connid, event_query_tx=True, **kwargs):
+    def ica_subcommand(self, *args, **kwargs):
+        if self.has_icaauth_subcommand:
+            return self.raw("tx", *args, **kwargs)
+        else:
+            return self.raw(*args, **kwargs)
+
+    def ica_register_account(self, connid, event_query_tx=True, **kwargs):
         "execute on host chain to attach an account to the connection"
         default_kwargs = {
             "home": self.data_dir,
@@ -1207,11 +1225,15 @@ class CosmosCLI:
             "chain_id": self.chain_id,
             "keyring_backend": "test",
         }
+        args = (
+            ["icaauth", "register-account"]
+            if self.has_icaauth_subcommand
+            else ["ica", "controller", "register"]
+        )
         rsp = json.loads(
             self.raw(
                 "tx",
-                "icaauth",
-                "register-account",
+                *args,
                 connid,
                 "-y",
                 **(default_kwargs | kwargs),
@@ -1226,18 +1248,20 @@ class CosmosCLI:
             "node": self.node_rpc,
             "output": "json",
         }
+        args = (
+            ["icaauth", "interchain-account-address", connid, owner]
+            if self.has_icaauth_subcommand
+            else ["ica", "controller", "interchain-account", owner, connid]
+        )
         return json.loads(
             self.raw(
                 "q",
-                "icaauth",
-                "interchain-account-address",
-                connid,
-                owner,
+                *args,
                 **(default_kwargs | kwargs),
             )
         )
 
-    def icaauth_submit_tx(
+    def ica_submit_tx(
         self,
         connid,
         tx,
@@ -1251,15 +1275,25 @@ class CosmosCLI:
             "chain_id": self.chain_id,
             "keyring_backend": "test",
         }
+        if self.has_icaauth_subcommand:
+            args = ["icaauth", "submit-tx"]
+        else:
+            args = ["ica", "controller", "send-tx"]
+
+        if timeout_duration:
+            if self.has_icaauth_subcommand:
+                duration_args = ["--timeout-duration", timeout_duration]
+            else:
+                timeout = int(durations.Duration(timeout_duration).to_seconds() * 1e9)
+                duration_args = ["--relative-packet-timeout", timeout]
+
         rsp = json.loads(
             self.raw(
                 "tx",
-                "icaauth",
-                "submit-tx",
+                *args,
                 connid,
                 tx,
-                "--timeout-duration" if timeout_duration else None,
-                timeout_duration if timeout_duration else None,
+                *duration_args,
                 "-y",
                 **(default_kwargs | kwargs),
             )
@@ -1267,3 +1301,18 @@ class CosmosCLI:
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
+
+    def ica_generate_packet_data(self, tx, memo=None, encoding="proto3", **kwargs):
+        return json.loads(
+            self.raw(
+                "tx",
+                "interchain-accounts",
+                "host",
+                "generate-packet-data",
+                tx,
+                memo=memo,
+                encoding=encoding,
+                home=self.data_dir,
+                **kwargs,
+            )
+        )

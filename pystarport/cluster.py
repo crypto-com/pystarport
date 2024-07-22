@@ -753,8 +753,8 @@ class ClusterCLI:
     def ibc_query_channels(self, connid, i=0):
         return self.cosmos_cli(i).ibc_query_channels(connid)
 
-    def icaauth_register_account(self, connid, i=0, event_query_tx=True):
-        return self.cosmos_cli(i).icaauth_register_account(
+    def ica_register_account(self, connid, i=0, event_query_tx=True):
+        return self.cosmos_cli(i).ica_register_account(
             connid,
             event_query_tx=event_query_tx,
         )
@@ -762,7 +762,7 @@ class ClusterCLI:
     def ica_query_account(self, connid, owner, i=0, **kwargs):
         return self.cosmos_cli(i).ica_query_account(connid, owner, **kwargs)
 
-    def icaauth_submit_tx(
+    def ica_submit_tx(
         self,
         connid,
         tx,
@@ -770,12 +770,15 @@ class ClusterCLI:
         i=0,
         event_query_tx=True,
     ):
-        return self.cosmos_cli(i).icaauth_submit_tx(
+        return self.cosmos_cli(i).ica_submit_tx(
             connid,
             tx,
             timeout_duration,
             event_query_tx=event_query_tx,
         )
+
+    def ica_generate_packet_data(self, tx, memo=None, encoding="proto3", i=0, **kwargs):
+        return self.cosmos_cli(i).ica_generate_packet_data(memo, encoding, **kwargs)
 
 
 def start_cluster(data_dir):

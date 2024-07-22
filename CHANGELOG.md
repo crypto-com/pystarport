@@ -23,6 +23,7 @@
 - [#127](https://github.com/crypto-com/pystarport/pull/127) Support adding new key when patching config
 - [#128](https://github.com/crypto-com/pystarport/pull/128) fix wrong description on empty flag when create validator and align flags for edit validator.
 - [#129](https://github.com/crypto-com/pystarport/pull/129) create and get validator are incompatible.
+- [#137](https://github.com/crypto-com/pystarport/pull/137) support ica and icaauth cmd.
 
 *Feb 7, 2023*
 
