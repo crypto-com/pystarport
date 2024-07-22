@@ -11,7 +11,13 @@ from dateutil.parser import isoparse
 
 from .app import CHAIN
 from .ledger import ZEMU_BUTTON_PORT, ZEMU_HOST, LedgerButton
-from .utils import build_cli_args_safe, format_doc_string, get_sync_info, interact
+from .utils import (
+    build_cli_args_safe,
+    format_doc_string,
+    get_sync_info,
+    interact,
+    parse_amount,
+)
 
 
 class ModuleAccount(enum.Enum):
@@ -249,7 +255,7 @@ class CosmosCLI:
         return json.loads(txs)
 
     def distribution_commission(self, addr):
-        coin = json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "distribution",
@@ -258,11 +264,11 @@ class CosmosCLI:
                 output="json",
                 node=self.node_rpc,
             )
-        )["commission"][0]
-        return float(coin["amount"])
+        )["commission"]
+        return parse_amount((res.get("commission") or res)[0])
 
     def distribution_community(self):
-        coin = json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "distribution",
@@ -270,11 +276,11 @@ class CosmosCLI:
                 output="json",
                 node=self.node_rpc,
             )
-        )["pool"][0]
-        return float(coin["amount"])
+        )
+        return parse_amount(res["pool"][0])
 
     def distribution_reward(self, delegator_addr):
-        coin = json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "distribution",
@@ -283,8 +289,8 @@ class CosmosCLI:
                 output="json",
                 node=self.node_rpc,
             )
-        )["total"][0]
-        return float(coin["amount"])
+        )
+        return parse_amount(res["total"][0])
 
     def address(self, name, bech="acc"):
         output = self.raw(
@@ -311,7 +317,7 @@ class CosmosCLI:
         )
 
     def validator(self, addr):
-        return json.loads(
+        res = json.loads(
             self.raw(
                 "query",
                 "staking",
@@ -321,6 +327,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
+        return res.get("validator") or res
 
     def validators(self):
         return json.loads(
@@ -330,9 +337,10 @@ class CosmosCLI:
         )["validators"]
 
     def staking_params(self):
-        return json.loads(
+        res = json.loads(
             self.raw("query", "staking", "params", output="json", node=self.node_rpc)
         )
+        return res.get("params") or res
 
     def staking_pool(self, bonded=True):
         res = self.raw("query", "staking", "pool", output="json", node=self.node_rpc)
@@ -655,6 +663,55 @@ class CosmosCLI:
     def create_validator(
         self,
         amount,
+        options,
+        event_query_tx=True,
+        **kwargs,
+    ):
+        options = {
+            "commission-max-change-rate": "0.01",
+            "commission-rate": "0.1",
+            "commission-max-rate": "0.2",
+            "min-self-delegation": "1",
+            "amount": amount,
+        } | options
+
+        if "pubkey" not in options:
+            pubkey = (
+                self.raw(
+                    "tendermint",
+                    "show-validator",
+                    home=self.data_dir,
+                )
+                .strip()
+                .decode()
+            )
+            options["pubkey"] = json.loads(pubkey)
+
+        with tempfile.NamedTemporaryFile("w") as fp:
+            json.dump(options, fp)
+            fp.flush()
+            raw = self.raw(
+                "tx",
+                "staking",
+                "create-validator",
+                fp.name,
+                "-y",
+                from_=self.address("validator"),
+                # basic
+                home=self.data_dir,
+                node=self.node_rpc,
+                keyring_backend="test",
+                chain_id=self.chain_id,
+                **kwargs,
+            )
+        rsp = json.loads(raw)
+        if rsp["code"] == 0 and event_query_tx:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
+
+    def create_validator_legacy(
+        self,
+        amount,
         moniker=None,
         commission_max_change_rate="0.01",
         commission_rate="0.1",
@@ -666,42 +723,38 @@ class CosmosCLI:
         """MsgCreateValidator
         create the node with create_node before call this"""
         pubkey = (
-            "'"
-            + (
-                self.raw(
-                    "tendermint",
-                    "show-validator",
-                    home=self.data_dir,
-                )
-                .strip()
-                .decode()
-            )
-            + "'"
-        )
-        rsp = json.loads(
             self.raw(
-                "tx",
-                "staking",
-                "create-validator",
-                "-y",
-                from_=self.address("validator"),
-                amount=amount,
-                pubkey=pubkey,
-                min_self_delegation=min_self_delegation,
-                # commision
-                commission_rate=commission_rate,
-                commission_max_rate=commission_max_rate,
-                commission_max_change_rate=commission_max_change_rate,
-                # description
-                moniker=moniker,
-                # basic
+                "tendermint",
+                "show-validator",
                 home=self.data_dir,
-                node=self.node_rpc,
-                keyring_backend="test",
-                chain_id=self.chain_id,
-                **kwargs,
             )
+            .strip()
+            .decode()
         )
+        options = {
+            "amount": amount,
+            "min-self-delegation": min_self_delegation,
+            "commission-rate": commission_rate,
+            "commission-max-rate": commission_max_rate,
+            "commission-max-change-rate": commission_max_change_rate,
+            "moniker": moniker,
+        }
+        options["pubkey"] = "'" + pubkey + "'"
+        raw = self.raw(
+            "tx",
+            "staking",
+            "create-validator",
+            "-y",
+            from_=self.address("validator"),
+            # basic
+            home=self.data_dir,
+            node=self.node_rpc,
+            keyring_backend="test",
+            chain_id=self.chain_id,
+            **{k: v for k, v in options.items() if v is not None},
+            **kwargs,
+        )
+        rsp = json.loads(raw)
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp

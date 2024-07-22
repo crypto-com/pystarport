@@ -1,5 +1,6 @@
 import configparser
 import subprocess
+from itertools import takewhile
 
 
 def interact(cmd, ignore_error=False, input=None, **kwargs):
@@ -65,3 +66,19 @@ def format_doc_string(**kwargs):
 
 def get_sync_info(s):
     return s.get("SyncInfo") or s.get("sync_info")
+
+
+def parse_amount(coin):
+    """
+    parse amount from coin representation, compatible with multiple sdk versions:
+    - pre-sdk-50: {"denom": "uatom", "amount": "1000000.00"}
+    - post-sdk-50: "1000000.00uatom"
+    """
+    if isinstance(coin, dict):
+        return float(coin["amount"])
+    else:
+        return float("".join(takewhile(is_float, coin)))
+
+
+def is_float(s):
+    return str.isdigit(s) or s == "."
