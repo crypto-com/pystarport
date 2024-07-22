@@ -1,7 +1,6 @@
 import enum
 import hashlib
 import json
-import re
 import subprocess
 import tempfile
 import threading
@@ -664,13 +663,61 @@ class CosmosCLI:
     def create_validator(
         self,
         amount,
+        options,
+        event_query_tx=True,
+        **kwargs,
+    ):
+        options = {
+            "commission-max-change-rate": "0.01",
+            "commission-rate": "0.1",
+            "commission-max-rate": "0.2",
+            "min-self-delegation": "1",
+            "amount": amount,
+        } | options
+
+        if "pubkey" not in options:
+            pubkey = (
+                self.raw(
+                    "tendermint",
+                    "show-validator",
+                    home=self.data_dir,
+                )
+                .strip()
+                .decode()
+            )
+            options["pubkey"] = json.loads(pubkey)
+
+        with tempfile.NamedTemporaryFile("w") as fp:
+            json.dump(options, fp)
+            fp.flush()
+            raw = self.raw(
+                "tx",
+                "staking",
+                "create-validator",
+                fp.name,
+                "-y",
+                from_=self.address("validator"),
+                # basic
+                home=self.data_dir,
+                node=self.node_rpc,
+                keyring_backend="test",
+                chain_id=self.chain_id,
+                **kwargs,
+            )
+        rsp = json.loads(raw)
+        if rsp["code"] == 0 and event_query_tx:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
+
+    def create_validator_legacy(
+        self,
+        amount,
         moniker=None,
         commission_max_change_rate="0.01",
         commission_rate="0.1",
         commission_max_rate="0.2",
         min_self_delegation="1",
         event_query_tx=True,
-        sdk47_compact=True,
         **kwargs,
     ):
         """MsgCreateValidator
@@ -692,41 +739,21 @@ class CosmosCLI:
             "commission-max-change-rate": commission_max_change_rate,
             "moniker": moniker,
         }
-        if sdk47_compact:
-            options["pubkey"] = "'" + pubkey + "'"
-            raw = self.raw(
-                "tx",
-                "staking",
-                "create-validator",
-                "-y",
-                from_=self.address("validator"),
-                # basic
-                home=self.data_dir,
-                node=self.node_rpc,
-                keyring_backend="test",
-                chain_id=self.chain_id,
-                **{k: v for k, v in options.items() if v is not None},
-                **kwargs,
-            )
-        else:
-            options["pubkey"] = json.loads(pubkey)
-            with tempfile.NamedTemporaryFile("w") as fp:
-                json.dump(options, fp)
-                fp.flush()
-                raw = self.raw(
-                    "tx",
-                    "staking",
-                    "create-validator",
-                    fp.name,
-                    "-y",
-                    from_=self.address("validator"),
-                    # basic
-                    home=self.data_dir,
-                    node=self.node_rpc,
-                    keyring_backend="test",
-                    chain_id=self.chain_id,
-                    **kwargs,
-                )
+        options["pubkey"] = "'" + pubkey + "'"
+        raw = self.raw(
+            "tx",
+            "staking",
+            "create-validator",
+            "-y",
+            from_=self.address("validator"),
+            # basic
+            home=self.data_dir,
+            node=self.node_rpc,
+            keyring_backend="test",
+            chain_id=self.chain_id,
+            **{k: v for k, v in options.items() if v is not None},
+            **kwargs,
+        )
         rsp = json.loads(raw)
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])

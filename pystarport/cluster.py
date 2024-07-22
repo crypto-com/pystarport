@@ -548,29 +548,25 @@ class ClusterCLI:
     def create_validator(
         self,
         amount,
+        options,
         i,
-        moniker=None,
-        commission_max_change_rate="0.01",
-        commission_rate="0.1",
-        commission_max_rate="0.2",
-        min_self_delegation="1",
-        event_query_tx=True,
-        sdk47_compact=True,
         **kwargs,
     ):
         """MsgCreateValidator
         create the node with create_node before call this"""
-        return self.cosmos_cli(i).create_validator(
-            amount,
-            moniker or self.config["validators"][i]["moniker"],
-            commission_max_change_rate,
-            commission_rate,
-            commission_max_rate,
-            min_self_delegation,
-            event_query_tx=event_query_tx,
-            sdk47_compact=sdk47_compact,
-            **kwargs,
-        )
+        options.setdefault("moniker", self.config["validators"][i]["moniker"])
+        return self.cosmos_cli(i).create_validator(amount, options, **kwargs)
+
+    def create_validator_legacy(
+        self,
+        amount,
+        i,
+        **kwargs,
+    ):
+        """MsgCreateValidator
+        create the node with create_node before call this"""
+        kwargs.setdefault("moniker", self.config["validators"][i]["moniker"])
+        return self.cosmos_cli(i).create_validator_legacy(amount, **kwargs)
 
     def edit_validator(
         self,
