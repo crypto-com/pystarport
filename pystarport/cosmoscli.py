@@ -12,7 +12,13 @@ from dateutil.parser import isoparse
 
 from .app import CHAIN
 from .ledger import ZEMU_BUTTON_PORT, ZEMU_HOST, LedgerButton
-from .utils import build_cli_args_safe, format_doc_string, get_sync_info, interact
+from .utils import (
+    build_cli_args_safe,
+    format_doc_string,
+    get_sync_info,
+    interact,
+    parse_amount,
+)
 
 
 class ModuleAccount(enum.Enum):
@@ -260,9 +266,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )["commission"]
-        coin = (res.get("commission") or res)[0]
-        amt = re.search(r"\d+\.?\d*", coin)
-        return float(amt.group()) if amt else 0.0
+        return parse_amount((res.get("commission") or res)[0])
 
     def distribution_community(self):
         res = json.loads(
@@ -274,9 +278,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        coin = res["pool"][0]
-        amt = re.search(r"\d+\.?\d*", coin)
-        return float(amt.group()) if amt else 0.0
+        return parse_amount(res["pool"][0])
 
     def distribution_reward(self, delegator_addr):
         res = json.loads(
@@ -289,9 +291,7 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )
-        coin = res["total"][0]
-        amt = re.search(r"\d+\.?\d*", coin)
-        return float(amt.group()) if amt else 0.0
+        return parse_amount(res["total"][0])
 
     def address(self, name, bech="acc"):
         output = self.raw(
