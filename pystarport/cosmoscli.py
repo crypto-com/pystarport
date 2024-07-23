@@ -1280,6 +1280,7 @@ class CosmosCLI:
         else:
             args = ["ica", "controller", "send-tx"]
 
+        duration_args = []
         if timeout_duration:
             if self.has_icaauth_subcommand:
                 duration_args = ["--timeout-duration", timeout_duration]
