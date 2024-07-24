@@ -1257,12 +1257,6 @@ class CosmosCLI:
             )
         )
 
-    def ica_subcommand(self, *args, **kwargs):
-        if self.has_icaauth_subcommand:
-            return self.raw("tx", *args, **kwargs)
-        else:
-            return self.raw(*args, **kwargs)
-
     def ica_register_account(self, connid, event_query_tx=True, **kwargs):
         "execute on host chain to attach an account to the connection"
         default_kwargs = {
