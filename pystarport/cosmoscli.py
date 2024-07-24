@@ -1257,11 +1257,26 @@ class CosmosCLI:
             )
         )
 
-    def ica_subcommand(self, *args, **kwargs):
+    def ica_tx(self, cmd, *args, **kwargs):
         if self.has_icaauth_subcommand:
-            return self.raw("tx", *args, **kwargs)
+            # translate cmd
+            cmd = {
+                "register": "register-account",
+                "send-tx": "submit-tx",
+            }.get(cmd, cmd)
+            return self.raw("tx", "icaauth", cmd, *args, **kwargs)
         else:
-            return self.raw(*args, **kwargs)
+            return self.raw("tx", "ica", "controller", cmd, *args, **kwargs)
+
+    def ica_query(self, cmd, *args, **kwargs):
+        if self.has_icaauth_subcommand:
+            # translate cmd
+            cmd = {
+                "interchain-account": "interchain-account-address",
+            }.get(cmd, cmd)
+            return self.raw("q", "icaauth", cmd, *args, **kwargs)
+        else:
+            return self.raw("q", "ica", "controller", cmd, *args, **kwargs)
 
     def ica_register_account(self, connid, event_query_tx=True, **kwargs):
         "execute on host chain to attach an account to the connection"
@@ -1271,15 +1286,9 @@ class CosmosCLI:
             "chain_id": self.chain_id,
             "keyring_backend": "test",
         }
-        args = (
-            ["icaauth", "register-account"]
-            if self.has_icaauth_subcommand
-            else ["ica", "controller", "register"]
-        )
         rsp = json.loads(
-            self.raw(
-                "tx",
-                *args,
+            self.ica_tx(
+                "register",
                 connid,
                 "-y",
                 **(default_kwargs | kwargs),
@@ -1294,17 +1303,8 @@ class CosmosCLI:
             "node": self.node_rpc,
             "output": "json",
         }
-        args = (
-            ["icaauth", "interchain-account-address", connid, owner]
-            if self.has_icaauth_subcommand
-            else ["ica", "controller", "interchain-account", owner, connid]
-        )
         return json.loads(
-            self.raw(
-                "q",
-                *args,
-                **(default_kwargs | kwargs),
-            )
+            self.ica_query("interchain-account", **(default_kwargs | kwargs))
         )
 
     def ica_submit_tx(
@@ -1321,10 +1321,6 @@ class CosmosCLI:
             "chain_id": self.chain_id,
             "keyring_backend": "test",
         }
-        if self.has_icaauth_subcommand:
-            args = ["icaauth", "submit-tx"]
-        else:
-            args = ["ica", "controller", "send-tx"]
 
         duration_args = []
         if timeout_duration:
@@ -1335,9 +1331,8 @@ class CosmosCLI:
                 duration_args = ["--relative-packet-timeout", timeout]
 
         rsp = json.loads(
-            self.raw(
-                "tx",
-                *args,
+            self.ica_tx(
+                "send-tx",
                 connid,
                 tx,
                 *duration_args,
