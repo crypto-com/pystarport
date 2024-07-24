@@ -7,6 +7,7 @@ import threading
 import time
 
 import bech32
+import durations
 from dateutil.parser import isoparse
 
 from .app import CHAIN
@@ -57,6 +58,16 @@ class ChainCommand:
 
         return "Available Commands" in output.decode()
 
+    def prob_icaauth_subcommand(self):
+        'test if the command has "icaauth" subcommand, removed after ibc 8.3'
+        try:
+            output = self("q", "icaauth")
+        except AssertionError:
+            # non-zero return code
+            return False
+
+        return "Available Commands" in output.decode()
+
     def __call__(self, cmd, *args, stdin=None, stderr=subprocess.STDOUT, **kwargs):
         "execute chain-maind"
         args = " ".join(build_cli_args_safe(cmd, *args, **kwargs))
@@ -88,6 +99,7 @@ class CosmosCLI:
         self.output = None
         self.error = None
         self.has_genesis_subcommand = self.raw.prob_genesis_subcommand()
+        self.has_icaauth_subcommand = self.raw.prob_icaauth_subcommand()
 
     def node_id(self):
         "get tendermint node id"
@@ -386,6 +398,7 @@ class CosmosCLI:
         generate_only=False,
         fees=None,
         event_query_tx=True,
+        **kwargs,
     ):
         def send_request():
             try:
@@ -406,6 +419,7 @@ class CosmosCLI:
                         node=self.node_rpc,
                         fees=fees,
                         sign_mode="amino-json",
+                        **kwargs,
                     )
                 )
                 if not generate_only and self.output["code"] == 0 and event_query_tx:
@@ -445,6 +459,7 @@ class CosmosCLI:
         from_addr,
         gas_price=None,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -460,6 +475,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
                 node=self.node_rpc,
                 gas_prices=gas_price,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -467,7 +483,7 @@ class CosmosCLI:
         return rsp
 
     # to_addr: croclcl1...  , from_addr: cro1...
-    def unbond_amount(self, to_addr, amount, from_addr, event_query_tx=True):
+    def unbond_amount(self, to_addr, amount, from_addr, event_query_tx=True, **kwargs):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -481,6 +497,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -519,7 +536,7 @@ class CosmosCLI:
         return rsp
 
     # from_delegator can be account name or address
-    def withdraw_all_rewards(self, from_delegator, event_query_tx=True):
+    def withdraw_all_rewards(self, from_delegator, event_query_tx=True, **kwargs):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -531,6 +548,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -548,7 +566,7 @@ class CosmosCLI:
             keyring_backend="test",
         )
 
-    def sign_multisig_tx(self, tx_file, multi_addr, signer_name):
+    def sign_multisig_tx(self, tx_file, multi_addr, signer_name, **kwargs):
         return json.loads(
             self.raw(
                 "tx",
@@ -560,11 +578,18 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
 
     def sign_batch_multisig_tx(
-        self, tx_file, multi_addr, signer_name, account_number, sequence_number
+        self,
+        tx_file,
+        multi_addr,
+        signer_name,
+        account_number,
+        sequence_number,
+        **kwargs,
     ):
         r = self.raw(
             "tx",
@@ -579,17 +604,19 @@ class CosmosCLI:
             keyring_backend="test",
             chain_id=self.chain_id,
             node=self.node_rpc,
+            **kwargs,
         )
         return r.decode("utf-8")
 
-    def encode_signed_tx(self, signed_tx):
+    def encode_signed_tx(self, signed_tx, **kwargs):
         return self.raw(
             "tx",
             "encode",
             signed_tx,
+            **kwargs,
         )
 
-    def sign_single_tx(self, tx_file, signer_name):
+    def sign_single_tx(self, tx_file, signer_name, **kwargs):
         return json.loads(
             self.raw(
                 "tx",
@@ -600,10 +627,13 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
 
-    def combine_multisig_tx(self, tx_file, multi_name, signer1_file, signer2_file):
+    def combine_multisig_tx(
+        self, tx_file, multi_name, signer1_file, signer2_file, **kwargs
+    ):
         return json.loads(
             self.raw(
                 "tx",
@@ -616,11 +646,12 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
 
     def combine_batch_multisig_tx(
-        self, tx_file, multi_name, signer1_file, signer2_file
+        self, tx_file, multi_name, signer1_file, signer2_file, **kwargs
     ):
         r = self.raw(
             "tx",
@@ -633,16 +664,22 @@ class CosmosCLI:
             keyring_backend="test",
             chain_id=self.chain_id,
             node=self.node_rpc,
+            **kwargs,
         )
         return r.decode("utf-8")
 
-    def broadcast_tx(self, tx_file):
+    def broadcast_tx(self, tx_file, **kwargs):
         r = self.raw(
-            "tx", "broadcast", tx_file, node=self.node_rpc, broadcast_mode="sync"
+            "tx",
+            "broadcast",
+            tx_file,
+            node=self.node_rpc,
+            broadcast_mode="sync",
+            **kwargs,
         )
         return r.decode("utf-8")
 
-    def unjail(self, addr, event_query_tx=True):
+    def unjail(self, addr, event_query_tx=True, **kwargs):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -654,6 +691,7 @@ class CosmosCLI:
                 node=self.node_rpc,
                 keyring_backend="test",
                 chain_id=self.chain_id,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -799,7 +837,7 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def gov_propose(self, proposer, kind, proposal):
+    def gov_propose(self, proposer, kind, proposal, **kwargs):
         if kind == "software-upgrade":
             return json.loads(
                 self.raw(
@@ -822,6 +860,7 @@ class CosmosCLI:
                     node=self.node_rpc,
                     keyring_backend="test",
                     chain_id=self.chain_id,
+                    **kwargs,
                 )
             )
         elif kind == "cancel-software-upgrade":
@@ -842,6 +881,7 @@ class CosmosCLI:
                     node=self.node_rpc,
                     keyring_backend="test",
                     chain_id=self.chain_id,
+                    **kwargs,
                 )
             )
         else:
@@ -862,10 +902,11 @@ class CosmosCLI:
                         node=self.node_rpc,
                         keyring_backend="test",
                         chain_id=self.chain_id,
+                        **kwargs,
                     )
                 )
 
-    def gov_vote(self, voter, proposal_id, option, event_query_tx=True):
+    def gov_vote(self, voter, proposal_id, option, event_query_tx=True, **kwargs):
         print(voter)
         print(proposal_id)
         print(option)
@@ -883,13 +924,16 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 stderr=subprocess.DEVNULL,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def gov_deposit(self, depositor, proposal_id, amount, event_query_tx=True):
+    def gov_deposit(
+        self, depositor, proposal_id, amount, event_query_tx=True, **kwargs
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -903,6 +947,7 @@ class CosmosCLI:
                 node=self.node_rpc,
                 keyring_backend="test",
                 chain_id=self.chain_id,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -958,6 +1003,7 @@ class CosmosCLI:
         channel,  # src channel
         target_version,  # chain version number of target chain
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -978,6 +1024,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
                 packet_timeout_height=f"{target_version}-10000000000",
                 packet_timeout_timestamp=0,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -998,6 +1045,7 @@ class CosmosCLI:
         schema,
         fees,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1014,6 +1062,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1055,6 +1104,7 @@ class CosmosCLI:
         uri,
         fees,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1071,6 +1121,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1091,7 +1142,9 @@ class CosmosCLI:
             )
         )
 
-    def burn_nft_token(self, from_addr, denomid, tokenid, event_query_tx=True):
+    def burn_nft_token(
+        self, from_addr, denomid, tokenid, event_query_tx=True, **kwargs
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -1105,6 +1158,7 @@ class CosmosCLI:
                 home=self.data_dir,
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1119,6 +1173,7 @@ class CosmosCLI:
         newuri,
         newname,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1135,6 +1190,7 @@ class CosmosCLI:
                 home=self.data_dir,
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1148,6 +1204,7 @@ class CosmosCLI:
         denomid,
         tokenid,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1163,6 +1220,7 @@ class CosmosCLI:
                 home=self.data_dir,
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1199,7 +1257,13 @@ class CosmosCLI:
             )
         )
 
-    def icaauth_register_account(self, connid, event_query_tx=True, **kwargs):
+    def ica_subcommand(self, *args, **kwargs):
+        if self.has_icaauth_subcommand:
+            return self.raw("tx", *args, **kwargs)
+        else:
+            return self.raw(*args, **kwargs)
+
+    def ica_register_account(self, connid, event_query_tx=True, **kwargs):
         "execute on host chain to attach an account to the connection"
         default_kwargs = {
             "home": self.data_dir,
@@ -1207,11 +1271,15 @@ class CosmosCLI:
             "chain_id": self.chain_id,
             "keyring_backend": "test",
         }
+        args = (
+            ["icaauth", "register-account"]
+            if self.has_icaauth_subcommand
+            else ["ica", "controller", "register"]
+        )
         rsp = json.loads(
             self.raw(
                 "tx",
-                "icaauth",
-                "register-account",
+                *args,
                 connid,
                 "-y",
                 **(default_kwargs | kwargs),
@@ -1226,18 +1294,20 @@ class CosmosCLI:
             "node": self.node_rpc,
             "output": "json",
         }
+        args = (
+            ["icaauth", "interchain-account-address", connid, owner]
+            if self.has_icaauth_subcommand
+            else ["ica", "controller", "interchain-account", owner, connid]
+        )
         return json.loads(
             self.raw(
                 "q",
-                "icaauth",
-                "interchain-account-address",
-                connid,
-                owner,
+                *args,
                 **(default_kwargs | kwargs),
             )
         )
 
-    def icaauth_submit_tx(
+    def ica_submit_tx(
         self,
         connid,
         tx,
@@ -1251,15 +1321,26 @@ class CosmosCLI:
             "chain_id": self.chain_id,
             "keyring_backend": "test",
         }
+        if self.has_icaauth_subcommand:
+            args = ["icaauth", "submit-tx"]
+        else:
+            args = ["ica", "controller", "send-tx"]
+
+        duration_args = []
+        if timeout_duration:
+            if self.has_icaauth_subcommand:
+                duration_args = ["--timeout-duration", timeout_duration]
+            else:
+                timeout = int(durations.Duration(timeout_duration).to_seconds() * 1e9)
+                duration_args = ["--relative-packet-timeout", timeout]
+
         rsp = json.loads(
             self.raw(
                 "tx",
-                "icaauth",
-                "submit-tx",
+                *args,
                 connid,
                 tx,
-                "--timeout-duration" if timeout_duration else None,
-                timeout_duration if timeout_duration else None,
+                *duration_args,
                 "-y",
                 **(default_kwargs | kwargs),
             )
@@ -1267,3 +1348,18 @@ class CosmosCLI:
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
+
+    def ica_generate_packet_data(self, tx, memo=None, encoding="proto3", **kwargs):
+        return json.loads(
+            self.raw(
+                "tx",
+                "interchain-accounts",
+                "host",
+                "generate-packet-data",
+                tx,
+                memo=memo,
+                encoding=encoding,
+                home=self.data_dir,
+                **kwargs,
+            )
+        )
