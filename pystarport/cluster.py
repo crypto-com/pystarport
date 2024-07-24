@@ -437,6 +437,7 @@ class ClusterCLI:
         generate_only=False,
         fees=None,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).transfer_from_ledger(
             from_,
@@ -445,6 +446,7 @@ class ClusterCLI:
             generate_only,
             fees,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def get_delegated_amount(self, which_addr, i=0):
@@ -458,6 +460,7 @@ class ClusterCLI:
         i=0,
         gas_price=None,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).delegate_amount(
             to_addr,
@@ -465,15 +468,19 @@ class ClusterCLI:
             from_addr,
             gas_price,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     # to_addr: croclcl1...  , from_addr: cro1...
-    def unbond_amount(self, to_addr, amount, from_addr, i=0, event_query_tx=True):
+    def unbond_amount(
+        self, to_addr, amount, from_addr, i=0, event_query_tx=True, **kwargs
+    ):
         return self.cosmos_cli(i).unbond_amount(
             to_addr,
             amount,
             from_addr,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     # to_validator_addr: crocncl1...  ,  from_from_validator_addraddr: crocl1...
@@ -496,54 +503,61 @@ class ClusterCLI:
             **kwargs,
         )
 
-    def withdraw_all_rewards(self, from_delegator, i=0, event_query_tx=True):
+    def withdraw_all_rewards(self, from_delegator, i=0, event_query_tx=True, **kwargs):
         return self.cosmos_cli(i).withdraw_all_rewards(
             from_delegator,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def make_multisig(self, name, signer1, signer2, i=0):
         return self.cosmos_cli(i).make_multisig(name, signer1, signer2)
 
-    def sign_multisig_tx(self, tx_file, multi_addr, signer_name, i=0):
-        return self.cosmos_cli(i).sign_multisig_tx(tx_file, multi_addr, signer_name)
-
-    def sign_batch_multisig_tx(
-        self, tx_file, multi_addr, signer_name, account_num, sequence, i=0
-    ):
-        return self.cosmos_cli(i).sign_batch_multisig_tx(
-            tx_file, multi_addr, signer_name, account_num, sequence
+    def sign_multisig_tx(self, tx_file, multi_addr, signer_name, i=0, **kwargs):
+        return self.cosmos_cli(i).sign_multisig_tx(
+            tx_file, multi_addr, signer_name, **kwargs
         )
 
-    def encode_signed_tx(self, signed_tx, i=0):
-        return self.cosmos_cli(i).encode_signed_tx(signed_tx)
+    def sign_batch_multisig_tx(
+        self, tx_file, multi_addr, signer_name, account_num, sequence, i=0, **kwargs
+    ):
+        return self.cosmos_cli(i).sign_batch_multisig_tx(
+            tx_file, multi_addr, signer_name, account_num, sequence, **kwargs
+        )
 
-    def sign_single_tx(self, tx_file, signer_name, i=0):
-        return self.cosmos_cli(i).sign_single_tx(tx_file, signer_name)
+    def encode_signed_tx(self, signed_tx, i=0, **kwargs):
+        return self.cosmos_cli(i).encode_signed_tx(signed_tx, **kwargs)
 
-    def combine_multisig_tx(self, tx_file, multi_name, signer1_file, signer2_file, i=0):
+    def sign_single_tx(self, tx_file, signer_name, i=0, **kwargs):
+        return self.cosmos_cli(i).sign_single_tx(tx_file, signer_name, **kwargs)
+
+    def combine_multisig_tx(
+        self, tx_file, multi_name, signer1_file, signer2_file, i=0, **kwargs
+    ):
         return self.cosmos_cli(i).combine_multisig_tx(
             tx_file,
             multi_name,
             signer1_file,
             signer2_file,
+            **kwargs,
         )
 
     def combine_batch_multisig_tx(
-        self, tx_file, multi_name, signer1_file, signer2_file, i=0
+        self, tx_file, multi_name, signer1_file, signer2_file, i=0, **kwargs
     ):
         return self.cosmos_cli(i).combine_batch_multisig_tx(
             tx_file,
             multi_name,
             signer1_file,
             signer2_file,
+            **kwargs,
         )
 
-    def broadcast_tx(self, tx_file, i=0):
-        return self.cosmos_cli(i).broadcast_tx(tx_file)
+    def broadcast_tx(self, tx_file, i=0, **kwargs):
+        return self.cosmos_cli(i).broadcast_tx(tx_file, **kwargs)
 
-    def unjail(self, addr, i=0, event_query_tx=True):
-        return self.cosmos_cli(i).unjail(addr, event_query_tx=event_query_tx)
+    def unjail(self, addr, i=0, event_query_tx=True, **kwargs):
+        return self.cosmos_cli(i).unjail(addr, event_query_tx=event_query_tx, **kwargs)
 
     def create_validator(
         self,
@@ -592,23 +606,27 @@ class ClusterCLI:
             **kwargs,
         )
 
-    def gov_propose(self, proposer, kind, proposal, i=0):
-        return self.cosmos_cli(i).gov_propose(proposer, kind, proposal)
+    def gov_propose(self, proposer, kind, proposal, i=0, **kwargs):
+        return self.cosmos_cli(i).gov_propose(proposer, kind, proposal, **kwargs)
 
-    def gov_vote(self, voter, proposal_id, option, i=0, event_query_tx=True):
+    def gov_vote(self, voter, proposal_id, option, i=0, event_query_tx=True, **kwargs):
         return self.cosmos_cli(i).gov_vote(
             voter,
             proposal_id,
             option,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
-    def gov_deposit(self, depositor, proposal_id, amount, i=0, event_query_tx=True):
+    def gov_deposit(
+        self, depositor, proposal_id, amount, i=0, event_query_tx=True, **kwargs
+    ):
         return self.cosmos_cli(i).gov_deposit(
             depositor,
             proposal_id,
             amount,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def query_proposals(self, depositor=None, limit=None, status=None, voter=None, i=0):
@@ -630,6 +648,7 @@ class ClusterCLI:
         target_version,  # chain version number of target chain
         i=0,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).ibc_transfer(
             from_,
@@ -638,6 +657,7 @@ class ClusterCLI:
             channel,
             target_version,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def create_nft(
@@ -653,6 +673,7 @@ class ClusterCLI:
         fees=None,
         i=0,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).create_nft(
             from_addr,
@@ -661,6 +682,7 @@ class ClusterCLI:
             schema,
             fees,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def query_nft(self, denomid="mydenomid", i=0):
@@ -679,6 +701,7 @@ class ClusterCLI:
         fees=None,
         i=0,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).create_nft_token(
             from_addr,
@@ -688,6 +711,7 @@ class ClusterCLI:
             uri,
             fees,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def query_nft_token(self, denomid="mydenomid", tokenid="mytokenid", i=0):
@@ -700,12 +724,14 @@ class ClusterCLI:
         tokenid="mytokenid",
         i=0,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).burn_nft_token(
             from_addr,
             denomid,
             tokenid,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def edit_nft_token(
@@ -717,6 +743,7 @@ class ClusterCLI:
         newname="newname",
         i=0,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).edit_nft_token(
             from_addr,
@@ -725,6 +752,7 @@ class ClusterCLI:
             newuri,
             newname,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def transfer_nft_token(
@@ -735,6 +763,7 @@ class ClusterCLI:
         tokenid="mytokenid",
         i=0,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).transfer_nft_token(
             from_addr,
@@ -742,6 +771,7 @@ class ClusterCLI:
             denomid,
             tokenid,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def event_query_tx_for(self, hash, i=0):
@@ -750,13 +780,14 @@ class ClusterCLI:
     def migrate_keystore(self, i=0):
         return self.cosmos_cli(i).migrate_keystore()
 
-    def ibc_query_channels(self, connid, i=0):
-        return self.cosmos_cli(i).ibc_query_channels(connid)
+    def ibc_query_channels(self, connid, i=0, **kwargs):
+        return self.cosmos_cli(i).ibc_query_channels(connid, **kwargs)
 
-    def ica_register_account(self, connid, i=0, event_query_tx=True):
+    def ica_register_account(self, connid, i=0, event_query_tx=True, **kwargs):
         return self.cosmos_cli(i).ica_register_account(
             connid,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def ica_query_account(self, connid, owner, i=0, **kwargs):
@@ -769,12 +800,14 @@ class ClusterCLI:
         timeout_duration="1h",
         i=0,
         event_query_tx=True,
+        **kwargs,
     ):
         return self.cosmos_cli(i).ica_submit_tx(
             connid,
             tx,
             timeout_duration,
             event_query_tx=event_query_tx,
+            **kwargs,
         )
 
     def ica_generate_packet_data(self, tx, memo=None, encoding="proto3", i=0, **kwargs):

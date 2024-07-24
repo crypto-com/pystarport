@@ -398,6 +398,7 @@ class CosmosCLI:
         generate_only=False,
         fees=None,
         event_query_tx=True,
+        **kwargs,
     ):
         def send_request():
             try:
@@ -418,6 +419,7 @@ class CosmosCLI:
                         node=self.node_rpc,
                         fees=fees,
                         sign_mode="amino-json",
+                        **kwargs,
                     )
                 )
                 if not generate_only and self.output["code"] == 0 and event_query_tx:
@@ -457,6 +459,7 @@ class CosmosCLI:
         from_addr,
         gas_price=None,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -472,6 +475,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
                 node=self.node_rpc,
                 gas_prices=gas_price,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -479,7 +483,7 @@ class CosmosCLI:
         return rsp
 
     # to_addr: croclcl1...  , from_addr: cro1...
-    def unbond_amount(self, to_addr, amount, from_addr, event_query_tx=True):
+    def unbond_amount(self, to_addr, amount, from_addr, event_query_tx=True, **kwargs):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -493,6 +497,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -531,7 +536,7 @@ class CosmosCLI:
         return rsp
 
     # from_delegator can be account name or address
-    def withdraw_all_rewards(self, from_delegator, event_query_tx=True):
+    def withdraw_all_rewards(self, from_delegator, event_query_tx=True, **kwargs):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -543,6 +548,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -560,7 +566,7 @@ class CosmosCLI:
             keyring_backend="test",
         )
 
-    def sign_multisig_tx(self, tx_file, multi_addr, signer_name):
+    def sign_multisig_tx(self, tx_file, multi_addr, signer_name, **kwargs):
         return json.loads(
             self.raw(
                 "tx",
@@ -572,11 +578,18 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
 
     def sign_batch_multisig_tx(
-        self, tx_file, multi_addr, signer_name, account_number, sequence_number
+        self,
+        tx_file,
+        multi_addr,
+        signer_name,
+        account_number,
+        sequence_number,
+        **kwargs,
     ):
         r = self.raw(
             "tx",
@@ -591,17 +604,19 @@ class CosmosCLI:
             keyring_backend="test",
             chain_id=self.chain_id,
             node=self.node_rpc,
+            **kwargs,
         )
         return r.decode("utf-8")
 
-    def encode_signed_tx(self, signed_tx):
+    def encode_signed_tx(self, signed_tx, **kwargs):
         return self.raw(
             "tx",
             "encode",
             signed_tx,
+            **kwargs,
         )
 
-    def sign_single_tx(self, tx_file, signer_name):
+    def sign_single_tx(self, tx_file, signer_name, **kwargs):
         return json.loads(
             self.raw(
                 "tx",
@@ -612,10 +627,13 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
 
-    def combine_multisig_tx(self, tx_file, multi_name, signer1_file, signer2_file):
+    def combine_multisig_tx(
+        self, tx_file, multi_name, signer1_file, signer2_file, **kwargs
+    ):
         return json.loads(
             self.raw(
                 "tx",
@@ -628,11 +646,12 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
 
     def combine_batch_multisig_tx(
-        self, tx_file, multi_name, signer1_file, signer2_file
+        self, tx_file, multi_name, signer1_file, signer2_file, **kwargs
     ):
         r = self.raw(
             "tx",
@@ -645,16 +664,22 @@ class CosmosCLI:
             keyring_backend="test",
             chain_id=self.chain_id,
             node=self.node_rpc,
+            **kwargs,
         )
         return r.decode("utf-8")
 
-    def broadcast_tx(self, tx_file):
+    def broadcast_tx(self, tx_file, **kwargs):
         r = self.raw(
-            "tx", "broadcast", tx_file, node=self.node_rpc, broadcast_mode="sync"
+            "tx",
+            "broadcast",
+            tx_file,
+            node=self.node_rpc,
+            broadcast_mode="sync",
+            **kwargs,
         )
         return r.decode("utf-8")
 
-    def unjail(self, addr, event_query_tx=True):
+    def unjail(self, addr, event_query_tx=True, **kwargs):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -666,6 +691,7 @@ class CosmosCLI:
                 node=self.node_rpc,
                 keyring_backend="test",
                 chain_id=self.chain_id,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -811,7 +837,7 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def gov_propose(self, proposer, kind, proposal):
+    def gov_propose(self, proposer, kind, proposal, **kwargs):
         if kind == "software-upgrade":
             return json.loads(
                 self.raw(
@@ -834,6 +860,7 @@ class CosmosCLI:
                     node=self.node_rpc,
                     keyring_backend="test",
                     chain_id=self.chain_id,
+                    **kwargs,
                 )
             )
         elif kind == "cancel-software-upgrade":
@@ -854,6 +881,7 @@ class CosmosCLI:
                     node=self.node_rpc,
                     keyring_backend="test",
                     chain_id=self.chain_id,
+                    **kwargs,
                 )
             )
         else:
@@ -874,10 +902,11 @@ class CosmosCLI:
                         node=self.node_rpc,
                         keyring_backend="test",
                         chain_id=self.chain_id,
+                        **kwargs,
                     )
                 )
 
-    def gov_vote(self, voter, proposal_id, option, event_query_tx=True):
+    def gov_vote(self, voter, proposal_id, option, event_query_tx=True, **kwargs):
         print(voter)
         print(proposal_id)
         print(option)
@@ -895,13 +924,16 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 stderr=subprocess.DEVNULL,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def gov_deposit(self, depositor, proposal_id, amount, event_query_tx=True):
+    def gov_deposit(
+        self, depositor, proposal_id, amount, event_query_tx=True, **kwargs
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -915,6 +947,7 @@ class CosmosCLI:
                 node=self.node_rpc,
                 keyring_backend="test",
                 chain_id=self.chain_id,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -970,6 +1003,7 @@ class CosmosCLI:
         channel,  # src channel
         target_version,  # chain version number of target chain
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -990,6 +1024,7 @@ class CosmosCLI:
                 chain_id=self.chain_id,
                 packet_timeout_height=f"{target_version}-10000000000",
                 packet_timeout_timestamp=0,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1010,6 +1045,7 @@ class CosmosCLI:
         schema,
         fees,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1026,6 +1062,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1067,6 +1104,7 @@ class CosmosCLI:
         uri,
         fees,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1083,6 +1121,7 @@ class CosmosCLI:
                 keyring_backend="test",
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1103,7 +1142,9 @@ class CosmosCLI:
             )
         )
 
-    def burn_nft_token(self, from_addr, denomid, tokenid, event_query_tx=True):
+    def burn_nft_token(
+        self, from_addr, denomid, tokenid, event_query_tx=True, **kwargs
+    ):
         rsp = json.loads(
             self.raw(
                 "tx",
@@ -1117,6 +1158,7 @@ class CosmosCLI:
                 home=self.data_dir,
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1131,6 +1173,7 @@ class CosmosCLI:
         newuri,
         newname,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1147,6 +1190,7 @@ class CosmosCLI:
                 home=self.data_dir,
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
@@ -1160,6 +1204,7 @@ class CosmosCLI:
         denomid,
         tokenid,
         event_query_tx=True,
+        **kwargs,
     ):
         rsp = json.loads(
             self.raw(
@@ -1175,6 +1220,7 @@ class CosmosCLI:
                 home=self.data_dir,
                 chain_id=self.chain_id,
                 node=self.node_rpc,
+                **kwargs,
             )
         )
         if rsp["code"] == 0 and event_query_tx:
