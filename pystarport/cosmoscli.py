@@ -1257,6 +1257,23 @@ class CosmosCLI:
             )
         )
 
+    def ibc_query_channel(self, port_id, channel_id, **kwargs):
+        default_kwargs = {
+            "node": self.node_rpc,
+            "output": "json",
+        }
+        return json.loads(
+            self.raw(
+                "q",
+                "ibc",
+                "channel",
+                "end",
+                port_id,
+                channel_id,
+                **(default_kwargs | kwargs),
+            )
+        )
+
     def ica_register_account(self, connid, event_query_tx=True, **kwargs):
         "execute on host chain to attach an account to the connection"
         default_kwargs = {
@@ -1357,3 +1374,74 @@ class CosmosCLI:
                 **kwargs,
             )
         )
+
+    def ibc_upgrade_channels(self, version, from_addr, **kwargs):
+        return json.loads(
+            self.raw(
+                "tx",
+                "ibc",
+                "channel",
+                "upgrade-channels",
+                json.dumps(version),
+                "-y",
+                "--json",
+                from_=from_addr,
+                keyring_backend="test",
+                chain_id=self.chain_id,
+                home=self.data_dir,
+                stderr=subprocess.DEVNULL,
+                **kwargs,
+            )
+        )
+
+    def register_counterparty_payee(
+        self, port_id, channel_id, relayer, counterparty_payee, **kwargs
+    ):
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "ibc-fee",
+                "register-counterparty-payee",
+                port_id,
+                channel_id,
+                relayer,
+                counterparty_payee,
+                "-y",
+                home=self.data_dir,
+                **kwargs,
+            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
+
+    def pay_packet_fee(self, port_id, channel_id, packet_seq, **kwargs):
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "ibc-fee",
+                "pay-packet-fee",
+                port_id,
+                channel_id,
+                str(packet_seq),
+                "-y",
+                home=self.data_dir,
+                **kwargs,
+            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp
+
+    def ibc_denom_trace(self, path, node):
+        denom_hash = hashlib.sha256(path.encode()).hexdigest().upper()
+        return json.loads(
+            self.raw(
+                "q",
+                "ibc-transfer",
+                "denom-trace",
+                denom_hash,
+                node=node,
+                output="json",
+            )
+        )["denom_trace"]

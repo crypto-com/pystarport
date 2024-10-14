@@ -783,6 +783,9 @@ class ClusterCLI:
     def ibc_query_channels(self, connid, i=0, **kwargs):
         return self.cosmos_cli(i).ibc_query_channels(connid, **kwargs)
 
+    def ibc_query_channel(self, port_id, channel_id, i=0, **kwargs):
+        return self.cosmos_cli(i).ibc_query_channel(port_id, channel_id, **kwargs)
+
     def ica_register_account(self, connid, i=0, event_query_tx=True, **kwargs):
         return self.cosmos_cli(i).ica_register_account(
             connid,
@@ -812,6 +815,24 @@ class ClusterCLI:
 
     def ica_generate_packet_data(self, tx, memo=None, encoding="proto3", i=0, **kwargs):
         return self.cosmos_cli(i).ica_generate_packet_data(memo, encoding, **kwargs)
+
+    def ibc_upgrade_channels(self, version, from_addr, i=0, **kwargs):
+        return self.cosmos_cli(i).ibc_upgrade_channels(version, from_addr, **kwargs)
+
+    def register_counterparty_payee(
+        self, port_id, channel_id, relayer, counterparty_payee, i=0, **kwargs
+    ):
+        return self.cosmos_cli(i).register_counterparty_payee(
+            port_id, channel_id, relayer, counterparty_payee, **kwargs
+        )
+
+    def pay_packet_fee(self, port_id, channel_id, packet_seq, i=0, **kwargs):
+        return self.cosmos_cli(i).pay_packet_fee(
+            port_id, channel_id, packet_seq, **kwargs
+        )
+
+    def ibc_denom_trace(self, path, node, i=0):
+        return self.cosmos_cli(i).ibc_denom_trace(path, node)
 
 
 def start_cluster(data_dir):
@@ -1188,6 +1209,11 @@ def relayer_chain_config_rly(data_dir, chain, relayer_chains_config):
 class Relayer(Enum):
     HERMES = "hermes"
     RLY = "rly"
+
+
+class ChannelOrder(Enum):
+    ORDERED = "ORDER_ORDERED"
+    UNORDERED = "ORDER_UNORDERED"
 
 
 def init_cluster(
