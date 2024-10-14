@@ -24,7 +24,7 @@ jobs:
       - uses: cachix/install-nix-action@v30
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Run tests
-        run: make test
+        run: nix develop -c python -mpytest -vv -s
   nix-flake:
     runs-on: ubuntu-latest
     steps:
