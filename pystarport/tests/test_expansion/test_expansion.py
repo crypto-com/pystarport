@@ -53,8 +53,10 @@ def test_expansion(type, func):
         }
     }
 
+    path = Path(__file__).parent
+
     # overriding dotenv with absolute path is expanded and has diff
-    dotenv = os.path.abspath("test_expansion/dotenv1")
+    dotenv = os.path.abspath(path / "dotenv1")
     config = func(cronos_has_dotenv, dotenv)
     assert DeepDiff(
         base_config,
@@ -72,7 +74,7 @@ def test_expansion(type, func):
     }
 
     # overriding dotenv with absolute path is expanded and no diff
-    dotenv = os.path.abspath("test_expansion/dotenv")
+    dotenv = os.path.abspath(path / "dotenv")
     config = func(cronos_has_posix_no_dotenv, dotenv)
     assert not DeepDiff(
         base_config,
