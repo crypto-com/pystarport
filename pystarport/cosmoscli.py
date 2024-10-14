@@ -1257,6 +1257,23 @@ class CosmosCLI:
             )
         )
 
+    def ibc_query_channel(self, port_id, channel_id, **kwargs):
+        default_kwargs = {
+            "node": self.node_rpc,
+            "output": "json",
+        }
+        return json.loads(
+            self.raw(
+                "q",
+                "ibc",
+                "channel",
+                "end",
+                port_id,
+                channel_id,
+                **(default_kwargs | kwargs),
+            )
+        )
+
     def ica_register_account(self, connid, event_query_tx=True, **kwargs):
         "execute on host chain to attach an account to the connection"
         default_kwargs = {
@@ -1354,6 +1371,25 @@ class CosmosCLI:
                 memo=memo,
                 encoding=encoding,
                 home=self.data_dir,
+                **kwargs,
+            )
+        )
+
+    def ibc_upgrade_channels(self, version, from_addr, **kwargs):
+        return json.loads(
+            self.raw(
+                "tx",
+                "ibc",
+                "channel",
+                "upgrade-channels",
+                json.dumps(version),
+                "-y",
+                "--json",
+                from_=from_addr,
+                keyring_backend="test",
+                chain_id=self.chain_id,
+                home=self.data_dir,
+                stderr=subprocess.DEVNULL,
                 **kwargs,
             )
         )
