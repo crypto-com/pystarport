@@ -1393,3 +1393,24 @@ class CosmosCLI:
                 **kwargs,
             )
         )
+    
+    def register_counterparty_payee(
+        self, port_id, channel_id, relayer, counterparty_payee, **kwargs
+    ):
+        rsp = json.loads(
+            self.raw(
+                "tx",
+                "ibc-fee",
+                "register-counterparty-payee",
+                port_id,
+                channel_id,
+                relayer,
+                counterparty_payee,
+                "-y",
+                home=self.data_dir,
+                **kwargs,
+            )
+        )
+        if rsp["code"] == 0:
+            rsp = self.event_query_tx_for(rsp["txhash"])
+        return rsp

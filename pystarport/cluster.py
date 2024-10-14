@@ -819,6 +819,13 @@ class ClusterCLI:
     def ibc_upgrade_channels(self, version, from_addr, i=0, **kwargs):
         return self.cosmos_cli(i).ibc_upgrade_channels(version, from_addr, **kwargs)
 
+    def register_counterparty_payee(
+        self, port_id, channel_id, relayer, counterparty_payee, i=0, **kwargs
+    ):
+        return self.cosmos_cli(i).register_counterparty_payee(
+            port_id, channel_id, relayer, counterparty_payee, **kwargs
+        )
+
 
 def start_cluster(data_dir):
     cmd = [
