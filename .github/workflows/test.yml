@@ -21,7 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: install dependencies
-        run: python3 -m pip install --user --upgrade poetry
+        run: |
+          python3 -m pip install --user --upgrade pipx
+          pipx install poetry
       - name: install
         run: poetry install
       - name: Run tests
