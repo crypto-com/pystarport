@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run tests
-        run: nix develop -c python -mpytest
+        run: nix develop -c python -mpytest -vv -s
   nix-flake:
     runs-on: ubuntu-latest
     steps:
