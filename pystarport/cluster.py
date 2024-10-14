@@ -826,6 +826,11 @@ class ClusterCLI:
             port_id, channel_id, relayer, counterparty_payee, **kwargs
         )
 
+    def pay_packet_fee(self, port_id, channel_id, packet_seq, i=0, **kwargs):
+        return self.cosmos_cli(i).pay_packet_fee(
+            port_id, channel_id, packet_seq, **kwargs
+        )
+
 
 def start_cluster(data_dir):
     cmd = [
