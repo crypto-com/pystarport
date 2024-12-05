@@ -1239,7 +1239,14 @@ def init_cluster(
         cfg["chain_id"] = chain_id
 
     chains = list(config.values())
-    for chain in chains:
+
+    # for multiple chains, there can be multiple cmds splited by `,`
+    if cmd is not None:
+        cmds = cmd.split(',')
+    else:
+        cmds = [None] * len(chains)
+
+    for chain, cmd in zip(chains, cmds):
         (data_dir / chain["chain_id"]).mkdir()
         init_devnet(
             data_dir / chain["chain_id"], chain, base_port, image, cmd, gen_compose_file
