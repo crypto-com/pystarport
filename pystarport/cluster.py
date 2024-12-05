@@ -1242,7 +1242,7 @@ def init_cluster(
 
     # for multiple chains, there can be multiple cmds splited by `,`
     if cmd is not None:
-        cmds = cmd.split(',')
+        cmds = cmd.split(",")
     else:
         cmds = [None] * len(chains)
 
