@@ -25,7 +25,6 @@
 - [#129](https://github.com/crypto-com/pystarport/pull/129) create and get validator are incompatible.
 - [#137](https://github.com/crypto-com/pystarport/pull/137) support ica and icaauth cmd.
 - [#139](https://github.com/crypto-com/pystarport/pull/139) support ibc channel upgrade related methods.
-- [#141](https://github.com/crypto-com/pystarport/pull/141) add check to avoid cmd conflicts with chain_binary.
 
 *Feb 7, 2023*
 
