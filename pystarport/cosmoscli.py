@@ -119,7 +119,7 @@ class CosmosCLI:
             keyring_backend="test",
         )
 
-    def create_account(self, name, mnemonic=None):
+    def create_account(self, name, mnemonic=None, **kwargs):
         "create new keypair in node's keyring"
         if mnemonic is None:
             output = self.raw(
@@ -129,6 +129,7 @@ class CosmosCLI:
                 home=self.data_dir,
                 output="json",
                 keyring_backend="test",
+                **kwargs,
             )
         else:
             output = self.raw(
@@ -140,10 +141,11 @@ class CosmosCLI:
                 output="json",
                 keyring_backend="test",
                 stdin=mnemonic.encode() + b"\n",
+                **kwargs,
             )
         return json.loads(output)
 
-    def create_account_ledger(self, name):
+    def create_account_ledger(self, name, **kwargs):
         "create new ledger keypair"
 
         def send_request():
@@ -156,6 +158,7 @@ class CosmosCLI:
                     home=self.data_dir,
                     output="json",
                     keyring_backend="test",
+                    **kwargs,
                 )
             except Exception as e:
                 self.error = e
@@ -555,7 +558,7 @@ class CosmosCLI:
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
-    def make_multisig(self, name, signer1, signer2):
+    def make_multisig(self, name, signer1, signer2, **kwargs):
         self.raw(
             "keys",
             "add",
@@ -564,6 +567,7 @@ class CosmosCLI:
             multisig_threshold="2",
             home=self.data_dir,
             keyring_backend="test",
+            **kwargs,
         )
 
     def sign_multisig_tx(self, tx_file, multi_addr, signer_name, **kwargs):
