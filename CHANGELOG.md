@@ -26,6 +26,7 @@
 - [#137](https://github.com/crypto-com/pystarport/pull/137) support ica and icaauth cmd.
 - [#139](https://github.com/crypto-com/pystarport/pull/139) support ibc channel upgrade related methods.
 - [#141](https://github.com/crypto-com/pystarport/pull/141) make cmd flag support multiple chains.
+- [#142](https://github.com/crypto-com/pystarport/pull/142) add coin type when create account.
 
 *Feb 7, 2023*
 
