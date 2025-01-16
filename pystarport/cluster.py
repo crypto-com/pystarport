@@ -1294,8 +1294,8 @@ def init_cluster(
                 yaml.dump(
                     {
                         "global": {
-                            "api-listen-addr": "5183",
-                            "debug-listen-addr": "5183",
+                            "api-listen-addr": ":5183",
+                            "debug-listen-addr": ":5183",
                             "enable-debug-server": True,
                             "timeout": "10s",
                             "memo": "",
