@@ -1295,6 +1295,8 @@ def init_cluster(
                     {
                         "global": {
                             "api-listen-addr": ":5183",
+                            "debug-listen-addr": ":5183",
+                            "enable-debug-server": True,
                             "timeout": "10s",
                             "memo": "",
                             "light-cache-size": 20,
