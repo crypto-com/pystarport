@@ -835,6 +835,9 @@ class ClusterCLI:
     def ibc_denom_trace(self, path, node, i=0):
         return self.cosmos_cli(i).ibc_denom_trace(path, node)
 
+    def ibc_denom(self, path, node, i=0):
+        return self.cosmos_cli(i).ibc_denom(path, node)
+
 
 def start_cluster(data_dir):
     cmd = [

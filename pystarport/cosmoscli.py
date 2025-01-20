@@ -1449,3 +1449,16 @@ class CosmosCLI:
                 output="json",
             )
         )["denom_trace"]
+
+    def ibc_denom(self, path, node):
+        denom_hash = hashlib.sha256(path.encode()).hexdigest().upper()
+        return json.loads(
+            self.raw(
+                "q",
+                "ibc-transfer",
+                "denom",
+                denom_hash,
+                node=node,
+                output="json",
+            )
+        )["denom"]
