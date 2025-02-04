@@ -291,7 +291,9 @@ class CosmosCLI:
                 node=self.node_rpc,
             )
         )["commission"]
-        return parse_amount((res.get("commission") or res)[0])
+        if isinstance(res, dict):
+            res = res["commission"]
+        return parse_amount(res[0])
 
     def distribution_community(self):
         res = json.loads(
@@ -400,7 +402,12 @@ class CosmosCLI:
                 **kwargs,
             )
         )
-        if not generate_only and rsp["code"] == 0 and event_query_tx and self.has_event_query_tx_for:
+        if (
+            not generate_only
+            and rsp["code"] == 0
+            and event_query_tx
+            and self.has_event_query_tx_for
+        ):
             rsp = self.event_query_tx_for(rsp["txhash"])
         return rsp
 
@@ -436,7 +443,12 @@ class CosmosCLI:
                         **kwargs,
                     )
                 )
-                if not generate_only and self.output["code"] == 0 and event_query_tx and self.has_event_query_tx_for:
+                if (
+                    not generate_only
+                    and self.output["code"] == 0
+                    and event_query_tx
+                    and self.has_event_query_tx_for
+                ):
                     self.output = self.event_query_tx_for(self.output["txhash"])
             except Exception as e:
                 self.error = e
