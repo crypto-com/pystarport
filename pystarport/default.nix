@@ -7,6 +7,4 @@ pkgs.mkShell {
     python38Packages.grpcio-tools
     git
   ];
-  shellHook = ''                                                                                       
-  ./convert.sh                                                                                          '';
 }
