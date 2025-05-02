@@ -295,17 +295,28 @@ class CosmosCLI:
             res = res["commission"]
         return parse_amount(res[0])
 
-    def distribution_community(self):
-        res = json.loads(
-            self.raw(
-                "query",
-                "distribution",
-                "community-pool",
-                output="json",
-                node=self.node_rpc,
-            )
-        )
-        return parse_amount(res["pool"][0])
+    def distribution_community(self, **kwargs):
+        for module in ["distribution", "protocolpool"]:
+            try:
+                res = json.loads(
+                    self.raw(
+                        "query",
+                        module,
+                        "community-pool",
+                        output="json",
+                        node=self.node_rpc,
+                        **kwargs,
+                    )
+                )
+                return parse_amount(res["pool"][0])
+            except Exception as e:
+                if (
+                    module == "distribution"
+                    and "CommunityPool query exposed by the external community pool"
+                    in str(e)
+                ):
+                    continue
+                raise
 
     def distribution_reward(self, delegator_addr):
         res = json.loads(
