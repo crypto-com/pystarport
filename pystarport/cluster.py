@@ -369,8 +369,8 @@ class ClusterCLI:
     def distribution_commission(self, addr, i=0):
         return self.cosmos_cli(i).distribution_commission(addr)
 
-    def distribution_community(self, i=0):
-        return self.cosmos_cli(i).distribution_community()
+    def distribution_community(self, i=0, **kwargs):
+        return self.cosmos_cli(i).distribution_community(**kwargs)
 
     def distribution_reward(self, delegator_addr, i=0):
         return self.cosmos_cli(i).distribution_reward(delegator_addr)

@@ -28,6 +28,7 @@
 - [#141](https://github.com/crypto-com/pystarport/pull/141) make cmd flag support multiple chains.
 - [#142](https://github.com/crypto-com/pystarport/pull/142) add coin type when create account.
 - [#145](https://github.com/crypto-com/pystarport/pull/145) Backward compatible with binary that don't have event-query-tx-for.
+- [#147](https://github.com/crypto-com/pystarport/pull/147) suppport query exposed by the external community pool.
 
 *Feb 7, 2023*
 
