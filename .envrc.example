@@ -1,0 +1,2 @@
+use flake
+export DIRENV_ACTIVE=1 # force direnv to always activate by adding a dummy environment variable
