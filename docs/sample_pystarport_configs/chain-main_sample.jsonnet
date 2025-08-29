@@ -1,0 +1,59 @@
+{
+  'chainmain_777-1': {  // Cosmos chain ID: chainmain_777-1
+    cmd: 'chain-maind',
+    'start-flags': '--trace',
+
+    validators: [  // blockchain validators config
+      {
+        coins: '200000000000000000basetcro',
+        staked: '100000000000000000basetcro',
+        mnemonic: 'elbow flight coast travel move behind sister tell avocado road wait above',
+        base_port: 26750,
+      },
+      {
+        coins: '200000000000000000basetcro',
+        staked: '100000000000000000basetcro',
+        mnemonic: 'nasty large defy garage violin casual alarm blue marble industry infant inside',
+        base_port: 26760,
+      },
+    ],
+
+    accounts: [
+      {
+        name: 'alice',
+        coins: '100000000000000000000basetcro',
+        mnemonic: 'super develop desert oak load field ring jazz tray spray found novel',
+      },
+      {
+        name: 'bob',
+        coins: '100000000000000000000basetcro',
+        mnemonic: 'loyal legend allow glow wheel heavy pretty example tell peasant myself garlic battle bachelor buddy stand true grit manual letter wire alone polar glove',
+      },
+      {
+        name: 'relayer',  // account name must be "relayer" for IBC to work in pystarport
+        coins: '10000000000000000000000000basetcro',
+        mnemonic: 'summer account another open charge item reason double green winner six genuine glue daughter index pause bulb rival adult boss enlist bench oxygen asthma',
+      },
+    ],
+
+    config: {  // patch config.toml
+      consensus: {
+        timeout_commit: '5s',
+        create_empty_blocks_interval: '5s',
+      },
+    },
+
+    'app-config': {  // patch app.toml
+      'minimum-gas-prices': '0.025basetcro',
+    },
+
+    genesis: {  // patch genesis.json
+      consensus_params: {
+        block: {
+          max_bytes: '500000',
+          max_gas: '81500000',
+        },
+      },
+    },
+  },
+}
